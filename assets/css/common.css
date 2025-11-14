@@ -156,11 +156,26 @@ p, label, input, textarea {
     background-color: #f8f9fa;
     border-bottom: 4px solid #bcbcbc;
 }
-.section-title{
-    font-size: 2rem;
+.section-title {
+    font-size: 2rem;        /* default for desktop */
     font-weight: bold;
     color: #333;
 }
+
+/* Medium screens (tablets) */
+@media (max-width: 992px) {
+    .section-title {
+        font-size: 1.75rem;
+    }
+}
+
+/* Small screens (phones) */
+@media (max-width: 576px) {
+    .section-title {
+        font-size: 1.4rem;   /* smaller for mobile */
+    }
+}
+
 
 .section-subtitle{
     font-size: 1.2rem;
@@ -405,3 +420,48 @@ footer a:hover {
 .youtube-btn:hover i {
     color: red;
 }
+
+.teaching-item {
+  background: #fff;
+  border: 1px solid #eee;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-left: 3px solid #e70000;
+}
+
+.teaching-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.teaching-item h5 {
+  color: #000000;
+}
+
+.teaching-item p {
+  color: #555;
+}
+
+.section-nav .nav-link {
+  color: #555;
+  text-decoration: none;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.section-nav .nav-link:hover {
+  transform: translateY(-2px);
+}
+
+.service-benefit {
+  font-size: 0.85rem;
+  color: #555;
+  margin-top: 6px;
+  font-style: italic;
+}
+
+.service-divider {
+  height: 1px;
+  background: #ccc;
+  margin: 12px auto 6px;
+  width: 70%;
+}
+
