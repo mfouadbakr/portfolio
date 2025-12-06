@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Karoot | كروت</title>
+    
+    <!-- Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Poppins:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- VARIABLES --- */
+        :root {
+            --bg-size: 400% 400%;
+            --anim-speed: 15s;
+        }
+
+        /* === DARK MODE (Default) === */
+        [data-mode="dark"] {
+            --text-main: #ffffff;
+            --text-sub: rgba(255,255,255,0.7);
+            --card-bg: #2d3436;
+            --modal-bg: #1e1e24;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            --btn-active-bg: #ffffff;
+            --btn-active-text: #000000;
+        }
+
+        /* === LIGHT MODE === */
+        [data-mode="light"] {
+            --text-main: #2d3436;
+            --text-sub: rgba(0,0,0,0.6);
+            --card-bg: #ffffff;
+            --modal-bg: #f5f6fa;
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.9);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+            --btn-active-bg: #2d3436;
+            --btn-active-text: #ffffff;
+        }
+
+        /* === THEMES (Gradients) === */
+        [data-theme="galaxy"] { 
+            --bg-image: linear-gradient(-45deg, #240b36, #c31432, #240b36, #0f0c29);
+            --accent: #ff007f; --accent-glow: rgba(255, 0, 127, 0.6); 
+        }
+        [data-theme="ocean"] { 
+            --bg-image: linear-gradient(-45deg, #000428, #004e92, #000428);
+            --accent: #00d2d3; --accent-glow: rgba(0, 210, 211, 0.6); 
+        }
+        [data-theme="forest"] { 
+            --bg-image: linear-gradient(-45deg, #000000, #0f9b0f, #000000);
+            --accent: #00b894; --accent-glow: rgba(0, 184, 148, 0.6); 
+        }
+        [data-theme="gold"] { 
+            --bg-image: linear-gradient(-45deg, #1e1e1e, #b8860b, #1e1e1e);
+            --accent: #ffd700; --accent-glow: rgba(255, 215, 0, 0.6); 
+        }
+
+        /* Light Mode Overrides */
+        [data-mode="light"][data-theme="galaxy"] { --bg-image: linear-gradient(-45deg, #ff9a9e, #fad0c4); --accent: #ff6b6b; }
+        [data-mode="light"][data-theme="ocean"] { --bg-image: linear-gradient(-45deg, #a18cd1, #fbc2eb); --accent: #6c5ce7; }
+
+        /* --- GLOBAL --- */
+        body {
+            background: var(--bg-image);
+            background-size: var(--bg-size);
+            animation: gradientBG var(--anim-speed) ease infinite;
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+            user-select: none;
+            transition: color 0.3s ease;
+        }
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        body[dir="rtl"] { font-family: 'Cairo', sans-serif; }
+
+        /* --- BACKGROUND DECORATION --- */
+        #bg-decor-layer { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+        .decor-card {
+            position: absolute; width: 120px; height: 180px; 
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px; backdrop-filter: blur(3px); z-index: 0;
+        }
+        .d1 { top: 10%; left: -20px; transform: rotate(-15deg); animation: float 8s ease-in-out infinite; }
+        .d2 { bottom: 15%; right: -20px; transform: rotate(10deg); animation: float 9s ease-in-out infinite reverse; }
+        .d3 { top: 40%; right: 10%; transform: rotate(25deg) scale(0.6); animation: float 10s ease-in-out infinite 1s; opacity: 0.5; }
+        @keyframes float { 0%,100% { transform: translateY(0) rotate(var(--r, 0deg)); } 50% { transform: translateY(-20px) rotate(var(--r, 0deg)); } }
+
+        /* --- UI COMPONENTS --- */
+        .ui-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            border-radius: 20px;
+            transition: 0.3s;
+        }
+        .ui-panel:active { transform: scale(0.98); }
+
+        .btn-icon { 
+            background: transparent; border: none; font-size: 1.4rem; 
+            color: var(--text-main); padding: 12px; transition: 0.2s; 
+            cursor: pointer; z-index: 50; position: relative;
+        }
+        .btn-icon:hover { transform: scale(1.1); color: var(--accent); }
+
+        .screen { display: none; height: 100vh; flex-direction: column; position: relative; z-index: 10; overflow-y: auto; overflow-x: hidden; }
+        .screen.active { display: flex; animation: fadeIn 0.5s; }
+
+        /* --- LANDING --- */
+        #screen-landing { justify-content: center; align-items: center; text-align: center; }
+        .hero-logo { font-size: 4rem; font-weight: 900; letter-spacing: -3px; z-index: 2; text-shadow: 0 10px 40px rgba(0,0,0,0.4); }
+        .btn-start {
+            padding: 16px 60px; font-size: 1.3rem; font-weight: 800; border-radius: 50px;
+            border: none; background: var(--text-main); color: var(--card-bg);
+            box-shadow: 0 0 20px var(--accent-glow); transition: 0.3s; cursor: pointer;
+        }
+        .btn-start:hover { transform: scale(1.05); box-shadow: 0 0 40px var(--accent-glow); }
+
+        /* --- SETUP --- */
+        .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .role-full { grid-column: span 2; }
+        
+        .role-btn { height: 100px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; color: var(--text-main); }
+        .role-btn.selected { background: var(--accent); color: white !important; border-color: white; }
+        .count-btn { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--text-sub); color: var(--text-main); cursor: pointer; transition: 0.2s; }
+        .count-btn.active { background: var(--accent); color: white; border-color: white; font-weight: bold; transform: scale(1.15); box-shadow: 0 0 15px var(--accent-glow); }
+
+        /* --- GAMEPLAY --- */
+        #screen-game { justify-content: space-between; }
+        .card-stage { flex-grow: 1; width: 100%; display: flex; justify-content: center; align-items: center; perspective: 1000px; padding: 20px; position: relative; }
+        .game-card {
+            width: 90%; max-width: 350px; height: 520px;
+            background: var(--card-bg); color: var(--text-main);
+            border-radius: 26px; padding: 40px 30px; 
+            text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+            border: 8px solid var(--card-bg); position: relative;
+        }
+        .game-card::after { content: ''; position: absolute; inset: 15px; border: 2px dashed var(--accent); border-radius: 18px; opacity: 0.6; pointer-events: none; }
+        .card-title { font-size: 1.6rem; font-weight: 800; line-height: 1.5; }
+        .btn-control-prev { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: var(--glass-bg); color: var(--text-main); border: 1px solid var(--glass-border); cursor: pointer; }
+        .btn-control-next { background: var(--accent); color: white; border: none; padding: 15px 50px; border-radius: 50px; font-weight: bold; font-size: 1.2rem; box-shadow: 0 5px 20px rgba(0,0,0,0.3); transition: 0.2s; }
+        .btn-control-next:active { transform: scale(0.95); }
+
+        /* --- MODAL --- */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; backdrop-filter: blur(10px); display: none; justify-content: center; align-items: flex-end; }
+        .modal-panel { background: var(--modal-bg); width: 100%; border-radius: 30px 30px 0 0; padding: 30px; color: var(--text-main); max-height: 90vh; overflow-y: auto; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 -10px 40px rgba(0,0,0,0.3); }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+        /* --- CUSTOM DIALOGS --- */
+        .dialog-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 9999;
+            backdrop-filter: blur(12px); display: none; 
+            justify-content: center; align-items: center;
+            padding: 20px;
+        }
+        .dialog-box {
+            background: var(--modal-bg); width: 100%; max-width: 350px;
+            border-radius: 25px; padding: 30px; text-align: center;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .dialog-title { font-weight: 900; font-size: 1.5rem; margin-bottom: 10px; color: var(--accent); }
+        .dialog-msg { margin-bottom: 25px; color: var(--text-main); opacity: 0.9; }
+        .dialog-actions { display: flex; gap: 10px; justify-content: center; }
+        .btn-dialog { flex: 1; padding: 12px; border-radius: 50px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-dialog-primary { background: var(--accent); color: white; }
+        .btn-dialog-secondary { background: var(--glass-bg); color: var(--text-main); border: 1px solid var(--text-sub); }
+        .btn-dialog:active { transform: scale(0.95); }
+
+        /* --- UI HELPERS --- */
+        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .theme-btn {
+            height: 60px; border-radius: 15px; cursor: pointer;
+            border: 2px solid transparent; transition: 0.2s;
+            position: relative; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .theme-btn.active { border: 2px solid var(--text-main); transform: scale(0.98); }
+        .theme-btn.active::after { content: '✔'; color: white; font-weight: bold; font-size: 1.2rem; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+        .lang-btn { border: none; background: transparent; color: var(--text-main); font-weight: 500; transition: 0.3s; opacity: 0.7; }
+        .lang-btn:hover { opacity: 1; }
+        .lang-btn.active { background: var(--btn-active-bg); color: var(--btn-active-text); font-weight: 800; opacity: 1; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        .toggle-switch { width: 50px; height: 26px; background: var(--text-sub); border-radius: 20px; position: relative; cursor: pointer; }
+        .toggle-switch.active { background: var(--accent); }
+        .toggle-knob { width: 22px; height: 22px; background: white; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: 0.3s; }
+        .toggle-switch.active .toggle-knob { left: 26px; }
+        .btn-settings-bright { color: white !important; opacity: 0.8; text-decoration: underline; font-weight: 600; transition: 0.3s; }
+        .btn-settings-bright:hover { opacity: 1; letter-spacing: 0.5px; }
+
+    </style>
+</head>
+<body data-mode="dark" data-theme="galaxy">
+
+    <!-- BACKGROUND DECORATION -->
+    <div id="bg-decor-layer">
+        <div class="decor-card d1"></div>
+        <div class="decor-card d2"></div>
+        <div class="decor-card d3"></div>
+        <div id="particles"></div>
+    </div>
+
+    <!-- 0. LANDING -->
+    <div id="screen-landing" class="screen active">
+        <div class="animate__animated animate__zoomIn">
+            <h1 class="hero-logo mb-1" style="color: var(--accent);">KAROOT</h1>
+            <p class="text-sub mb-5 fw-bold" style="letter-spacing: 1px;">Icebreakers & Deep Talk</p>
+            <button class="btn-start animate__animated animate__pulse animate__infinite" onclick="enterApp()">
+                <span id="txt-start">Tap to Start</span>
+            </button>
+        </div>
+        <div class="fixed-bottom pb-4 animate__animated animate__fadeInUp animate__delay-1s">
+            <small class="text-sub text-uppercase letter-spacing-2" style="font-size: 0.7rem;">Developed By</small><br>
+            <a href="https://mfouadbakr.github.io/portfolio/index.html" target="_blank" style="color: var(--accent); text-decoration: none; font-weight: 800;">
+                Mohamed Bakr
+            </a>
+        </div>
+    </div>
+
+    <!-- 1. SETUP -->
+    <div id="screen-setup" class="screen pt-5 justify-content-center">
+        <div class="container">
+            <h2 class="text-center fw-bold mb-1" id="lbl-setup-title">Setup Game</h2>
+            <p class="text-center text-sub mb-4" id="lbl-setup-desc">Customize your session</p>
+
+            <div class="ui-panel p-4 mb-4">
+                <label class="d-block text-sub small mb-3 text-uppercase" id="lbl-count">Number of Questions</label>
+                <div class="d-flex justify-content-between px-2">
+                    <div class="count-btn" onclick="setCount(10)">10</div>
+                    <div class="count-btn" onclick="setCount(20)">20</div>
+                    <div class="count-btn active" id="btn-c-30" onclick="setCount(30)">30</div>
+                    <div class="count-btn" onclick="setCount(40)">40</div>
+                    <div class="count-btn" onclick="setCount(50)">50</div>
+                </div>
+            </div>
+
+            <label class="d-block text-sub small mb-3 text-uppercase px-3" id="lbl-role">Group Type</label>
+            <div class="role-grid px-2">
+                <div class="ui-panel role-btn" onclick="setRole('friends')"><div class="display-5 mb-2">🤘</div><span id="role-friends">Friends</span></div>
+                <div class="ui-panel role-btn" onclick="setRole('couples')"><div class="display-5 mb-2">❤️</div><span id="role-couples">Couples</span></div>
+                <div class="ui-panel role-btn" onclick="setRole('family')"><div class="display-5 mb-2">👨‍👩‍👧‍👦</div><span id="role-family">Family</span></div>
+                <div class="ui-panel role-btn" onclick="setRole('work')"><div class="display-5 mb-2">💼</div><span id="role-work">Coworkers</span></div>
+                <div class="ui-panel role-btn role-full" onclick="setRole('all')"><div class="display-5 mb-2">🎲</div><span id="role-all">Mix</span></div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-5 mb-3">
+            <button onclick="toggleSettings()" class="btn btn-sm btn-settings-bright" id="btn-settings-link">Settings & Language</button>
+        </div>
+    </div>
+
+    <!-- 2. TOPICS -->
+    <div id="screen-cats" class="screen pt-5">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between mb-4 px-2">
+                <button onclick="showScreen('screen-setup')" class="ui-panel btn-icon">←</button>
+                <h2 class="fw-bold m-0" id="lbl-choose-cat">Choose Topic</h2>
+                <div style="width:40px"></div>
+            </div>
+            <div class="row g-3" id="categories-container"></div>
+        </div>
+    </div>
+
+    <!-- 3. GAME -->
+    <div id="screen-game" class="screen pt-3">
+        <!-- Top Bar with Z-Index fix for exit button -->
+        <div class="d-flex justify-content-between align-items-center px-4 mb-2" style="position: relative; z-index: 100;">
+            <button onclick="confirmExit()" class="ui-panel btn-icon" style="background: rgba(200,0,0,0.1); border-color: rgba(200,0,0,0.3);">✕</button>
+            <span class="text-sub text-uppercase small" id="game-cat-title">TOPIC</span>
+            <button onclick="toggleSettings()" class="ui-panel btn-icon">⚙️</button>
+        </div>
+
+        <div class="px-4">
+            <div class="progress" style="height: 6px; background: rgba(255,255,255,0.2);">
+                <div class="progress-bar" id="game-progress" style="width: 0%; background: var(--accent);"></div>
+            </div>
+            <div class="text-end text-sub small mt-1" id="counter">1 / 30</div>
+        </div>
+
+        <div class="card-stage" id="card-stage"></div>
+
+        <div class="d-flex justify-content-center align-items-center gap-4 pb-5">
+            <button class="btn-control-prev" onclick="prevCard()" id="btn-prev">↩</button>
+            <button class="btn-control-next animate__animated animate__pulse animate__infinite" onclick="nextCard()" id="btn-next">
+                Next Card
+            </button>
+        </div>
+    </div>
+
+    <!-- CUSTOM DIALOG -->
+    <div id="custom-dialog" class="dialog-overlay">
+        <div class="dialog-box animate__animated animate__zoomIn">
+            <div class="dialog-title" id="d-title">Title</div>
+            <div class="dialog-msg" id="d-msg">Message goes here</div>
+            <div class="dialog-actions">
+                <button class="btn-dialog btn-dialog-secondary" id="d-btn-cancel" onclick="closeDialog()">Cancel</button>
+                <button class="btn-dialog btn-dialog-primary" id="d-btn-ok">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div id="modal-settings" class="modal-overlay" onclick="if(event.target === this) toggleSettings()">
+        <div class="modal-panel">
+            <div class="d-flex justify-content-between mb-4">
+                <h4 class="fw-bold m-0" id="lbl-settings-modal">Settings</h4>
+                <button onclick="toggleSettings()" class="ui-panel btn-icon rounded-circle" style="padding: 5px 12px;">✕</button>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <span class="fw-bold" id="lbl-mode">Dark Mode</span>
+                <div class="toggle-switch active" id="toggle-mode" onclick="toggleMode()"><div class="toggle-knob"></div></div>
+            </div>
+
+            <label class="text-sub small text-uppercase mb-3" id="lbl-theme">Theme</label>
+            <div class="theme-grid mb-4">
+                <div class="theme-btn active" style="background: linear-gradient(135deg, #240b36, #c31432)" onclick="setTheme('galaxy', this)"></div>
+                <div class="theme-btn" style="background: linear-gradient(135deg, #000428, #004e92)" onclick="setTheme('ocean', this)"></div>
+                <div class="theme-btn" style="background: linear-gradient(135deg, #000000, #0f9b0f)" onclick="setTheme('forest', this)"></div>
+                <div class="theme-btn" style="background: linear-gradient(135deg, #1e1e1e, #b8860b)" onclick="setTheme('gold', this)"></div>
+            </div>
+
+            <hr class="border-secondary my-3">
+
+            <label class="text-sub small text-uppercase mb-3" id="lbl-ui-lang">Language</label>
+            <div class="ui-panel p-1 d-flex rounded-pill mb-4">
+                <button class="lang-btn active w-50 rounded-pill" id="btn-lang-en" onclick="setUILang('en')">English</button>
+                <button class="lang-btn w-50 rounded-pill" id="btn-lang-ar" onclick="setUILang('ar')">العربية</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGIC -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const uiDict = {
+            en: {
+                start_btn: "Tap to Start", setup_title: "Setup Game", setup_desc: "Customize your session",
+                lbl_count: "Number of Questions", lbl_role: "Group Type",
+                roles: { friends: "Friends", couples: "Couples", family: "Family", work: "Co-workers", all: "Mix" },
+                btn_settings: "Settings & Language", choose_cat: "Choose Topic",
+                next: "Next Card", finish: "Finish Game", settings_modal: "Settings",
+                ui_lang: "Language", theme: "Galaxy Theme", mode: "Dark Mode",
+                cats: { 
+                    ice: "Icebreakers", fun: "Funny", deep: "Deep Talk", love: "Romance", 
+                    confess: "Confessions", tell: "Stories", 
+                    career: "Career & Work", travel: "Travel", whatif: "What If?",
+                    debate: "Debates", truth: "Truth", context: "Association", wishes: "Wishes", advice: "Advice",
+                    rand: "Random Mix" 
+                },
+                exit_confirm: "Exit current game?",
+                game_over: "All Questions Done!",
+                game_over_msg: "Do you want to play another round?",
+                yes: "Yes", no: "No", ok: "OK", cancel: "Cancel"
+            },
+            ar: {
+                start_btn: "اضغط للبدء", setup_title: "إعداد اللعبة", setup_desc: "ظبط القعدة",
+                lbl_count: "عدد الأسئلة", lbl_role: "مين هيلعب؟",
+                roles: { friends: "الصحـاب", couples: "كابلز", family: "العيلـة", work: "زملاء عمل", all: "كوكتيل" },
+                btn_settings: "الإعدادات واللغة", choose_cat: "اختار الموضوع",
+                next: "السؤال التالي", finish: "إنهاء اللعبة", settings_modal: "الإعدادات",
+                ui_lang: "اللغة", theme: "ألوان المجرة", mode: "الوضع الليلي",
+                cats: { 
+                    ice: "تسخين", fun: "ضحك وهزار", deep: "كلام عميق", love: "رومانسية", 
+                    confess: "كرسي الاعتراف", tell: "احكي يا شهرزاد", 
+                    career: "شغل وكارير", travel: "سفر ومغامرة", whatif: "ماذا لو؟",
+                    debate: "نقاش وجدال", truth: "صراحة وبس", context: "أول خاطر", wishes: "أماني", advice: "نصيحة دينية",
+                    rand: "كوكتيل عشوائي" 
+                },
+                exit_confirm: "عايز تخرج من الجيم ده؟",
+                game_over: "خلصت الأسئلة!",
+                game_over_msg: "تحب تلعب جولة كمان؟",
+                yes: "أيوة", no: "لأ", ok: "تمام", cancel: "إلغاء"
+            }
+        };
+
+        const baseCats = [
+            // Original
+            { id: 'ice', roles: ['friends','family','all','couples','work'], icon: '👋', q: ["لو صحيت لقيت نفسك بقيت مليونير، أول حاجة هتعملها ايه؟","ايه أكتر أكلة مصرية بتعرف تطبخها؟","مين أكتر مدرس مأثر فيك من وانت صغير؟","ايه المكان اللي في مصر نفسك تروحه؟","لو تقدر تغير اسمك، هتختار اسم ايه؟","بتحب الصيف والبحر ولا الشتاء والمطر؟","ايه الوظيفة اللي كان نفسك تشتغلها وانت طفل؟","ايه أكتر كرتون كنت مدمن عليه زمان؟"] },
+            { id: 'fun', roles: ['friends','family','all','couples','work'], icon: '😂', q: ["ايه أكتر موقف محرج حصلك في مواصلات؟","لو بقيت دبانة لمدة ساعة، هتضايق مين؟","ايه أغرب حاجة اشتريتها اونلاين وطلعت مقلب؟","احكيلنا عن طبخة جربت تعملها وحرقت المطبخ؟","ايه أكتر لبس ندمت انك لبسته؟","لو حياتك ميم (Meme)، هتبقى انهي واحد؟","ايه أكتر كدبة كدبتها على أهلك عشان تخرج؟","لو اتقفشت بتكلم نفسك، بتبرر الموقف ازاي؟"] },
+            { id: 'deep', roles: ['friends','couples','all'], icon: '🧠', q: ["ايه الدرس اللي اتعلمته في حياتك بالطريقة الصعبة؟","امتى آخر مرة عيطت فيها، والسبب كان يستاهل؟","شايف نفسك حققت أحلام طفولتك؟","ايه أكتر حاجة بتخاف منها (الوحدة، الموت، الفشل)؟","لو تقدر ترجع بالزمن 5 سنين، هتغير ايه؟","مين الشخص اللي وجوده غير حياتك للأحسن؟","هل انت راضي عن نفسك دلوقتي؟","ايه الذكرى اللي بتتمنى تتمسح من ذاكرتك؟"] },
+            { id: 'love', roles: ['couples'], icon: '❤️', q: ["ايه أكتر صفة في شخصيتي بتخليك تتطمن؟","شايف حياتنا شكلها ايه كمان 5 سنين؟","ايه أكتر أكلة بحبها من ايدك؟","لو هنروح مكان واحد بس في العالم سوا، تختاره فين؟","ايه الحاجة اللي بعملها وبتفرحك اوي؟","لو كسبنا فلوس كتير، هنجيب ايه لبيتنا؟","ايه الفيلم اللي بتحب تتفرج عليه معايا؟","امتى بتحس اني بكون سند ليك بجد؟"] },
+            { id: 'confess', roles: ['friends','couples'], icon: '🤐', q: ["ايه أغرب مكان روحت فيه؟","عمرك سرقت حاجة (حتى لو لبانة) وانت صغير؟","مين الشخص اللي نفسك تقوله 'شكراً'؟","ايه أكتر موقف ضحكك مع صحابك ومستحيل تنساه؟","ايه العادة الغريبة اللي بتعملها وانت لوحدك؟","لو معاك طاقية الإخفاء، هتروح فين؟","عمرك عملت مقلب في حد وزعل منك؟"] },
+            { id: 'tell', roles: ['friends','family','all'], icon: '📢', q: ["احكيلنا عن علقة سخنة خدتها وانت صغير؟","احكي عن يوم مش ممكن تنساه؟","احكي عن موقف محرج حصلك في فرح؟","احكي عن موقف خوفك جداً؟","احكيلنا عن مغامرة عملتها في سفرية؟","احكي عن أول يوم شغل ليك؟","احكي عن أحلى هدية جاتلك في عيد ميلادك؟"] },
+            // Expanded
+            { id: 'career', roles: ['work','friends','all'], icon: '💼', q: ["ايه أغرب شغلانة اشتغلتها في حياتك؟","لو بقيت مدير الشركة لمدة يوم، أول قرار هتاخده ايه؟","ايه أكتر حاجة بتفصلك عن الشغل؟","مين الشخص اللي بيخلي الشغل يهون عليك؟","لو مش بتشتغل شغلانتك دي، كان نفسك تكون ايه؟","احكيلنا عن موقف مضحك حصل في اجتماع؟","ايه الحاجة اللي بتعملها عشان تفوق في نص اليوم؟","لو كسبت لوتري، هتكمل شغل ولا هتستقيل؟"] },
+            { id: 'travel', roles: ['friends','family','all','couples'], icon: '✈️', q: ["لو معاك تذكرة لبلد واحدة بس، هتختار فين؟","بتحب تسافر لوحدك ولا مع شلة؟","ايه أسوأ تجربة حصلتلك في سفرية؟","دهب ولا الساحل؟ وليه؟","ايه الحاجة اللي دايما بتنساها وانت بتحضر شنطتك؟","بتحب البحر والاستجمام ولا الجبال والمغامرة؟","احكيلنا عن مكان روحتله ونفسك تروحه تاني؟","لو هتعيش في بلد تانية غير مصر، تختار فين؟"] },
+            { id: 'whatif', roles: ['friends','couples','all','family','work'], icon: '🔮', q: ["لو بقيت وزير السعادة، أول قرار هتاخده ايه؟","لو معاك آلة زمن، هترجع للماضي ولا تروح المستقبل؟","لو صحيت لقيت نفسك الشخص الوحيد على كوكب الأرض؟","لو تقدر تاخد قدرة خارقة واحدة، تختار ايه؟ (طيران، اختفاء، قراءة أفكار)","لو حياتك هتتحول لفيلم، مين الممثل اللي هيقوم بدورك؟","لو تقدر تاكل أكلة واحدة بس بقية حياتك، هتكون ايه؟","لو الحيوانات بتتكلم، تفتكر مين هيكون أرخم حيوان؟"] },
+            { id: 'debate', roles: ['friends','family','work','all','couples'], icon: '⚖️', q: ["بتحب الشاي بحليب ولا القهوة الصبح؟","شايف الجواز عن حب ولا صالونات أنجح؟","عمرو دياب ولا تامر حسني؟","الفلوس ولا راحة البال؟","الأيفون ولا الأندرويد؟","الأكل البيتي ولا أكل الشارع؟","الساحل الطيب ولا الساحل الشرير؟","بتحب تقعد في البيت ولا تخرج؟","شكشوكة بصل ولا توم؟","تربي كلب ولا قطة؟"] },
+            // Requested Additions (Unique Questions)
+            { id: 'truth', roles: ['friends','couples','family'], icon: '👁️', q: ["شايف فيا عيب ايه نفسي أغيره؟","امتى حسيت اني خذلتك؟","مين أكتر شخص في القعدة دي بيعرف يسمعك؟","ايه الصفة اللي فيك ونفسك تغيرها؟","مين أكتر حد بتثق فيه في حياتك؟","لو هتوصف نفسك بكلمة واحدة، هتكون ايه؟","ايه أكتر حاجة بتندم عليها؟"] },
+            { id: 'context', roles: ['friends','all','couples','family'], icon: '💡', q: ["لما أقول 'جواز'، ايه أول كلمة بتيجي في بالك؟","سياق: 'يوم الجمعة'. بتفكر في ايه؟","كلمة 'نجاح' بتمثلك مين؟","سياق: 'الفلوس'. كمل الجملة بكلمة واحدة.","لما بتسمع اسم 'مصر'، بتفتكر ايه؟","سياق: 'الغدر'. أول موقف جه في بالك؟"] },
+            { id: 'wishes', roles: ['friends','all','couples','family'], icon: '✨', q: ["ايه الأمنية اللي اتمنيتها ومتحققتش ولعلها خير؟","نفسك ربنا يرزقك بايه السنة دي؟","تتمنى مين يسامحك؟","لو ليك أمنية واحدة تتحقق دلوقتي حالاً، هتكون ايه؟","نفسك تكون فين كمان ١٠ سنين؟","ايه الحاجة اللي نفسك تشتريها بس غالية عليك؟"] },
+            { id: 'advice', roles: ['friends','family','all'], icon: '🕌', q: ["نصيحة دينية فرقت معاك في حياتك؟","ايه الآية اللي لما بتسمعها قلبك بيرتاح؟","لو هتنصحنا نصيحة واحدة عشان نقرب من ربنا، هتقول ايه؟","ايه العادة الدينية اللي نفسك تواظب عليها؟","ازاي بتتعامل مع الابتلاء؟","مين الشيخ اللي بتحب تسمع صوته في القرآن؟"] }
+        ];
+
+        // NO MAPPING - Use Raw Unique Arrays
+        const categoriesDB = baseCats;
+
+        let state = {
+            uiLang: 'en', mode: 'dark', theme: 'galaxy', 
+            role: 'friends', targetCount: 30, currentCatId: null, deck: [], history: [], currentIndex: -1
+        };
+
+        $(document).ready(() => {
+            initParticles();
+            $('#btn-lang-en').addClass('active');
+            updateUI();
+        });
+
+        function enterApp() {
+            $('#screen-landing').addClass('animate__fadeOutUp');
+            setTimeout(() => { $('#screen-landing').removeClass('active'); showScreen('screen-setup'); }, 500);
+        }
+
+        function showScreen(id) { $('.screen').removeClass('active'); $(`#${id}`).addClass('active'); }
+        function toggleSettings() { const m = $('#modal-settings'); if(m.is(':visible')) m.fadeOut(); else m.fadeIn().css('display','flex'); }
+
+        function setCount(n) { state.targetCount = n; $('.count-btn').removeClass('active').filter((i,e)=>$(e).text()==n).addClass('active'); haptic(); }
+        function setRole(r) { state.role = r; $('.role-btn').removeClass('selected'); $(`#role-${r}`).parent().addClass('selected'); haptic(); setTimeout(() => { renderCats(); showScreen('screen-cats'); }, 250); }
+
+        function renderCats() {
+            const c = $('#categories-container'); c.empty();
+            const l = uiDict[state.uiLang].cats;
+            const valid = categoriesDB.filter(x => x.roles.includes(state.role));
+            c.append(`<div class="col-6 col-md-4"><div class="ui-panel p-3 text-center h-100 d-flex flex-column justify-content-center" onclick="startGame('random')" style="cursor:pointer;border-bottom:4px solid var(--text-main)"><div class="display-3 mb-2">🎲</div><h5 class="fw-bold m-0">${l.rand}</h5></div></div>`);
+            valid.forEach(i => {
+                c.append(`<div class="col-6 col-md-4"><div class="ui-panel p-3 text-center h-100 d-flex flex-column justify-content-center" onclick="startGame('${i.id}')" style="cursor:pointer;border-bottom:4px solid var(--accent)"><div class="display-3 mb-2">${i.icon}</div><h5 class="fw-bold m-0">${l[i.id]||i.id}</h5></div></div>`);
+            });
+        }
+
+        function startGame(id) {
+            state.currentCatId = id;
+            let pool = [];
+            
+            // Gather Unique Questions
+            if(id === 'random') {
+                categoriesDB.filter(x => x.roles.includes(state.role)).forEach(x => {
+                    pool = [...pool, ...x.q];
+                });
+            } else {
+                const cat = categoriesDB.find(x => x.id === id);
+                if(cat) pool = [...cat.q];
+            }
+            
+            // Remove duplicates just in case random mix has overlaps
+            pool = [...new Set(pool)];
+
+            // Shuffle Unique Questions
+            pool.sort(()=>Math.random()-0.5);
+            
+            // Slice Deck (If pool is smaller than target, take all pool)
+            if(pool.length < state.targetCount) {
+                state.deck = pool;
+            } else {
+                state.deck = pool.slice(0, state.targetCount);
+            }
+
+            state.history = []; state.currentIndex = -1;
+            showScreen('screen-game');
+            $('#game-cat-title').text(id==='random' ? uiDict[state.uiLang].cats.rand : uiDict[state.uiLang].cats[id]);
+            nextCard();
+        }
+
+        function renderCard(txt, end=false) {
+            const s = $('#card-stage'); s.empty();
+            s.append(`<div class="game-card animate__animated animate__zoomIn"><h2 class="card-title" style="direction:rtl">${txt}</h2></div>`);
+            if(end) $('#btn-next').hide(); else $('#btn-next').show();
+            
+            // Fix progress calculation
+            const total = state.deck.length; // Use actual deck length, not target count (in case unique count < target)
+            const current = state.currentIndex + 1;
+            const pct = (current/total)*100;
+            
+            $('#game-progress').css('width', `${pct}%`);
+            $('#counter').text(`${current} / ${total}`);
+        }
+
+        function nextCard() {
+            haptic();
+            if(state.currentIndex < state.history.length-1) { 
+                state.currentIndex++; 
+                renderCard(state.history[state.currentIndex]); 
+            }
+            else if(state.history.length < state.deck.length) {
+                const q = state.deck[state.history.length]; 
+                state.history.push(q); 
+                state.currentIndex++; 
+                renderCard(q);
+            } else {
+                showDialog(uiDict[state.uiLang].game_over, uiDict[state.uiLang].game_over_msg, () => showScreen('screen-setup'), true);
+            }
+            updateNav();
+        }
+
+        function prevCard() { haptic(); if(state.currentIndex > 0) { state.currentIndex--; renderCard(state.history[state.currentIndex]); updateNav(); } }
+        function updateNav() {
+            if(state.currentIndex <= 0) $('#btn-prev').css({opacity:0.5, pointerEvents:'none'}); else $('#btn-prev').css({opacity:1, pointerEvents:'all'});
+            
+            const isEnd = state.currentIndex >= state.deck.length - 1;
+            $('#btn-next').text(isEnd ? uiDict[state.uiLang].finish : uiDict[state.uiLang].next);
+        }
+
+        function toggleMode() { state.mode = state.mode==='dark'?'light':'dark'; $('body').attr('data-mode', state.mode); $('#toggle-mode').toggleClass('active'); haptic(); }
+        function setTheme(t,el) { state.theme=t; $('body').attr('data-theme',t); $('.theme-btn').removeClass('active'); $(el).addClass('active'); haptic(); }
+        
+        function setUILang(l) { 
+            state.uiLang=l; 
+            $('.lang-btn').removeClass('active'); $(`#btn-lang-${l}`).addClass('active');
+            updateUI(); if($('#screen-cats').hasClass('active'))renderCats(); haptic();
+        }
+
+        function updateUI() {
+            const t = uiDict[state.uiLang];
+            $('body').attr('dir', state.uiLang==='ar'?'rtl':'ltr');
+            $('#txt-start').text(t.start_btn);
+            $('#lbl-setup-title').text(t.setup_title); $('#lbl-setup-desc').text(t.setup_desc);
+            $('#lbl-count').text(t.lbl_count); $('#lbl-role').text(t.lbl_role);
+            $('#role-friends').text(t.roles.friends); $('#role-couples').text(t.roles.couples); $('#role-family').text(t.roles.family); $('#role-work').text(t.roles.work); $('#role-all').text(t.roles.all);
+            $('#btn-settings-link').text(t.btn_settings);
+            $('#lbl-settings-modal').text(t.settings_modal); $('#lbl-mode').text(t.mode); $('#lbl-theme').text(t.theme); $('#lbl-ui-lang').text(t.ui_lang);
+            updateNav();
+        }
+
+        function showDialog(title, msg, onConfirm, showCancel = true) {
+            $('#d-title').text(title); $('#d-msg').text(msg);
+            const btnOk = $('#d-btn-ok'); const btnCancel = $('#d-btn-cancel');
+            btnOk.text(uiDict[state.uiLang].yes); btnCancel.text(uiDict[state.uiLang].no);
+            if(!showCancel) { btnCancel.hide(); btnOk.text(uiDict[state.uiLang].ok); } else btnCancel.show();
+            btnOk.off('click').on('click', function() { closeDialog(); if(onConfirm) onConfirm(); });
+            $('#custom-dialog').css('display', 'flex');
+        }
+        function closeDialog() { $('#custom-dialog').hide(); }
+        function confirmExit() { showDialog(uiDict[state.uiLang].exit_confirm, "", () => showScreen('screen-setup'), true); }
+        function initParticles() { const c = $('#particles'); for(let i=0; i<15; i++) { const s = Math.random()*4+2; c.append(`<div style="position:absolute; width:${s}px; height:${s}px; background:white; border-radius:50%; opacity:0.3; left:${Math.random()*100}%; bottom:-20px; animation:float ${Math.random()*10+5}s linear infinite"></div>`); } }
+        function haptic() { if(navigator.vibrate) navigator.vibrate(10); }
+    </script>
+</body>
+</html>
