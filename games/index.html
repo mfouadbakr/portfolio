@@ -6,7 +6,7 @@
 
     <title>Games | Mohamed Bakr</title>
 
-    <!-- Favicon/Icon (Path adjusted: goes up one level) -->
+    <!-- Favicon/Icon -->
     <link rel="icon" href="../assets/images/icon.png" type="image/png">
 
     <!-- Bootstrap 5 CSS -->
@@ -16,15 +16,104 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
 
     <!-- Google Font Import -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&amp;family=Inter:wght@300;400;500&amp;display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&amp;family=Inter:wght@300;400;500&amp;display=swap" rel="stylesheet">
 
     <!-- Font Awesome Import -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
-    <!-- css (Path adjusted: goes up one level) -->
+    <!-- css -->
     <link href="../assets/css/common.css" rel="stylesheet">
+
+    <!-- CUSTOM STYLES FOR GAMES PAGE -->
+    <style>
+        /* 
+           Custom Game Card Styles 
+           Overrides global item-card constraints 
+        */
+        .game-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%; /* Forces card to fill the grid column height */
+            background: #fff;
+            border-radius: 16px; /* Smoother corners */
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.08);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            text-decoration: none; /* Removes underline from link */
+            color: inherit;
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px); /* Lifts up on hover */
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+            color: inherit;
+        }
+
+        /* Image Container */
+        .game-thumb-wrapper {
+            height: 220px; /* Consistent height for all images */
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .game-thumb-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures image covers area without stretching */
+            transition: transform 0.5s ease;
+        }
+
+        .game-card:hover .game-thumb-wrapper img {
+            transform: scale(1.05); /* Subtle zoom on hover */
+        }
+
+        /* Card Content */
+        .game-card-body {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1; /* Pushes content to fill space */
+        }
+
+        .game-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .game-desc {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+            flex-grow: 1; /* Ensures buttons/badges align at bottom */
+        }
+
+        .game-badges {
+            margin-top: auto; /* Pushes to bottom */
+        }
+        
+        /* Play Icon Overlay */
+        .play-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .game-card:hover .play-overlay {
+            opacity: 1;
+        }
+    </style>
 
 </head>
 
@@ -32,7 +121,6 @@
     <!-- Navbar -->
     <nav class="navbar navbar-light bg-light navbar-expand-lg" style="z-index: 1000;">
         <div class="container">
-            <!-- Logo Link (Path adjusted) -->
             <a class="navbar-brand" href="../index.html">
                 <img src="../assets/images/logo-dark.png" alt="Logo" height="40">
             </a>
@@ -41,7 +129,6 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <!-- Nav Links (Paths adjusted to go back to root) -->
                     <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="../services.html">Services</a></li>
                     <li class="nav-item"><a class="nav-link" href="../portfolio.html">Portfolio</a></li>
@@ -49,7 +136,6 @@
                     <li class="nav-item"><a class="nav-link highlight-bta" href="index.html">Games</a></li>
                 </ul>
 
-                <!-- Contact Link (Path adjusted) -->
                 <a href="../index.html#section-contact" class="btn btn-custom rounded-pill"><i
                         class="fas fa-graduation-cap fa-lg me-2"></i> Contact Me</a>
             </div>
@@ -67,31 +153,54 @@
         </section>
 
         <!-- Games Grid Section -->
-        <section class="container-fluid py-4 bg-texture-2" style="min-height: 60vh;">
+        <section class="container-fluid py-4 bg-texture-1" style="min-height: 60vh;">
             <div class="container mb-4">
                 <div class="row animate__animated animate__slideInUp">
                     
                     <!-- GAME ITEM 1: KAROOT -->
                     <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="card item-card">
-                            <!-- Link directly to karoot.html since it is in the same folder -->
-                            <a href="karoot.html">
-                                <!-- Image path adjusted to go up one level (..) then into assets -->
-                                <img src="https://placehold.co/600x400/46178f/ffffff?text=Karoot+Game" alt="Karoot Game" class="img-fluid">
-                                <!-- If you have a real image, use: src="../assets/images/games/karoot.jpg" -->
-                                
-                                <div class="item-card-body">
-                                    <h3 class="item-name">Karoot</h3>
-                                    <p class="item-info">
-                                        A fast-paced interactive quiz game. Challenge yourself and test your knowledge in this multiplayer-style simulation.
-                                    </p>
-                                    <p class="item-info mt-2">
-                                        <span class="badge bg-secondary">HTML5</span> 
-                                        <span class="badge bg-secondary">JS</span>
-                                    </p>
+                        <a href="karoot.html" class="game-card">
+                            <div class="game-thumb-wrapper">
+                                <!-- TIP: Add a real image here like: src="../assets/images/games/karoot.jpg" -->
+                                <img src="https://placehold.co/600x400/46178f/ffffff?text=Karoot" alt="Karoot">
+                                <div class="play-overlay">
+                                    <i class="fas fa-play-circle fa-3x text-white"></i>
                                 </div>
-                            </a>
-                        </div>
+                            </div>
+                            <div class="game-card-body">
+                                <h3 class="game-title">Karoot</h3>
+                                <p class="game-desc">
+                                    A fast-paced interactive quiz game. Challenge yourself and test your knowledge in this multiplayer-style simulation.
+                                </p>
+                                <div class="game-badges">
+                                    <span class="badge bg-primary rounded-pill">Play Now</span>
+                                    <span class="badge bg-light text-dark border">Quiz</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- GAME ITEM 2: JALSA -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <a href="jalsa.html" class="game-card">
+                            <div class="game-thumb-wrapper">
+                                <!-- TIP: Add a real image here like: src="../assets/images/games/jalsa.jpg" -->
+                                <img src="https://placehold.co/600x400/e67e22/ffffff?text=Jalsa" alt="Jalsa">
+                                <div class="play-overlay">
+                                    <i class="fas fa-play-circle fa-3x text-white"></i>
+                                </div>
+                            </div>
+                            <div class="game-card-body">
+                                <h3 class="game-title">Jalsa</h3>
+                                <p class="game-desc">
+                                    An engaging interactive session experience. Join the gathering and explore new activities.
+                                </p>
+                                <div class="game-badges">
+                                    <span class="badge bg-primary rounded-pill">Play Now</span>
+                                    <span class="badge bg-light text-dark border">New Release</span>
+                                </div>
+                            </div>
+                        </a>
                     </div>
 
                 </div>
@@ -113,7 +222,7 @@
     <!-- Bootstrap 5 JavaScript Bundle (includes Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- JS (Paths adjusted: goes up one level) -->
+    <!-- JS -->
     <script src="../assets/js/backgroundChanger.js"></script>
     <script src="../assets/js/common.js"></script>
 

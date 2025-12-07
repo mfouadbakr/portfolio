@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jalsa</title>
+    
+    <!-- Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Rubik:wght@500;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --anim-dur: 0.3s;
+        }
+
+        /* === DARK MODE (Default) === */
+        [data-mode="dark"] {
+            --bg-color: #121212;
+            --panel-bg: #1e1e1e;
+            --text-main: #ffffff;
+            --text-sub: #aaaaaa;
+            --border-color: #333333;
+            --accent: #ffffff;
+            --card-bg: #252525;
+            --btn-bg: #333333;
+            --btn-text: #ffffff;
+        }
+
+        /* === LIGHT MODE === */
+        [data-mode="light"] {
+            --bg-color: #f4f4f4;
+            --panel-bg: #ffffff;
+            --text-main: #000000;
+            --text-sub: #666666;
+            --border-color: #dddddd;
+            --accent: #000000;
+            --card-bg: #ffffff;
+            --btn-bg: #eeeeee;
+            --btn-text: #000000;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Rubik', sans-serif;
+            min-height: 100vh;
+            overflow: hidden;
+            user-select: none;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .ar-font { font-family: 'Cairo', sans-serif; }
+
+        /* SCREENS */
+        .screen { display: none; height: 100vh; flex-direction: column; overflow-y: auto; position: relative; z-index: 10; }
+        .screen.active { display: flex !important; animation: fadeIn 0.4s; }
+
+        /* --- BACKGROUND ANIMATION --- */
+        .splash-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+        .floating-card {
+            position: absolute;
+            width: 120px; height: 180px;
+            background: var(--panel-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            opacity: 0.3;
+            animation: floatUp 20s linear infinite;
+        }
+        .floating-card::after {
+            content: ''; position: absolute; inset: 8px; 
+            border: 2px dashed var(--border-color); border-radius: 8px;
+        }
+
+        .c1 { left: 10%; bottom: -200px; animation-delay: 0s; transform: rotate(15deg); }
+        .c2 { left: 80%; bottom: -200px; animation-delay: 5s; transform: rotate(-10deg); }
+        .c3 { left: 40%; bottom: -200px; animation-delay: 10s; transform: rotate(5deg); }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.4; }
+            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- UI COMPONENTS --- */
+        
+        .btn-solid {
+            background: var(--accent); color: var(--bg-color);
+            border: none; padding: 15px 50px;
+            font-size: 1.2rem; font-weight: 900;
+            border-radius: 12px;
+            text-transform: uppercase;
+            cursor: pointer; transition: 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .btn-solid:active { transform: scale(0.96); }
+
+        .btn-icon { background: none; border: none; color: var(--text-main); font-size: 1.5rem; cursor: pointer; padding: 10px; }
+        
+        /* Mode Grid */
+        .mode-card {
+            background: var(--panel-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            height: 130px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            cursor: pointer; transition: 0.2s;
+        }
+        .mode-card:active { transform: scale(0.96); border-color: var(--accent); }
+        .mode-icon { font-size: 2.5rem; margin-bottom: 8px; }
+        .mode-title { font-weight: 700; text-transform: uppercase; font-size: 1rem; color: var(--text-main); }
+
+        /* Count Buttons */
+        .count-btn {
+            width: 70px; height: 70px; border-radius: 50%;
+            background: var(--panel-bg); border: 2px solid var(--border-color);
+            color: var(--text-main); font-size: 1.5rem; font-weight: 900;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer; transition: 0.2s;
+        }
+        .count-btn.active {
+            background: var(--accent); border-color: var(--accent); color: var(--bg-color);
+            transform: scale(1.1);
+        }
+
+        /* --- GAMEPLAY CARD --- */
+        .game-stage {
+            flex-grow: 1; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; padding: 20px;
+        }
+        
+        .main-card {
+            width: 100%; max-width: 500px; min-height: 300px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 40px;
+            text-align: center;
+            transition: 0.3s;
+        }
+        /* Dashed Inner Outline */
+        .main-card::after {
+            content: ''; position: absolute; inset: 15px;
+            border: 2px dashed var(--border-color);
+            border-radius: 12px; pointer-events: none;
+        }
+
+        .card-content { z-index: 2; width: 100%; }
+        
+        .blur-box {
+            background: var(--bg-color); border: 1px solid var(--border-color);
+            border-radius: 10px; padding: 20px; margin-top: 20px;
+            cursor: pointer; user-select: none;
+        }
+        .blur-text { filter: blur(8px); transition: 0.3s; }
+        .blur-box.revealed .blur-text { filter: blur(0); }
+
+        .spin-text { font-size: 2.5rem; font-weight: 900; color: var(--accent); }
+
+        .top-nav { display: flex; justify-content: space-between; align-items: center; padding: 20px; width: 100%; }
+        .progress-track { flex-grow: 1; height: 6px; background: var(--border-color); border-radius: 10px; margin: 0 20px; }
+        .progress-bar { height: 100%; background: var(--accent); width: 0%; border-radius: 10px; transition: width 0.3s; }
+
+        .bottom-bar { padding: 20px; width: 100%; text-align: center; }
+        .btn-action {
+            width: 100%; max-width: 400px; padding: 16px; border: 2px solid var(--text-main);
+            background: transparent; color: var(--text-main);
+            font-weight: 900; font-size: 1.1rem; text-transform: uppercase;
+            border-radius: 12px; cursor: pointer; transition: 0.2s;
+        }
+        .btn-action:active { background: var(--text-main); color: var(--bg-color); }
+
+        /* SETTINGS (Bottom Sheet) */
+        .modal-overlay { 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 5000; 
+            display: none; align-items: flex-end; justify-content: center;
+        }
+        .modal-panel { 
+            background: var(--panel-bg); width: 100%; max-width: 600px;
+            border-radius: 25px 25px 0 0; padding: 30px; 
+            color: var(--text-main); border-top: 1px solid var(--border-color);
+            box-shadow: 0 -5px 30px rgba(0,0,0,0.2);
+            animation: slideUp 0.3s;
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+        .lang-btn { 
+            flex: 1; padding: 10px; margin: 0 5px; border-radius: 8px; 
+            border: 1px solid var(--border-color); background: transparent; 
+            color: var(--text-main); cursor: pointer; transition: 0.2s; font-weight: bold;
+        }
+        .lang-btn.active { background: var(--text-main); color: var(--bg-color); border-color: var(--text-main); }
+
+        /* Toggle */
+        .toggle-switch {
+            width: 50px; height: 26px; background: var(--border-color);
+            border-radius: 20px; position: relative; cursor: pointer; transition: 0.3s;
+        }
+        .toggle-switch.active { background: var(--accent); }
+        .toggle-knob {
+            width: 20px; height: 20px; background: var(--bg-color); border-radius: 50%;
+            position: absolute; top: 3px; left: 3px; transition: 0.3s;
+        }
+        .toggle-switch.active .toggle-knob { left: 27px; }
+
+        /* --- DIALOGS (FIXED CENTERING) --- */
+        .dialog-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 6000;
+            display: none; /* JS will toggle flex */
+            align-items: center; justify-content: center;
+        }
+        .dialog-box {
+            background: var(--panel-bg); border: 1px solid var(--border-color);
+            padding: 30px; border-radius: 20px; text-align: center;
+            color: var(--text-main); width: 300px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .dialog-btn { flex: 1; padding: 10px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; margin: 0 5px; }
+        .btn-yes { background: #e74c3c; color: white; }
+        .btn-no { background: var(--border-color); color: var(--text-main); }
+
+        .text-sub { color: var(--text-sub); font-size: 0.9rem; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; }
+    </style>
+</head>
+<body data-mode="dark">
+
+    <!-- SPLASH BG -->
+    <div class="splash-bg">
+        <div class="floating-card c1"></div>
+        <div class="floating-card c2"></div>
+        <div class="floating-card c3"></div>
+    </div>
+
+    <!-- 1. LANDING -->
+    <div id="screen-landing" class="screen active">
+        <div class="d-flex flex-column justify-content-center align-items-center flex-grow-1" style="z-index: 2;">
+            <h1 class="display-1 fw-bold mb-0 animate__animated animate__fadeInDown">JALSA</h1>
+            <p class="text-sub mb-5 animate__animated animate__fadeInUp">The Social Hub</p>
+            <button class="btn-solid animate__animated animate__pulse animate__infinite" onclick="enterApp()">
+                Tap to Start
+            </button>
+        </div>
+        <div class="text-center pb-4 text-sub" style="font-size: 0.7rem; z-index: 2;">
+            Developed by <a href="https://mfouadbakr.github.io/portfolio/index.html" target="_blank" style="color: var(--accent); text-decoration: none;">Mohamed Bakr</a>
+        </div>
+    </div>
+
+    <!-- 2. MODE SELECTION -->
+    <div id="screen-modes" class="screen justify-content-center pt-5">
+        <div class="container" style="max-width: 600px;">
+            <div class="d-flex justify-content-between align-items-center mb-5 px-2">
+                <button class="btn-icon" onclick="showScreen('screen-landing')">←</button>
+                <h2 class="m-0 fw-bold" id="txt-title-mode">SELECT GAME</h2>
+                <button class="btn-icon" onclick="toggleSettings()">⚙️</button>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-6"><div class="mode-card" onclick="prepareSetup('riddles')"><div class="mode-icon">🧩</div><div class="mode-title" id="mode-riddles">Riddles</div></div></div>
+                <div class="col-6"><div class="mode-card" onclick="prepareSetup('challenge')"><div class="mode-icon">🎡</div><div class="mode-title" id="mode-challenge">Challenge</div></div></div>
+                <div class="col-6"><div class="mode-card" onclick="prepareSetup('drawing')"><div class="mode-icon">🎨</div><div class="mode-title" id="mode-drawing">Drawing</div></div></div>
+                <div class="col-6"><div class="mode-card" onclick="prepareSetup('acting')"><div class="mode-icon">🎭</div><div class="mode-title" id="mode-acting">Acting</div></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. SETUP (COUNT) -->
+    <div id="screen-setup" class="screen justify-content-center align-items-center">
+        <div class="container text-center" style="max-width: 500px;">
+            <h2 class="fw-bold mb-5" id="txt-how-many">ROUNDS</h2>
+            
+            <div class="d-flex justify-content-center gap-4 mb-5">
+                <div class="count-btn" onclick="setCount(10)">10</div>
+                <div class="count-btn active" id="btn-c-20" onclick="setCount(20)">20</div>
+                <div class="count-btn" onclick="setCount(30)">30</div>
+            </div>
+
+            <button class="btn-solid w-100" onclick="startGame()">PLAY</button>
+            <div class="mt-3">
+                <button class="btn" style="color: var(--text-sub);" onclick="showScreen('screen-modes')">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. GAMEPLAY -->
+    <div id="screen-game" class="screen">
+        <!-- Top -->
+        <div class="top-nav">
+            <button class="btn-icon" onclick="confirmExit()">✕</button>
+            <div class="progress-track"><div class="progress-bar" id="progress-bar"></div></div>
+            <div style="font-weight:900" id="counter">1/20</div>
+        </div>
+
+        <!-- Stage -->
+        <div class="game-stage">
+            <div id="game-card" class="main-card animate__animated">
+                <!-- Content injected here -->
+                <div class="card-content" id="card-content"></div>
+            </div>
+        </div>
+
+        <!-- Bottom -->
+        <div class="bottom-bar">
+            <button class="btn-action" id="btn-next" onclick="nextCard()">Next Card</button>
+        </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div class="modal-overlay" id="settings-modal" onclick="if(event.target === this) toggleSettings()">
+        <div class="modal-panel">
+            <div class="d-flex justify-content-between mb-4">
+                <h4 class="m-0 fw-bold" id="lbl-settings">SETTINGS</h4>
+                <button onclick="toggleSettings()" class="btn-icon" style="font-size:1rem;">✕</button>
+            </div>
+
+            <!-- Mode -->
+            <div class="setting-row">
+                <span id="lbl-dark">Dark Mode</span>
+                <div class="toggle-switch active" id="modeSwitch" onclick="toggleMode()">
+                    <div class="toggle-knob"></div>
+                </div>
+            </div>
+
+            <!-- Language -->
+            <label class="text-sub d-block mb-2" id="lbl-lang">Language</label>
+            <div class="d-flex">
+                <button class="lang-btn active" id="btn-lang-en" onclick="setLang('en')">English</button>
+                <button class="lang-btn" id="btn-lang-ar" onclick="setLang('ar')">العربية</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DIALOG -->
+    <div id="custom-dialog" class="dialog-overlay">
+        <div class="dialog-box animate__animated animate__zoomIn">
+            <h3 class="fw-bold mb-3" id="d-title">Exit?</h3>
+            <p class="text-sub mb-4" id="d-msg" style="text-transform: none;">Progress will be lost.</p>
+            <div class="d-flex gap-2">
+                <button class="dialog-btn btn-no" onclick="$('#custom-dialog').fadeOut()">No</button>
+                <button class="dialog-btn btn-yes" onclick="performExit()">Yes</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // --- DATA ---
+        const db = {
+            riddles: [
+                {q: "حاجة بتمشي من غير رجلين وبتعيط من غير عيون؟", a: "السحاب"}, {q: "ابن أمك وأبوك، ومش أختك ولا أخوك، مين هو؟", a: "أنت"},
+                {q: "حاجة بتشيلها وهي شايلك؟", a: "الحذاء"}, {q: "حاجة كل ما تاخد منها تكبر؟", a: "الحفرة"},
+                {q: "ايه اللي بيعدي البحر ومش بيتبل؟", a: "الطيارة"}, {q: "عنده سنان بس مبيعضش؟", a: "المشط"},
+                {q: "بيسمع بلا أذن وبيتكلم بلا لسان؟", a: "التليفون"}, {q: "حاجة بتشوف كل حاجة ومعندهاش عيون؟", a: "المراية"},
+                {q: "بيمشي وبيقيف وملوش رجلين؟", a: "الساعة"}, {q: "أهون موجود وأعز مفقود؟", a: "الماء"},
+                {q: "خالك هو أخو عمك؟", a: "لأ، أبوك"}, {q: "شيء تذبحه وتبكي عليه؟", a: "البصل"},
+                {q: "بيت ملوش لا باب ولا شباك؟", a: "بيت الشعر"}, {q: "حاجة بتدخل مبلولة وتخرج ناشفة؟", a: "العيش"},
+                {q: "ايه اللي كل ما يزيد ينقص؟", a: "العمر"}, {q: "حاجة ليها رجل وحدة و 3 عيون؟", a: "إشارة المرور"},
+                {q: "بيقرصك ومش بتشوفه؟", a: "الجوع"}, {q: "حاجة بتكتب ومش بتقرأ؟", a: "القلم"},
+                {q: "حاجة بتطير من غير جناحين؟", a: "الوقت"}, {q: "ايه الحاجة اللي كل ما تديها تزيد؟", a: "الحب / العلم"}
+            ],
+            challenge: [
+                "اتكلم زي المعلقين الرياضيين لمدة دقيقة", "اعمل 10 ضغط دلوقتي حالا", "قول نكتة بايخة ومحدش يضحك",
+                "امشي مشية البطريق لحد باب الأوضة وارجع", "سيب موبايلك مفتوح مع اللي جنبك دقيقة", "غني أغنية شعبي بصوت أوبرا",
+                "اقف على رجل واحدة لغاية الدور ما يجيلك تاني", "اتصل بحد وقوله 'أنا بحب الملوخية' واقفل", "اعمل نفسك تمثال ومتحركش لمدة دقيقة",
+                "قول 'طبق طبقنا' 5 مرات بسرعة", "قوم هات مية لأكبر واحد في القعدة", "بوس راس والدك أو والدتك أو شريكك",
+                "قول صفة حلوة في كل واحد قاعد", "ممنوع تتكلم لمدة دقيقة (إشارة بس)", "احكي موقف مضحك حصلك وانت صغير",
+                "قول 3 أمثال شعبية بسرعة", "اعمل مساج للي جنبك", "اضحك ضحكة شريرة بصوت عالي",
+                "قول اسمك بالمتشقلب", "غمض عينك وحاول تلمس مناخيرك", "اعمل صوت قطة جعانة",
+                "اتكلم بلهجة خليجي لمدة دقيقة", "حاول تلحس كوعك", "قول حروف اسمك من الآخر للأول",
+                "اعمل زي الفرخة وهي بتبيض", "اعمل نفسك بتعوم على الأرض", "قول نكتة ولو محدش ضحك اعمل 5 ضغط",
+                "ارسم شنب بالكحل (لو بنت) أو روج (لو ولد)", "اعمل حركة سلو موشن لمدة دقيقة", "اقرأ آخر رسالة جاتلك بصوت عالي"
+            ],
+            drawing: [
+                "ارسم: بطيخة لابسة نضارة", "ارسم: جمل بيلعب كورة", "ارسم: سمكة بتطير", "ارسم: شبشب بيضحك",
+                "ارسم: بيتزا عليها أناناس", "ارسم: فضائي بيشرب شيشة", "ارسم: عربية مربعة", "ارسم: موبايل قديم",
+                "ارسم: عنكبوت لابس كوتشي", "ارسم: شجرة في الخريف", "ارسم: شجرة العيلة", "ارسم: الأكل المفضل ليك",
+                "ارسم: بيت أحلامك", "ارسم: قطة بتلعب", "ارسم: فانوس رمضان", "ارسم: بحر وشمس",
+                "ارسم: تورطة عيد ميلاد", "ارسم: عربية العيلة", "ارسم: كوباية شاي", "ارسم: وردة بتضحك",
+                "ارسم: قلب بيطير", "ارسم: دبلة ومحبس", "ارسم: ديناصور بياكل آيس كريم", "ارسم: شمس لابسة طاقية",
+                "ارسم: فيل بيرقص باليه", "ارسم: بطة لابسة بدلة", "ارسم: ساندوتش طعمية", "ارسم: أهرامات الجيزة",
+                "ارسم: توك توك بيطير", "ارسم: كباية قهوة بتعيط", "ارسم: مروحة سقف", "ارسم: ميكروباص زحمة"
+            ],
+            acting: [
+                "مثل: سواق ميكروباص بيلم الأجرة", "مثل: واحد بيحاول يقتل ناموسة رخمة", "مثل: حرامي غبي بيحاول يسرق بنك",
+                "مثل: واحد بياكل ليمونة حامضة", "مثل: دكتور سنان بيخلع ضرس لواحد خايف", "مثل: زومبي بيجري ورا الناس",
+                "مثل: واحد بيتزحلق على قشرة موز", "مثل: روبوت بطاريته بتخلص", "مثل: واحد شايل حديد تقيل جدا",
+                "مثل: نملة شايلة حباية سكر", "مثل: أم بتصحي ولادها للمدرسة", "مثل: أب بيصلح التلفزيون",
+                "مثل: طفل بيعيط عشان عايز لعبة", "مثل: واحد بيغسل مواعين", "مثل: جدو وهو بيقرأ الجرنال",
+                "مثل: حد بيطبخ والأكل اتحرق", "مثل: واحد نايم وبيحلم كابوس", "مثل: حد بيذاكر ومش فاهم حاجة",
+                "مثل: واحد بيصطاد سمك", "مثل: عريس في الكوشة", "مثل: واحد بيعدي الشارع في الزحمة",
+                "مثل: واحد بياكل ملوخية سخنة", "مثل: واحد راكب خيل", "مثل: واحد بيغير لمبة",
+                "مثل: واحد بيتخانق مع خياله", "مثل: واحد بيحاول يفتح برطمان مربى", "مثل: واحد بيجري في سباق",
+                "مثل: واحد بيصور سيلفي", "مثل: واحد بيشرب شاي سخن", "مثل: واحد بيحاول يلبس بنطلون ضيق"
+            ]
+        };
+
+        const uiText = {
+            en: {
+                start: "Tap to Start", mode_title: "Select Game", setup_title: "Rounds",
+                modes: { riddles: "Riddles", challenge: "Challenge", drawing: "Drawing", acting: "Acting" },
+                btn_next: "Next Card", btn_spin: "Spin Wheel", btn_reveal: "Tap to Reveal",
+                settings: "Settings", lang: "Language", dark: "Dark Mode",
+                exit_title: "Exit?", exit_msg: "Progress will be lost.", game_over: "Game Over!",
+                inst: {
+                    riddles: "Read aloud. Reveal answer.",
+                    challenge: "Spin and do the task!",
+                    drawing: "Draw this item.",
+                    acting: "Act without speaking."
+                }
+            },
+            ar: {
+                start: "اضغط للبدء", mode_title: "اختار اللعبة", setup_title: "كام جولة؟",
+                modes: { riddles: "فوازير", challenge: "تحديات", drawing: "رسم", acting: "تمثيل" },
+                btn_next: "التالي", btn_spin: "لف العجلة", btn_reveal: "اضغط لإظهار الحل",
+                settings: "الإعدادات", lang: "اللغة", dark: "الوضع الليلي",
+                exit_title: "خروج؟", exit_msg: "هتخسر الدور الحالي.", game_over: "خلصت اللعبة!",
+                inst: {
+                    riddles: "اقرأ الفزورة. شوف الحل.",
+                    challenge: "لف العجلة ونفذ الحكم!",
+                    drawing: "ارسم الحاجة دي.",
+                    acting: "مثل من غير كلام."
+                }
+            }
+        };
+
+        // --- STATE ---
+        let state = { lang: 'en', mode: '', deck: [], index: 0, count: 20 };
+
+        $(document).ready(function() {
+            setCount(20);
+        });
+
+        // --- FUNCTIONS ---
+
+        function enterApp() {
+            const el = document.documentElement;
+            if (el.requestFullscreen) el.requestFullscreen().catch(()=>{});
+            else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+            showScreen('screen-modes');
+        }
+
+        function showScreen(id) {
+            $('.screen').removeClass('active');
+            $(`#${id}`).addClass('active');
+        }
+
+        function prepareSetup(mode) {
+            state.mode = mode;
+            showScreen('screen-setup');
+        }
+
+        function setCount(n) {
+            state.count = n;
+            $('.count-btn').removeClass('active');
+            $(`#btn-c-${n}`).length ? $(`#btn-c-${n}`).addClass('active') : $('.count-btn').filter((i,e)=>$(e).text()==n).addClass('active');
+        }
+
+        function startGame() {
+            state.index = 0;
+            // Shuffle
+            let pool = [...db[state.mode]];
+            for (let i = pool.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [pool[i], pool[j]] = [pool[j], pool[i]];
+            }
+            state.deck = pool.slice(0, state.count);
+            
+            updateLabels();
+            showScreen('screen-game');
+            renderCard();
+        }
+
+        // --- RENDERER ---
+        function renderCard() {
+            const container = $('#game-card'); 
+            const content = $('#card-content');
+            const item = state.deck[state.index];
+            const t = uiText[state.lang];
+            const btn = $('#btn-next');
+
+            // Reset Anim
+            container.removeClass('animate__zoomIn');
+            void container[0].offsetWidth; 
+            container.addClass('animate__zoomIn');
+
+            $('#counter').text(`${state.index + 1}/${state.deck.length}`);
+
+            let html = '';
+            
+            // Add instructions inside card
+            html += `<div class="text-sub mb-4" style="color:var(--text-sub);">${t.inst[state.mode]}</div>`;
+
+            if (state.mode === 'riddles') {
+                html += `
+                    <div class="ar-font fw-bold mb-4" style="font-size:1.3rem;">${item.q}</div>
+                    <div class="blur-box" onclick="this.classList.add('revealed')">
+                        <small class="text-sub d-block mb-1" style="font-size:0.7rem">${t.btn_reveal}</small>
+                        <h2 class="blur-text ar-font fw-bold m-0" style="color:var(--text-main)">${item.a}</h2>
+                    </div>
+                `;
+                btn.text(t.btn_next).prop('disabled', false).attr('onclick', 'nextCard()');
+            } 
+            else if (state.mode === 'challenge') {
+                html += `<div class="spin-text ar-font" id="spin-val">???</div>`;
+                btn.text(t.btn_spin).prop('disabled', false).attr('onclick', 'spinWheel()');
+            } 
+            else {
+                html += `
+                    <div class="display-1 mb-3">${state.mode==='drawing'?'🎨':'🎭'}</div>
+                    <div class="ar-font fw-bold display-6">${item}</div>
+                `;
+                btn.text(t.btn_next).prop('disabled', false).attr('onclick', 'nextCard()');
+            }
+
+            content.html(html);
+            updateProgress();
+        }
+
+        function spinWheel() {
+            const item = state.deck[state.index];
+            const display = $('#spin-val');
+            const btn = $('#btn-next');
+            const t = uiText[state.lang];
+            
+            let count = 0;
+            btn.prop('disabled', true); // Lock
+
+            const interval = setInterval(() => {
+                display.text(['⚡','🔥','🎯','🎲'][count % 4]);
+                count++;
+                if (count > 20) {
+                    clearInterval(interval);
+                    display.text(item);
+                    display.addClass('animate__animated animate__tada');
+                    btn.text(t.btn_next).prop('disabled', false).attr('onclick', 'nextCard()');
+                }
+            }, 80);
+        }
+
+        function nextCard() {
+            if (state.index < state.deck.length - 1) {
+                state.index++;
+                renderCard();
+            } else {
+                $('#d-title').text("🎉");
+                $('#d-msg').text(uiText[state.lang].game_over);
+                $('.btn-no').hide();
+                $('.btn-yes').text("OK").attr('onclick', "performExit()");
+                $('#custom-dialog').css('display', 'flex').hide().fadeIn();
+            }
+        }
+
+        function updateProgress() {
+            const current = state.index + 1;
+            const total = state.deck.length;
+            const pct = (current / total) * 100;
+            $('#progress-bar').css('width', pct + '%');
+        }
+
+        // --- UTILS ---
+        function confirmExit() {
+            $('#d-title').text(uiText[state.lang].exit_title);
+            $('#d-msg').text(uiText[state.lang].exit_msg);
+            $('.btn-no').show().text(state.lang === 'en' ? 'No' : 'لأ');
+            $('.btn-yes').text(state.lang === 'en' ? 'Yes' : 'أيوة').attr('onclick', "performExit()");
+            // Force flex display for centering
+            $('#custom-dialog').css('display', 'flex').hide().fadeIn();
+        }
+
+        function performExit() {
+            $('#custom-dialog').fadeOut();
+            showScreen('screen-modes');
+        }
+
+        function toggleSettings() {
+            const m = $('#settings-modal');
+            const o = $('.modal-overlay');
+            if (o.css('display') === 'flex') { o.fadeOut(); } else { o.css('display', 'flex').hide().fadeIn(); }
+        }
+
+        function toggleMode() {
+            const btn = $('#modeSwitch');
+            const isDark = btn.hasClass('active'); 
+            if(isDark) {
+                btn.removeClass('active');
+                $('body').attr('data-mode', 'light');
+            } else {
+                btn.addClass('active');
+                $('body').attr('data-mode', 'dark');
+            }
+        }
+
+        function setLang(l) {
+            state.lang = l;
+            $('.lang-btn').removeClass('active');
+            $(`#btn-lang-${l}`).addClass('active');
+            updateLabels();
+        }
+
+        function updateLabels() {
+            const t = uiText[state.lang];
+            $('#txt-title-mode').text(t.mode_title);
+            $('#txt-how-many').text(t.setup_title);
+            $('#mode-riddles').text(t.modes.riddles);
+            $('#mode-challenge').text(t.modes.challenge);
+            $('#mode-drawing').text(t.modes.drawing);
+            $('#mode-acting').text(t.modes.acting);
+            $('#lbl-settings').text(t.settings);
+            $('#lbl-dark').text(t.dark);
+            $('#lbl-lang').text(t.lang);
+        }
+    </script>
+</body>
+</html>
