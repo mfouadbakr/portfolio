@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tiny Spy 2.0</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Segoe+UI:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --accent-color: #00adb5;
+            --text-color: #eeeeee;
+            --danger-color: #ff2e63;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .screen { display: none; width: 90%; max-width: 400px; text-align: center; padding-bottom: 50px; }
+        .active { display: block; }
+
+        h1 { font-size: 3rem; color: var(--accent-color); margin-bottom: 10px; margin-top: 0; }
+        h2 { font-size: 1.8rem; margin-bottom: 20px; }
+        p { color: #aaa; font-size: 1.1rem; line-height: 1.6; }
+
+        /* Arabic Text Support */
+        .arabic-text { font-family: 'Cairo', sans-serif; direction: rtl; }
+
+        button {
+            background-color: var(--accent-color);
+            color: #fff; border: none; padding: 18px; border-radius: 50px;
+            font-size: 1.2rem; font-weight: bold; margin-top: 20px;
+            cursor: pointer; width: 100%; box-shadow: 0 4px 15px rgba(0, 173, 181, 0.3);
+            transition: transform 0.1s;
+        }
+        button:active { transform: scale(0.98); }
+        button.secondary { background: transparent; border: 2px solid var(--accent-color); color: var(--accent-color); box-shadow: none; }
+        button.danger { background-color: var(--danger-color); box-shadow: 0 4px 15px rgba(255, 46, 99, 0.3); }
+
+        .input-group { background: var(--glass-bg); padding: 20px; border-radius: 15px; margin-bottom: 15px; text-align: left; }
+        .input-group label { font-size: 0.9rem; color: var(--accent-color); }
+        input[type="text"] {
+            width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444;
+            background: #222; color: white; margin-top: 5px; font-size: 1rem; outline: none;
+        }
+        input[type="text"]:focus { border-color: var(--accent-color); }
+
+        /* Range Slider */
+        input[type=range] { width: 100%; accent-color: var(--accent-color); cursor: pointer; }
+
+        /* --- CARD STYLE --- */
+        .card-container { perspective: 1000px; width: 100%; height: 320px; margin: 30px auto; cursor: pointer; }
+        .card { width: 100%; height: 100%; position: relative; transition: transform 0.6s; transform-style: preserve-3d; }
+        .card.is-flipped { transform: rotateY(180deg); }
+        
+        .card-face {
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border-radius: 20px; border: 2px solid var(--accent-color); background: var(--card-bg);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .card-back { background: radial-gradient(circle at center, #2a2a2a 0%, #121212 100%); }
+        .card-front { transform: rotateY(180deg); background: #222; }
+        
+        .role-word { font-size: 2.2rem; color: var(--accent-color); padding: 20px; }
+        .tap-hint { position: absolute; bottom: 20px; font-size: 0.8rem; color: #666; opacity: 0.7; }
+
+        .big-number { font-size: 4rem; font-weight: bold; margin: 0; color: var(--text-color); }
+        
+        /* Grid for names */
+        .vote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .vote-btn { margin: 0; padding: 15px; font-size: 1rem; background: var(--glass-bg); border: 1px solid #444; box-shadow: none; }
+        .vote-btn:hover { border-color: var(--accent-color); }
+    </style>
+</head>
+<body>
+
+    <!-- 1. SPLASH SCREEN -->
+    <section id="screen-splash" class="screen active animate__animated animate__fadeIn">
+        <h1>Tiny Spy</h1>
+        <p>Identify the spy before time runs out.</p>
+        <button onclick="navTo('screen-setup')">New Game</button>
+    </section>
+
+    <!-- 2. SETUP SCREEN -->
+    <section id="screen-setup" class="screen animate__animated animate__fadeIn">
+        <h2>Setup</h2>
+        <div class="input-group" style="text-align: center;">
+            <label>Number of Players</label>
+            <p class="big-number" id="pVal">3</p>
+            <input type="range" min="3" max="8" value="3" id="pCount" oninput="document.getElementById('pVal').innerText = this.value">
+        </div>
+        <button onclick="goToNames()">Next</button>
+    </section>
+
+    <!-- 3. NAMES SCREEN -->
+    <section id="screen-names" class="screen animate__animated animate__fadeIn">
+        <h2>Who is playing?</h2>
+        <div id="nameInputsContainer" style="max-height: 50vh; overflow-y: auto;"></div>
+        <button onclick="initGame()">Start Game</button>
+    </section>
+
+    <!-- 4. SAFETY INTERSTITIAL (PASS PHONE) -->
+    <section id="screen-pass" class="screen animate__animated animate__fadeIn">
+        <h2 style="color: #666">Pass phone to:</h2>
+        <h1 id="passNameDisplay" style="font-size: 2.5rem; margin: 30px 0;">Name</h1>
+        <div style="font-size: 3rem;">📱</div>
+        <p>Don't look if this isn't you!</p>
+        <button onclick="showRevealScreen()">I am <span id="btnPassName">Name</span></button>
+    </section>
+
+    <!-- 5. REVEAL SCREEN -->
+    <section id="screen-reveal" class="screen animate__animated animate__fadeIn">
+        <h2 id="revealNameHeader">Player Name</h2>
+        <p>Tap card to reveal, tap again to hide.</p>
+        
+        <div class="card-container" onclick="toggleCard()">
+            <div class="card" id="roleCard">
+                <!-- Back (Face Down) -->
+                <div class="card-face card-back">
+                    <span style="font-size: 3rem;">🕵️</span>
+                    <span class="tap-hint">TAP TO FLIP</span>
+                </div>
+                <!-- Front (Face Up) -->
+                <div class="card-face card-front">
+                    <p style="margin:0; font-size: 0.9rem; color:#888;">YOUR WORD</p>
+                    <div id="roleWord" class="role-word arabic-text">Word</div>
+                    <span class="tap-hint">TAP TO HIDE</span>
+                </div>
+            </div>
+        </div>
+
+        <button id="nextBtn" style="display:none; background-color: #333;" onclick="finishTurn()">Pass to Next Player</button>
+    </section>
+
+    <!-- 6. GAME HINT / TIMER -->
+    <section id="screen-hint" class="screen animate__animated animate__fadeIn">
+        <h2>The Mission</h2>
+        <div class="input-group">
+            <p style="text-align: center; margin:0; color: #888;">Category / Hint</p>
+            <h2 id="arabicHint" class="arabic-text" style="text-align: center; margin: 10px 0; color: var(--accent-color);"></h2>
+        </div>
+        
+        <div style="margin: 30px 0;">
+            <p id="timer" class="big-number">03:00</p>
+        </div>
+
+        <button id="btnTimer" onclick="toggleTimer()">Start Timer</button>
+        <button class="secondary" onclick="prepareVote()">Stop & Vote</button>
+    </section>
+
+    <!-- 7. VOTE SCREEN -->
+    <section id="screen-vote" class="screen animate__animated animate__fadeIn">
+        <h2 style="color: var(--danger-color)">Who is the Spy?</h2>
+        <p>Discuss, then tap the name to accuse.</p>
+        <div id="voteBtns" class="vote-grid"></div>
+        <button class="secondary" style="margin-top:30px" onclick="navTo('screen-hint')">Back to Timer</button>
+    </section>
+
+    <!-- 8. RESULT SCREEN -->
+    <section id="screen-result" class="screen animate__animated animate__fadeIn">
+        <h1 id="resTitle">Result</h1>
+        
+        <div class="input-group" style="text-align: center;">
+            <p>The Spy was:</p>
+            <h2 id="spyNameDisplay" class="arabic-text" style="color:var(--danger-color)">Name</h2>
+            <hr style="border: 0; border-top: 1px solid #333; margin: 15px 0;">
+            <p>The Location was:</p>
+            <h2 id="citizenWordDisplay" class="arabic-text" style="color:var(--accent-color)">Word</h2>
+        </div>
+
+        <button onclick="location.reload()">Play Again</button>
+    </section>
+
+    <script>
+        // --- DATA ---
+        const wordPackages = [
+            { common: "صلاة الفجر", spy: "صلاة الجمعة", hint: "وقت عبادة؟" },
+            { common: "كشري", spy: "مكرونة بشاميل", hint: "أكلة مصرية؟" },
+            { common: "الأهرامات", spy: "أبو الهول", hint: "مكان أثري؟" },
+            { common: "ستاربكس", spy: "كوستا", hint: "مكان قهوة؟" },
+            { common: "نهر النيل", spy: "البحر الأحمر", hint: "مكان فيه مية؟" },
+            { common: "فيسبوك", spy: "تويتر", hint: "تطبيق سوشيال؟" },
+            { common: "محمد صلاح", spy: "ميسي", hint: "لاعب كرة؟" },
+            { common: "مترو الأنفاق", spy: "الأتوبيس", hint: "وسيلة مواصلات؟" },
+            { common: "الشتاء", spy: "الصيف", hint: "فصل من السنة؟" },
+            { common: "طبيب أسنان", spy: "طبيب عيون", hint: "مهنة طبية؟" }
+        ];
+
+        // --- STATE ---
+        let state = { 
+            players: [], 
+            spyIdx: 0, 
+            currentIdx: 0, 
+            pkg: null, 
+            timerTime: 180, // 3 minutes
+            interval: null,
+            timerRunning: false
+        };
+
+        // --- NAVIGATION ---
+        function navTo(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            const el = document.getElementById(id);
+            el.classList.remove('animate__fadeIn');
+            void el.offsetWidth; // trigger reflow
+            el.classList.add('active', 'animate__fadeIn');
+        }
+
+        // --- SETUP ---
+        function goToNames() {
+            const count = document.getElementById('pCount').value;
+            const container = document.getElementById('nameInputsContainer');
+            container.innerHTML = '';
+            for(let i=1; i<=count; i++) {
+                container.innerHTML += `
+                <div class="input-group">
+                    <label>Player ${i}</label>
+                    <input type="text" class="p-name" placeholder="Name" value="Player ${i}" onfocus="this.select()">
+                </div>`;
+            }
+            navTo('screen-names');
+        }
+
+        function initGame() {
+            const inputs = document.querySelectorAll('.p-name');
+            state.players = Array.from(inputs).map(i => i.value.trim() || "Player");
+            
+            // Randomize Spy
+            state.spyIdx = Math.floor(Math.random() * state.players.length);
+            // Randomize Word Package
+            state.pkg = wordPackages[Math.floor(Math.random() * wordPackages.length)];
+            
+            state.currentIdx = 0;
+            state.timerTime = 60 * Math.max(3, Math.floor(state.players.length * 0.8)); // Dynamic time based on players
+            
+            setupPassScreen();
+        }
+
+        // --- REVEAL FLOW ---
+        function setupPassScreen() {
+            const currentPlayer = state.players[state.currentIdx];
+            document.getElementById('passNameDisplay').innerText = currentPlayer;
+            document.getElementById('btnPassName').innerText = currentPlayer;
+            navTo('screen-pass');
+        }
+
+        function showRevealScreen() {
+            const currentPlayer = state.players[state.currentIdx];
+            const isSpy = (state.currentIdx === state.spyIdx);
+            
+            document.getElementById('revealNameHeader').innerText = currentPlayer;
+            document.getElementById('roleWord').innerText = isSpy ? state.pkg.spy : state.pkg.common;
+            
+            // Reset Card State
+            const card = document.getElementById('roleCard');
+            card.classList.remove('is-flipped');
+            document.getElementById('nextBtn').style.display = 'none';
+            
+            if(isSpy) {
+                document.getElementById('roleWord').style.color = "var(--danger-color)";
+            } else {
+                document.getElementById('roleWord').style.color = "var(--accent-color)";
+            }
+
+            navTo('screen-reveal');
+        }
+
+        function toggleCard() {
+            const card = document.getElementById('roleCard');
+            const isFlipped = card.classList.contains('is-flipped');
+            
+            if(isFlipped) {
+                // Closing the card
+                card.classList.remove('is-flipped');
+                // Show Next button immediately after closing
+                setTimeout(() => {
+                    const btn = document.getElementById('nextBtn');
+                    btn.style.display = 'block';
+                    btn.classList.add('animate__animated', 'animate__pulse');
+                    btn.style.backgroundColor = 'var(--accent-color)';
+                }, 200);
+            } else {
+                // Opening the card
+                card.classList.add('is-flipped');
+            }
+        }
+
+        function finishTurn() {
+            state.currentIdx++;
+            if(state.currentIdx < state.players.length) {
+                setupPassScreen();
+            } else {
+                startMainGame();
+            }
+        }
+
+        // --- MAIN GAME ---
+        function startMainGame() {
+            document.getElementById('arabicHint').innerText = state.pkg.hint;
+            updateTimerDisplay();
+            navTo('screen-hint');
+        }
+
+        function toggleTimer() {
+            const btn = document.getElementById('btnTimer');
+            if(state.timerRunning) {
+                clearInterval(state.interval);
+                state.timerRunning = false;
+                btn.innerText = "Resume Timer";
+                btn.classList.remove('danger');
+            } else {
+                state.timerRunning = true;
+                btn.innerText = "Pause Timer";
+                btn.classList.add('danger');
+                state.interval = setInterval(() => {
+                    state.timerTime--;
+                    updateTimerDisplay();
+                    if(state.timerTime <= 0) {
+                        clearInterval(state.interval);
+                        state.timerRunning = false;
+                        btn.innerText = "Time's Up!";
+                        alert("Time is up! Discuss and Vote.");
+                    }
+                }, 1000);
+            }
+        }
+
+        function updateTimerDisplay() {
+            const m = Math.floor(state.timerTime / 60);
+            const s = state.timerTime % 60;
+            document.getElementById('timer').innerText = 
+                `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+        }
+
+        // --- VOTING ---
+        function prepareVote() {
+            // Pause timer if running
+            if(state.timerRunning) toggleTimer();
+            
+            const container = document.getElementById('voteBtns');
+            container.innerHTML = '';
+            
+            state.players.forEach((p, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'vote-btn';
+                btn.innerText = p;
+                btn.onclick = () => confirmVote(i);
+                container.appendChild(btn);
+            });
+            navTo('screen-vote');
+        }
+
+        function confirmVote(idx) {
+            if(confirm(`Accuse ${state.players[idx]} of being the Spy?`)) {
+                showResult(idx);
+            }
+        }
+
+        function showResult(votedIdx) {
+            const spyCaught = (votedIdx === state.spyIdx);
+            
+            document.getElementById('resTitle').innerText = spyCaught ? "Citizens Win! 🎉" : "Spy Wins! 🕵️";
+            document.getElementById('resTitle').style.color = spyCaught ? "var(--accent-color)" : "var(--danger-color)";
+            
+            document.getElementById('spyNameDisplay').innerText = state.players[state.spyIdx];
+            document.getElementById('citizenWordDisplay').innerText = state.pkg.common;
+            
+            navTo('screen-result');
+        }
+    </script>
+</body>
+</html>
