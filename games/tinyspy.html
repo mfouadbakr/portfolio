@@ -43,6 +43,25 @@
         .screen { display: none; width: 90%; max-width: 450px; text-align: center; padding-bottom: 50px; position: relative; z-index: 10; }
         .active { display: block; }
 
+        /* --- CREDITS FOOTER --- */
+        .credits {
+            margin-top: 40px;
+            font-size: 0.8rem;
+            color: #666;
+            z-index: 20;
+            position: relative;
+        }
+        .credits a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.2s;
+        }
+        .credits a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
         /* --- BACKGROUND ANIMATION (Splash) --- */
         .bg-cards {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 0; pointer-events: none;
@@ -50,7 +69,7 @@
         .bg-card {
             position: absolute; width: 60px; height: 80px; border: 2px dashed rgba(255,255,255,0.1);
             background: rgba(255,255,255,0.02); 
-            opacity: 0; /* FIX: Hidden by default to prevent flash at top */
+            opacity: 0; 
             animation: floatUp 10s infinite linear;
         }
         @keyframes floatUp {
@@ -175,6 +194,11 @@
             <div style="font-size: 4rem;">🕵️‍♂️</div>
         </div>
         <button onclick="startSetup()">New Game</button>
+        
+        <!-- DEVELOPER CREDIT -->
+        <div class="credits">
+            Developed by <a href="https://mfouadbakr.github.io/portfolio/index.html" target="_blank">Mohamed Bakr</a>
+        </div>
     </section>
 
     <!-- 2. SETUP SCREEN -->
@@ -316,7 +340,6 @@
                 let div = document.createElement('div');
                 div.className = 'bg-card';
                 div.style.left = Math.random() * 90 + '%';
-                // Increase duration slightly for smoother effect
                 div.style.animationDuration = (Math.random() * 8 + 8) + 's';
                 div.style.animationDelay = (Math.random() * 8) + 's';
                 container.appendChild(div);
