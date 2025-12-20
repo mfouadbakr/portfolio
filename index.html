@@ -26,6 +26,86 @@
     <!-- css -->
     <link href="assets/css/common.css" rel="stylesheet">
 
+    <!-- CUSTOM STYLES FOR POPUP BACKGROUND -->
+    <style>
+        /* Modal Background Container */
+        .modal-content {
+            overflow: hidden; /* Clips the floating cards so they don't go outside */
+            position: relative;
+            background-color: #fff;
+        }
+
+        /* Ensure text sits on top of the background animation */
+        .modal-header, .modal-body {
+            position: relative;
+            z-index: 5;
+        }
+
+        /* The Animation Container */
+        .bg-animation-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none; /* Allows clicking through to the text */
+        }
+
+        /* The Floating Card Style */
+        .floating-card {
+            position: absolute;
+            bottom: -150px; /* Start below the modal */
+            background: transparent;
+            border-radius: 12px;
+            
+            /* OUTSIDE BORDER: SOLID */
+            border: 2px solid rgba(220, 53, 69, 0.1); /* Faint red solid border */
+            
+            animation: moveUp linear infinite;
+        }
+
+        /* INSIDE BORDER: DASHED (Using pseudo-element) */
+        .floating-card::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            bottom: 4px;
+            border-radius: 8px;
+            
+            /* Inner Dashed Border */
+            border: 2px dashed rgba(220, 53, 69, 0.1); 
+        }
+
+        /* Animation Keyframes */
+        @keyframes moveUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-600px) rotate(10deg); /* Move way up */
+                opacity: 0;
+            }
+        }
+
+        /* Different Card Sizes & Speeds for variety */
+        .card-1 { width: 60px; height: 80px; left: 10%; animation-duration: 10s; animation-delay: 0s; }
+        .card-2 { width: 90px; height: 120px; left: 25%; animation-duration: 15s; animation-delay: 2s; }
+        .card-3 { width: 50px; height: 70px; left: 55%; animation-duration: 12s; animation-delay: 1s; }
+        .card-4 { width: 80px; height: 100px; left: 75%; animation-duration: 18s; animation-delay: 4s; }
+        .card-5 { width: 70px; height: 90px; left: 85%; animation-duration: 14s; animation-delay: 0.5s; }
+        .card-6 { width: 40px; height: 60px; left: 40%; animation-duration: 20s; animation-delay: 5s; }
+    </style>
+
 </head>
 
 <body>
@@ -343,6 +423,46 @@
         </div>
     </footer>
 
+    <!-- PROMOTIONAL MODAL FOR GAMES -->
+    <div class="modal fade" id="gamesPromoModal" tabindex="-1" aria-labelledby="gamesPromoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center p-4">
+                
+                <!-- Background Animation Container -->
+                <div class="bg-animation-container">
+                    <div class="floating-card card-1"></div>
+                    <div class="floating-card card-2"></div>
+                    <div class="floating-card card-3"></div>
+                    <div class="floating-card card-4"></div>
+                    <div class="floating-card card-5"></div>
+                    <div class="floating-card card-6"></div>
+                </div>
+
+                <div class="modal-header border-0 pb-0 justify-content-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pt-0">
+                    <!-- Static Icon (Animation Removed) -->
+                    <div class="mb-3">
+                        <i class="fas fa-gamepad fa-4x text-danger"></i>
+                    </div>
+                    <h2 class="modal-title fw-bold mb-2" id="gamesPromoLabel">Game Library Launched!</h2>
+                    <p class="text-muted">
+                        Explore my new interactive games section featuring <strong>Karoot</strong>, <strong>Jalsa</strong>, and <strong>Tiny Spy</strong>.
+                    </p>
+                    <div class="mt-4">
+                        <a href="games/index.html" class="btn btn-custom rounded-pill px-4 py-2">
+                            <i class="fas fa-play me-2"></i> Play Games Now
+                        </a>
+                    </div>
+                    <div class="mt-2">
+                        <button type="button" class="btn btn-sm btn-link text-secondary text-decoration-none" data-bs-dismiss="modal">Maybe later</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
@@ -352,6 +472,22 @@
     <!-- JS -->
     <script src="assets/js/backgroundChanger.js"></script>
     <script src="assets/js/common.js"></script>
+
+    <!-- Script to Trigger Modal on Load (With 5s Delay & Testing Enabled) -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Set delay to 5000 milliseconds (5 seconds)
+            setTimeout(function() {
+                // I have commented out the 'once per session' check so it appears on refresh for testing.
+                // if (!sessionStorage.getItem('gamesPopupShown')) {
+                    var gamesModal = new bootstrap.Modal(document.getElementById('gamesPromoModal'));
+                    gamesModal.show();
+                    
+                    // sessionStorage.setItem('gamesPopupShown', 'true');
+                // }
+            }, 5000); // 5 Seconds Delay
+        });
+    </script>
 
 </body>
 
