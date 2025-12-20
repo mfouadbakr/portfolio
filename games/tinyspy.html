@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tiny Spy 2.0</title>
+    <title>Tiny Spy Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Segoe+UI:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -14,6 +14,7 @@
             --text-color: #eeeeee;
             --danger-color: #ff2e63;
             --glass-bg: rgba(255, 255, 255, 0.08);
+            --modal-bg: rgba(0, 0, 0, 0.9);
         }
 
         * { box-sizing: border-box; }
@@ -31,37 +32,65 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        .screen { display: none; width: 90%; max-width: 400px; text-align: center; padding-bottom: 50px; }
-        .active { display: block; }
-
-        h1 { font-size: 3rem; color: var(--accent-color); margin-bottom: 10px; margin-top: 0; }
+        /* --- TYPOGRAPHY --- */
+        h1, h2, h3 { margin: 0; font-weight: 700; }
+        h1 { font-size: 3rem; color: var(--accent-color); z-index: 2; position: relative; }
         h2 { font-size: 1.8rem; margin-bottom: 20px; }
         p { color: #aaa; font-size: 1.1rem; line-height: 1.6; }
-
-        /* Arabic Text Support */
         .arabic-text { font-family: 'Cairo', sans-serif; direction: rtl; }
 
+        /* --- SCREENS --- */
+        .screen { display: none; width: 90%; max-width: 450px; text-align: center; padding-bottom: 50px; position: relative; z-index: 10; }
+        .active { display: block; }
+
+        /* --- BACKGROUND ANIMATION (Splash) --- */
+        .bg-cards {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: 0; pointer-events: none;
+        }
+        .bg-card {
+            position: absolute; width: 60px; height: 80px; border: 2px dashed rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.02); 
+            opacity: 0; /* FIX: Hidden by default to prevent flash at top */
+            animation: floatUp 10s infinite linear;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- BUTTONS --- */
         button {
             background-color: var(--accent-color);
-            color: #fff; border: none; padding: 18px; border-radius: 50px;
-            font-size: 1.2rem; font-weight: bold; margin-top: 20px;
-            cursor: pointer; width: 100%; box-shadow: 0 4px 15px rgba(0, 173, 181, 0.3);
-            transition: transform 0.1s;
+            color: #fff; border: none; padding: 18px; border-radius: 0; /* Square/Sharp */
+            font-size: 1.2rem; font-weight: bold; margin-top: 15px;
+            cursor: pointer; width: 100%; 
+            position: relative; overflow: hidden;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+            transition: transform 0.1s, filter 0.2s;
         }
         button:active { transform: scale(0.98); }
-        button.secondary { background: transparent; border: 2px solid var(--accent-color); color: var(--accent-color); box-shadow: none; }
-        button.danger { background-color: var(--danger-color); box-shadow: 0 4px 15px rgba(255, 46, 99, 0.3); }
+        button.secondary { background: transparent; border: 2px solid var(--accent-color); color: var(--accent-color); }
+        button.danger { background-color: var(--danger-color); }
+        button.small-btn { padding: 10px; font-size: 0.9rem; width: auto; display: inline-block; margin: 5px; }
 
-        .input-group { background: var(--glass-bg); padding: 20px; border-radius: 15px; margin-bottom: 15px; text-align: left; }
-        .input-group label { font-size: 0.9rem; color: var(--accent-color); }
+        /* --- INPUTS --- */
+        .input-group { background: var(--glass-bg); padding: 20px; margin-bottom: 15px; text-align: left; border-left: 4px solid var(--accent-color); }
+        .input-group label { font-size: 0.9rem; color: var(--accent-color); display: block; margin-bottom: 5px;}
         input[type="text"] {
-            width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444;
-            background: #222; color: white; margin-top: 5px; font-size: 1rem; outline: none;
+            width: 100%; padding: 12px; border: 1px solid #444; background: #222; color: white; font-size: 1rem; outline: none;
         }
-        input[type="text"]:focus { border-color: var(--accent-color); }
-
-        /* Range Slider */
         input[type=range] { width: 100%; accent-color: var(--accent-color); cursor: pointer; }
+        
+        /* Checkbox Switch */
+        .switch-container { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+        .toggle-switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .4s; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 4px; bottom: 4px; background-color: white; transition: .4s; }
+        input:checked + .slider { background-color: var(--accent-color); }
+        input:checked + .slider:before { transform: translateX(24px); }
 
         /* --- CARD STYLE --- */
         .card-container { perspective: 1000px; width: 100%; height: 320px; margin: 30px auto; cursor: pointer; }
@@ -71,93 +100,162 @@
         .card-face {
             position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border-radius: 20px; border: 2px solid var(--accent-color); background: var(--card-bg);
+            background: var(--card-bg);
+            border-radius: 0; /* Not rounded */
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .card-back { background: radial-gradient(circle at center, #2a2a2a 0%, #121212 100%); }
-        .card-front { transform: rotateY(180deg); background: #222; }
         
-        .role-word { font-size: 2.2rem; color: var(--accent-color); padding: 20px; }
-        .tap-hint { position: absolute; bottom: 20px; font-size: 0.8rem; color: #666; opacity: 0.7; }
+        /* Dashed Inner Border Effect */
+        .card-face::after {
+            content: ''; position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px;
+            border: 2px dashed var(--accent-color); pointer-events: none;
+        }
 
-        .big-number { font-size: 4rem; font-weight: bold; margin: 0; color: var(--text-color); }
+        .card-back { background: #222; }
+        .card-front { transform: rotateY(180deg); background: #222; }
+        .card-front::after { border-color: #555; }
         
-        /* Grid for names */
+        .role-word { font-size: 2.5rem; color: var(--accent-color); padding: 20px; z-index: 2; }
+        .big-icon { font-size: 4rem; z-index: 2; }
+
+        /* --- JUDGEMENT CARDS --- */
+        .judge-option {
+            background: rgba(255,255,255,0.05);
+            border: 1px dashed #555;
+            padding: 15px;
+            margin-bottom: 10px;
+            color: #eee;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .judge-option:hover {
+            border-color: var(--accent-color);
+            background: rgba(0, 173, 181, 0.1);
+        }
+        .judge-option.selected {
+            border-color: var(--accent-color);
+            background: var(--accent-color);
+            color: #fff;
+        }
+
+        /* --- CUSTOM MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--modal-bg); z-index: 100; display: none;
+            align-items: center; justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        .modal-box {
+            background: #1a1a1a; width: 85%; max-width: 350px; padding: 30px 20px;
+            border: 1px solid var(--accent-color); box-shadow: 0 0 20px rgba(0, 173, 181, 0.2);
+            text-align: center; animation: zoomIn 0.2s ease-out;
+        }
+        @keyframes zoomIn { from {transform: scale(0.8); opacity:0;} to {transform: scale(1); opacity:1;} }
+        
+        .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
+
+        /* --- GRID --- */
         .vote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .vote-btn { margin: 0; padding: 15px; font-size: 1rem; background: var(--glass-bg); border: 1px solid #444; box-shadow: none; }
-        .vote-btn:hover { border-color: var(--accent-color); }
+        .vote-btn { margin: 0; padding: 15px; background: rgba(255,255,255,0.05); border: 1px solid #444; }
+        .vote-btn:hover { border-color: var(--accent-color); background: rgba(0,173,181,0.1); }
+
     </style>
 </head>
 <body>
 
+    <!-- BACKGROUND ANIMATION -->
+    <div class="bg-cards" id="bgAnim"></div>
+
     <!-- 1. SPLASH SCREEN -->
     <section id="screen-splash" class="screen active animate__animated animate__fadeIn">
         <h1>Tiny Spy</h1>
-        <p>Identify the spy before time runs out.</p>
-        <button onclick="navTo('screen-setup')">New Game</button>
+        <p style="letter-spacing: 2px; text-transform: uppercase; font-size: 0.8rem;">Social Deduction Game</p>
+        <div style="margin: 40px 0;">
+            <div style="font-size: 4rem;">🕵️‍♂️</div>
+        </div>
+        <button onclick="startSetup()">New Game</button>
     </section>
 
     <!-- 2. SETUP SCREEN -->
     <section id="screen-setup" class="screen animate__animated animate__fadeIn">
-        <h2>Setup</h2>
-        <div class="input-group" style="text-align: center;">
-            <label>Number of Players</label>
-            <p class="big-number" id="pVal">3</p>
-            <input type="range" min="3" max="8" value="3" id="pCount" oninput="document.getElementById('pVal').innerText = this.value">
+        <h2>Game Setup</h2>
+        
+        <div class="input-group">
+            <label>Number of Players: <span id="pVal" style="color:white; font-weight:bold;">3</span></label>
+            <input type="range" min="3" max="10" value="3" id="pCount" oninput="document.getElementById('pVal').innerText = this.value">
         </div>
+
+        <div class="input-group">
+            <div class="switch-container">
+                <label>Spy knows they are the Spy?</label>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="spyAware" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <p style="font-size: 0.8rem; margin: 5px 0 0 0;">If OFF, Spy's word looks identical to citizens (Hard Mode).</p>
+        </div>
+
         <button onclick="goToNames()">Next</button>
     </section>
 
     <!-- 3. NAMES SCREEN -->
     <section id="screen-names" class="screen animate__animated animate__fadeIn">
-        <h2>Who is playing?</h2>
-        <div id="nameInputsContainer" style="max-height: 50vh; overflow-y: auto;"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2>Players</h2>
+            <button class="small-btn secondary" onclick="rerollCategory()" style="width: auto;">🎲 Shuffle Words</button>
+        </div>
+        
+        <p id="catPreview" style="font-size: 0.8rem; color: var(--accent-color); margin-bottom: 10px;">Category: Random</p>
+
+        <div id="nameInputsContainer" style="max-height: 40vh; overflow-y: auto; padding-right:5px;"></div>
+        
         <button onclick="initGame()">Start Game</button>
     </section>
 
-    <!-- 4. SAFETY INTERSTITIAL (PASS PHONE) -->
+    <!-- 4. PASS PHONE SCREEN -->
     <section id="screen-pass" class="screen animate__animated animate__fadeIn">
         <h2 style="color: #666">Pass phone to:</h2>
-        <h1 id="passNameDisplay" style="font-size: 2.5rem; margin: 30px 0;">Name</h1>
-        <div style="font-size: 3rem;">📱</div>
-        <p>Don't look if this isn't you!</p>
+        <h1 id="passNameDisplay" class="arabic-text" style="font-size: 2.5rem; margin: 30px 0;">Name</h1>
+        <div style="font-size: 3rem; animation: pulse 2s infinite;">📱</div>
+        <p>Keep the screen hidden!</p>
         <button onclick="showRevealScreen()">I am <span id="btnPassName">Name</span></button>
     </section>
 
-    <!-- 5. REVEAL SCREEN -->
+    <!-- 5. REVEAL CARD SCREEN -->
     <section id="screen-reveal" class="screen animate__animated animate__fadeIn">
-        <h2 id="revealNameHeader">Player Name</h2>
-        <p>Tap card to reveal, tap again to hide.</p>
+        <h2 id="revealNameHeader" class="arabic-text">Player Name</h2>
         
         <div class="card-container" onclick="toggleCard()">
             <div class="card" id="roleCard">
-                <!-- Back (Face Down) -->
+                <!-- Back -->
                 <div class="card-face card-back">
-                    <span style="font-size: 3rem;">🕵️</span>
-                    <span class="tap-hint">TAP TO FLIP</span>
+                    <span class="big-icon">👁️</span>
+                    <span style="z-index:2; margin-top:10px; font-weight:bold; letter-spacing:1px;">TAP TO REVEAL</span>
                 </div>
-                <!-- Front (Face Up) -->
+                <!-- Front -->
                 <div class="card-face card-front">
-                    <p style="margin:0; font-size: 0.9rem; color:#888;">YOUR WORD</p>
+                    <p style="margin:0; font-size: 0.9rem; color:#888; z-index:2;">YOUR WORD</p>
                     <div id="roleWord" class="role-word arabic-text">Word</div>
-                    <span class="tap-hint">TAP TO HIDE</span>
+                    <span style="z-index:2; position:absolute; bottom:20px; font-size:0.8rem; opacity:0.5;">TAP TO HIDE</span>
                 </div>
             </div>
         </div>
 
-        <button id="nextBtn" style="display:none; background-color: #333;" onclick="finishTurn()">Pass to Next Player</button>
+        <button id="nextBtn" style="display:none;" onclick="finishTurn()">Pass to Next Player</button>
     </section>
 
-    <!-- 6. GAME HINT / TIMER -->
+    <!-- 6. MISSION / TIMER SCREEN -->
     <section id="screen-hint" class="screen animate__animated animate__fadeIn">
         <h2>The Mission</h2>
-        <div class="input-group">
-            <p style="text-align: center; margin:0; color: #888;">Category / Hint</p>
-            <h2 id="arabicHint" class="arabic-text" style="text-align: center; margin: 10px 0; color: var(--accent-color);"></h2>
+        <div class="input-group" style="text-align:center;">
+            <p style="margin:0;">Category</p>
+            <h2 id="arabicHint" class="arabic-text" style="color: var(--accent-color); margin-top:5px;"></h2>
         </div>
         
-        <div style="margin: 30px 0;">
-            <p id="timer" class="big-number">03:00</p>
+        <div style="margin: 20px 0;">
+            <p id="timer" style="font-size: 3.5rem; font-weight:bold; margin:0; color: white;">03:00</p>
         </div>
 
         <button id="btnTimer" onclick="toggleTimer()">Start Timer</button>
@@ -167,7 +265,7 @@
     <!-- 7. VOTE SCREEN -->
     <section id="screen-vote" class="screen animate__animated animate__fadeIn">
         <h2 style="color: var(--danger-color)">Who is the Spy?</h2>
-        <p>Discuss, then tap the name to accuse.</p>
+        <p>Tap a name to accuse them.</p>
         <div id="voteBtns" class="vote-grid"></div>
         <button class="secondary" style="margin-top:30px" onclick="navTo('screen-hint')">Back to Timer</button>
     </section>
@@ -179,27 +277,111 @@
         <div class="input-group" style="text-align: center;">
             <p>The Spy was:</p>
             <h2 id="spyNameDisplay" class="arabic-text" style="color:var(--danger-color)">Name</h2>
-            <hr style="border: 0; border-top: 1px solid #333; margin: 15px 0;">
-            <p>The Location was:</p>
+            <hr style="border: 0; border-top: 1px dashed #444; margin: 15px 0;">
+            <p>The Word was:</p>
             <h2 id="citizenWordDisplay" class="arabic-text" style="color:var(--accent-color)">Word</h2>
         </div>
 
-        <button onclick="location.reload()">Play Again</button>
+        <button onclick="showJudgement()">See Judgement Choices ⚖️</button>
     </section>
 
+    <!-- 9. JUDGEMENT SCREEN -->
+    <section id="screen-judgement" class="screen animate__animated animate__fadeIn">
+        <h2 id="judgeContext">Choose one:</h2>
+        
+        <div id="judgementList" style="margin-top:20px;">
+            <!-- Choices injected here -->
+        </div>
+
+        <button onclick="startSetup()">Start New Game</button>
+    </section>
+
+    <!-- CUSTOM MODAL -->
+    <div id="customModal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 id="modalTitle">Confirm</h3>
+            <p id="modalMsg">Are you sure?</p>
+            <div class="modal-btns">
+                <button class="secondary" onclick="closeModal()">Cancel</button>
+                <button id="modalConfirmBtn">Yes</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // --- ANIMATION SETUP ---
+        function createBgCards() {
+            const container = document.getElementById('bgAnim');
+            for(let i=0; i<12; i++) {
+                let div = document.createElement('div');
+                div.className = 'bg-card';
+                div.style.left = Math.random() * 90 + '%';
+                // Increase duration slightly for smoother effect
+                div.style.animationDuration = (Math.random() * 8 + 8) + 's';
+                div.style.animationDelay = (Math.random() * 8) + 's';
+                container.appendChild(div);
+            }
+        }
+        createBgCards();
+
         // --- DATA ---
         const wordPackages = [
-            { common: "صلاة الفجر", spy: "صلاة الجمعة", hint: "وقت عبادة؟" },
-            { common: "كشري", spy: "مكرونة بشاميل", hint: "أكلة مصرية؟" },
-            { common: "الأهرامات", spy: "أبو الهول", hint: "مكان أثري؟" },
-            { common: "ستاربكس", spy: "كوستا", hint: "مكان قهوة؟" },
-            { common: "نهر النيل", spy: "البحر الأحمر", hint: "مكان فيه مية؟" },
-            { common: "فيسبوك", spy: "تويتر", hint: "تطبيق سوشيال؟" },
-            { common: "محمد صلاح", spy: "ميسي", hint: "لاعب كرة؟" },
-            { common: "مترو الأنفاق", spy: "الأتوبيس", hint: "وسيلة مواصلات؟" },
-            { common: "الشتاء", spy: "الصيف", hint: "فصل من السنة؟" },
-            { common: "طبيب أسنان", spy: "طبيب عيون", hint: "مهنة طبية؟" }
+            { common: "صلاة الفجر", spy: "صلاة الجمعة", hint: "عبادة" },
+            { common: "كشري", spy: "مكرونة بشاميل", hint: "أكل مصري" },
+            { common: "الأهرامات", spy: "أبو الهول", hint: "آثار" },
+            { common: "الساحل الشمالي", spy: "الإسكندرية", hint: "مصيف" },
+            { common: "قهوة تركي", spy: "نسكافيه", hint: "مشروب" },
+            { common: "ميكروباص", spy: "توكتوك", hint: "مواصلات" },
+            { common: "فيسبوك", spy: "انستجرام", hint: "تطبيق" },
+            { common: "بطيخ", spy: "شمام", hint: "فاكهة" },
+            { common: "ثلاجة", spy: "غسالة", hint: "جهاز منزلي" },
+            { common: "عيد الفطر", spy: "عيد الأضحى", hint: "مناسبة" },
+            { common: "محمد صلاح", spy: "ميسي", hint: "لاعب كرة" },
+            { common: "عمرو دياب", spy: "تامر حسني", hint: "مغني" },
+            { common: "فول وطعمية", spy: "جبنة وبطيخ", hint: "فطار" },
+            { common: "القلعة", spy: "برج القاهرة", hint: "مكان سياحي" },
+            { common: "قطة", spy: "كلب", hint: "حيوان" },
+            { common: "شيبسي", spy: "دريتوس", hint: "سناكس" },
+            { common: "نتفليكس", spy: "شاهد", hint: "منصة أفلام" },
+            { common: "جامعة القاهرة", spy: "الجامعة الأمريكية", hint: "تعليم" },
+            { common: "شاي بلبن", spy: "شاي سادة", hint: "مزاج" },
+            { common: "المطار", spy: "محطة القطار", hint: "سفر" },
+            { common: "بيتزا", spy: "كريب", hint: "أكل سريع" },
+            { common: "الزمالك", spy: "الأهلي", hint: "نادي" },
+            { common: "دكتور أسنان", spy: "دكتور صيدلي", hint: "مهنة" },
+            { common: "جيتار", spy: "بيانو", hint: "موسيقى" },
+            { common: "الصيف", spy: "الشتاء", hint: "فصل" },
+            { common: "ملوخية", spy: "بامية", hint: "خضار" },
+            { common: "50 جنية", spy: "100 جنية", hint: "فلوس" },
+            { common: "البحر الأحمر", spy: "نهر النيل", hint: "مية" },
+            { common: "ايفون", spy: "سامسونج", hint: "موبايل" },
+            { common: "جيم (Gym)", spy: "ملعب كرة", hint: "رياضة" },
+            { common: "سوشي", spy: "سمك مشوي", hint: "أكلة بحرية" },
+            { common: "مترو", spy: "ترام", hint: "مواصلات عامة" }
+        ];
+
+        // Safe Judgements (Choices)
+        const judgementsSpyLost = [
+            "يعزم الناس كلها على كنز",
+            "يتكلم لغة عربية فصحى الجولة الجاية",
+            "ممنوع يستخدم صباع الإبهام الجولة الجاية",
+            "يقول الحروف الأبجدية بالعكس",
+            "يقف على رجل واحدة لمدة دقيقة",
+            "ممنوع يتكلم الجولة الجاية غير لما حد يسأله",
+            "يحكي نكتة بايخة ولازم الناس تضحك",
+            "يصب مية للناس كلها",
+            "يغني أغنية أطفال بصوت عالي",
+            "يعمل 10 عدات ضغط"
+        ];
+
+        const judgementsSpyWon = [
+            "الجاسوس يختار واحد يفضل واقف الجولة الجاية",
+            "الكل يقول للجاسوس 'يا باشا' قبل ما يكلمه",
+            "الكل يدفع للجاسوس 5 جنية (أو عملة رمزية)",
+            "الجاسوس يختار مكان كل واحد يقعد فين",
+            "الجاسوس معفي من الكلام أول دقيقة الجولة الجاية",
+            "الجاسوس يختار واحد ميتكلمش لمدة دقيقتين",
+            "الجاسوس يدي لقب لكل واحد والكل ينادي بيه"
         ];
 
         // --- STATE ---
@@ -208,22 +390,34 @@
             spyIdx: 0, 
             currentIdx: 0, 
             pkg: null, 
-            timerTime: 180, // 3 minutes
+            spyAware: true,
+            timerTime: 180, 
             interval: null,
-            timerRunning: false
+            timerRunning: false,
+            spyCaught: false
         };
 
-        // --- NAVIGATION ---
+        // --- CORE FUNCTIONS ---
+
         function navTo(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             const el = document.getElementById(id);
             el.classList.remove('animate__fadeIn');
-            void el.offsetWidth; // trigger reflow
+            void el.offsetWidth; 
             el.classList.add('active', 'animate__fadeIn');
         }
 
-        // --- SETUP ---
+        function startSetup() {
+            // Full Screen Request
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen().catch(err => console.log(err));
+            }
+            navTo('screen-setup');
+        }
+
         function goToNames() {
+            state.spyAware = document.getElementById('spyAware').checked;
             const count = document.getElementById('pCount').value;
             const container = document.getElementById('nameInputsContainer');
             container.innerHTML = '';
@@ -234,25 +428,28 @@
                     <input type="text" class="p-name" placeholder="Name" value="Player ${i}" onfocus="this.select()">
                 </div>`;
             }
+            rerollCategory(); // Pick initial word
             navTo('screen-names');
+        }
+
+        function rerollCategory() {
+            state.pkg = wordPackages[Math.floor(Math.random() * wordPackages.length)];
+            document.getElementById('catPreview').innerText = "Category: " + state.pkg.hint;
         }
 
         function initGame() {
             const inputs = document.querySelectorAll('.p-name');
-            state.players = Array.from(inputs).map(i => i.value.trim() || "Player");
-            
-            // Randomize Spy
+            state.players = Array.from(inputs).map(i => i.value.trim() || "Player " + (Math.random()*100).toFixed(0));
             state.spyIdx = Math.floor(Math.random() * state.players.length);
-            // Randomize Word Package
-            state.pkg = wordPackages[Math.floor(Math.random() * wordPackages.length)];
-            
             state.currentIdx = 0;
-            state.timerTime = 60 * Math.max(3, Math.floor(state.players.length * 0.8)); // Dynamic time based on players
-            
+            state.timerTime = 60 * Math.max(3, Math.floor(state.players.length * 0.8));
+            state.spyCaught = false;
+
             setupPassScreen();
         }
 
-        // --- REVEAL FLOW ---
+        // --- GAME LOOP ---
+
         function setupPassScreen() {
             const currentPlayer = state.players[state.currentIdx];
             document.getElementById('passNameDisplay').innerText = currentPlayer;
@@ -265,17 +462,24 @@
             const isSpy = (state.currentIdx === state.spyIdx);
             
             document.getElementById('revealNameHeader').innerText = currentPlayer;
-            document.getElementById('roleWord').innerText = isSpy ? state.pkg.spy : state.pkg.common;
-            
-            // Reset Card State
-            const card = document.getElementById('roleCard');
-            card.classList.remove('is-flipped');
+            document.getElementById('roleCard').classList.remove('is-flipped');
             document.getElementById('nextBtn').style.display = 'none';
+
+            // Logic for Spy Awareness
+            const wordEl = document.getElementById('roleWord');
             
-            if(isSpy) {
-                document.getElementById('roleWord').style.color = "var(--danger-color)";
+            if (isSpy) {
+                wordEl.innerText = state.pkg.spy;
+                if (state.spyAware) {
+                    // Spy Knows: Red Color
+                    wordEl.style.color = "var(--danger-color)";
+                } else {
+                    // Spy Doesn't Know: Standard Color
+                    wordEl.style.color = "var(--accent-color)";
+                }
             } else {
-                document.getElementById('roleWord').style.color = "var(--accent-color)";
+                wordEl.innerText = state.pkg.common;
+                wordEl.style.color = "var(--accent-color)";
             }
 
             navTo('screen-reveal');
@@ -286,17 +490,11 @@
             const isFlipped = card.classList.contains('is-flipped');
             
             if(isFlipped) {
-                // Closing the card
                 card.classList.remove('is-flipped');
-                // Show Next button immediately after closing
                 setTimeout(() => {
-                    const btn = document.getElementById('nextBtn');
-                    btn.style.display = 'block';
-                    btn.classList.add('animate__animated', 'animate__pulse');
-                    btn.style.backgroundColor = 'var(--accent-color)';
+                    document.getElementById('nextBtn').style.display = 'block';
                 }, 200);
             } else {
-                // Opening the card
                 card.classList.add('is-flipped');
             }
         }
@@ -306,27 +504,24 @@
             if(state.currentIdx < state.players.length) {
                 setupPassScreen();
             } else {
-                startMainGame();
+                document.getElementById('arabicHint').innerText = state.pkg.hint;
+                updateTimerDisplay();
+                navTo('screen-hint');
             }
         }
 
-        // --- MAIN GAME ---
-        function startMainGame() {
-            document.getElementById('arabicHint').innerText = state.pkg.hint;
-            updateTimerDisplay();
-            navTo('screen-hint');
-        }
+        // --- TIMER & VOTING ---
 
         function toggleTimer() {
             const btn = document.getElementById('btnTimer');
             if(state.timerRunning) {
                 clearInterval(state.interval);
                 state.timerRunning = false;
-                btn.innerText = "Resume Timer";
+                btn.innerText = "Resume";
                 btn.classList.remove('danger');
             } else {
                 state.timerRunning = true;
-                btn.innerText = "Pause Timer";
+                btn.innerText = "Pause";
                 btn.classList.add('danger');
                 state.interval = setInterval(() => {
                     state.timerTime--;
@@ -335,7 +530,6 @@
                         clearInterval(state.interval);
                         state.timerRunning = false;
                         btn.innerText = "Time's Up!";
-                        alert("Time is up! Discuss and Vote.");
                     }
                 }, 1000);
             }
@@ -348,41 +542,93 @@
                 `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
         }
 
-        // --- VOTING ---
         function prepareVote() {
-            // Pause timer if running
             if(state.timerRunning) toggleTimer();
-            
             const container = document.getElementById('voteBtns');
             container.innerHTML = '';
-            
             state.players.forEach((p, i) => {
                 const btn = document.createElement('button');
                 btn.className = 'vote-btn';
                 btn.innerText = p;
-                btn.onclick = () => confirmVote(i);
+                btn.onclick = () => confirmAccusation(i);
                 container.appendChild(btn);
             });
             navTo('screen-vote');
         }
 
-        function confirmVote(idx) {
-            if(confirm(`Accuse ${state.players[idx]} of being the Spy?`)) {
-                showResult(idx);
-            }
+        // --- MODAL LOGIC ---
+        function openModal(title, msg, callback) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalMsg').innerText = msg;
+            
+            const yesBtn = document.getElementById('modalConfirmBtn');
+            const newBtn = yesBtn.cloneNode(true);
+            yesBtn.parentNode.replaceChild(newBtn, yesBtn);
+            
+            newBtn.onclick = () => {
+                callback();
+                closeModal();
+            };
+            
+            document.getElementById('customModal').style.display = 'flex';
         }
 
+        function closeModal() {
+            document.getElementById('customModal').style.display = 'none';
+        }
+
+        function confirmAccusation(idx) {
+            openModal("Accuse Player?", `Are you sure ${state.players[idx]} is the Spy?`, () => {
+                showResult(idx);
+            });
+        }
+
+        // --- RESULTS & JUDGEMENT ---
+
         function showResult(votedIdx) {
-            const spyCaught = (votedIdx === state.spyIdx);
+            state.spyCaught = (votedIdx === state.spyIdx);
             
-            document.getElementById('resTitle').innerText = spyCaught ? "Citizens Win! 🎉" : "Spy Wins! 🕵️";
-            document.getElementById('resTitle').style.color = spyCaught ? "var(--accent-color)" : "var(--danger-color)";
+            document.getElementById('resTitle').innerText = state.spyCaught ? "Citizens Win! 🎉" : "Spy Wins! 🕵️";
+            document.getElementById('resTitle').style.color = state.spyCaught ? "var(--accent-color)" : "var(--danger-color)";
             
             document.getElementById('spyNameDisplay').innerText = state.players[state.spyIdx];
             document.getElementById('citizenWordDisplay').innerText = state.pkg.common;
             
             navTo('screen-result');
         }
+
+        function showJudgement() {
+            let context = "";
+            let sourceList = [];
+
+            if(state.spyCaught) {
+                context = "Spy Caught! Choose a punishment:";
+                sourceList = judgementsSpyLost;
+            } else {
+                context = "Spy Won! Choose a reward:";
+                sourceList = judgementsSpyWon;
+            }
+
+            document.getElementById('judgeContext').innerText = context;
+            
+            // Get 3 random unique choices
+            const shuffled = sourceList.sort(() => 0.5 - Math.random());
+            const selected = shuffled.slice(0, 3);
+
+            const listContainer = document.getElementById('judgementList');
+            listContainer.innerHTML = '';
+
+            selected.forEach(txt => {
+                listContainer.innerHTML += `
+                    <div class="judge-option arabic-text" onclick="this.classList.toggle('selected')">
+                        ${txt}
+                    </div>
+                `;
+            });
+
+            navTo('screen-judgement');
+        }
+
     </script>
 </body>
 </html>
