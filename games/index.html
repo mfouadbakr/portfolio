@@ -16,7 +16,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
 
     <!-- Google Font Import -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&amp;family=Inter:wght@300;400;500&amp;display=swap" rel="stylesheet">
+    <!-- Poppins/Inter (Site UI) | Russo One (Card Titles) | Kanit (Card Text) -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Inter:wght@300;400;500&family=Russo+One&family=Kanit:wght@300;400;500&display=swap" rel="stylesheet">
 
     <!-- Font Awesome Import -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -27,32 +28,47 @@
     <!-- CUSTOM STYLES FOR GAMES PAGE -->
     <style>
         /* 
-           Custom Game Card Styles 
-           Overrides global item-card constraints 
+           1. Header / Global Styles (Kept Original)
+        */
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .section-subtitle {
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            color: #666;
+        }
+
+        /* 
+           2. Game Card Container 
         */
         .game-card {
             display: flex;
             flex-direction: column;
-            height: 100%; /* Forces card to fill the grid column height */
+            height: 100%;
             background: #fff;
-            border-radius: 16px; /* Smoother corners */
+            border-radius: 16px; 
             overflow: hidden;
             border: 1px solid rgba(0,0,0,0.08);
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             transition: all 0.3s ease;
-            text-decoration: none; /* Removes underline from link */
+            text-decoration: none;
             color: inherit;
         }
 
         .game-card:hover {
-            transform: translateY(-8px); /* Lifts up on hover */
-            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
-            color: inherit;
+            transform: translateY(-8px);
+            /* Red glow on hover to match theme */
+            box-shadow: 0 15px 30px rgba(220, 53, 69, 0.15); 
+            border-color: rgba(220, 53, 69, 0.2);
         }
 
         /* Image Container */
         .game-thumb-wrapper {
-            height: 220px; /* Consistent height for all images */
+            height: 220px;
             width: 100%;
             overflow: hidden;
             position: relative;
@@ -61,12 +77,12 @@
         .game-thumb-wrapper img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Ensures image covers area without stretching */
+            object-fit: cover;
             transition: transform 0.5s ease;
         }
 
         .game-card:hover .game-thumb-wrapper img {
-            transform: scale(1.05); /* Subtle zoom on hover */
+            transform: scale(1.05);
         }
 
         /* Card Content */
@@ -74,35 +90,77 @@
             padding: 1.5rem;
             display: flex;
             flex-direction: column;
-            flex-grow: 1; /* Pushes content to fill space */
+            flex-grow: 1;
         }
 
+        /* 
+           3. NEW FONTS & THEME COLORS 
+        */
         .game-title {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            font-size: 1.25rem;
+            font-family: 'Russo One', sans-serif; /* Modern/Gaming Header */
+            font-weight: 400;
+            font-size: 1.5rem;
             margin-bottom: 0.5rem;
-            color: #333;
+            letter-spacing: 0.5px;
+            color: #333; /* Dark Gray Base */
+            transition: color 0.3s ease;
+        }
+        
+        /* On hover, title turns Red */
+        .game-card:hover .game-title {
+            color: #dc3545; 
         }
 
         .game-desc {
-            font-family: 'Inter', sans-serif;
-            font-size: 0.95rem;
-            color: #666;
-            margin-bottom: 1rem;
-            line-height: 1.5;
-            flex-grow: 1; /* Ensures buttons/badges align at bottom */
+            font-family: 'Kanit', sans-serif; /* Clean Modern Text */
+            font-size: 1rem;
+            font-weight: 300;
+            color: #555;
+            margin-bottom: 1.2rem;
+            line-height: 1.4;
+            flex-grow: 1;
         }
 
         .game-badges {
-            margin-top: auto; /* Pushes to bottom */
+            margin-top: auto;
+        }
+
+        /* Custom Badges */
+        .badge-play {
+            font-family: 'Kanit', sans-serif;
+            font-weight: 500;
+            font-size: 0.85rem;
+            padding: 8px 16px;
+            border-radius: 50rem;
+            background-color: #dc3545; /* Theme Red */
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid #dc3545;
+            transition: all 0.3s;
+        }
+        
+        .game-card:hover .badge-play {
+            background-color: #bb2d3b; /* Darker Red on Hover */
+        }
+        
+        .badge-tag {
+            font-family: 'Kanit', sans-serif;
+            font-weight: 400;
+            font-size: 0.85rem;
+            padding: 8px 12px;
+            background-color: #f8f9fa;
+            color: #333;
+            border: 1px solid #dee2e6;
+            border-radius: 50rem;
+            margin-left: 5px;
         }
         
         /* Play Icon Overlay */
         .play-overlay {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.3);
+            background: rgba(0,0,0,0.5); /* Darker overlay */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -161,8 +219,8 @@
                     <div class="col-lg-4 col-md-6 mb-4">
                         <a href="karoot.html" class="game-card">
                             <div class="game-thumb-wrapper">
-                                <!-- TIP: Add a real image here like: src="../assets/images/games/karoot.jpg" -->
-                                <img src="https://placehold.co/600x400/46178f/ffffff?text=Karoot" alt="Karoot">
+                                <!-- Dark Gray Image -->
+                                <img src="https://placehold.co/600x400/333333/ffffff?text=KAROOT" alt="Karoot">
                                 <div class="play-overlay">
                                     <i class="fas fa-play-circle fa-3x text-white"></i>
                                 </div>
@@ -173,8 +231,8 @@
                                     A fast-paced interactive quiz game. Challenge yourself and test your knowledge in this multiplayer-style simulation.
                                 </p>
                                 <div class="game-badges">
-                                    <span class="badge bg-primary rounded-pill">Play Now</span>
-                                    <span class="badge bg-light text-dark border">Quiz</span>
+                                    <span class="badge badge-play">Play Now</span>
+                                    <span class="badge badge-tag">Quiz</span>
                                 </div>
                             </div>
                         </a>
@@ -184,8 +242,8 @@
                     <div class="col-lg-4 col-md-6 mb-4">
                         <a href="jalsa.html" class="game-card">
                             <div class="game-thumb-wrapper">
-                                <!-- TIP: Add a real image here like: src="../assets/images/games/jalsa.jpg" -->
-                                <img src="https://placehold.co/600x400/e67e22/ffffff?text=Jalsa" alt="Jalsa">
+                                <!-- Dark Gray Image -->
+                                <img src="https://placehold.co/600x400/333333/ffffff?text=JALSA" alt="Jalsa">
                                 <div class="play-overlay">
                                     <i class="fas fa-play-circle fa-3x text-white"></i>
                                 </div>
@@ -193,11 +251,11 @@
                             <div class="game-card-body">
                                 <h3 class="game-title">Jalsa</h3>
                                 <p class="game-desc">
-                                    An engaging interactive session experience. Join the gathering and explore new activities.
+                                    An engaging interactive session experience. Join the gathering and explore new activities with your friends.
                                 </p>
                                 <div class="game-badges">
-                                    <span class="badge bg-primary rounded-pill">Play Now</span>
-                                    <span class="badge bg-light text-dark border">Social</span>
+                                    <span class="badge badge-play">Play Now</span>
+                                    <span class="badge badge-tag">Social</span>
                                 </div>
                             </div>
                         </a>
@@ -207,8 +265,8 @@
                     <div class="col-lg-4 col-md-6 mb-4">
                         <a href="tinyspy.html" class="game-card">
                             <div class="game-thumb-wrapper">
-                                <!-- TIP: Add a real image here like: src="../assets/images/games/tinyspy.jpg" -->
-                                <img src="https://placehold.co/600x400/333333/ffffff?text=Tiny+Spy" alt="Tiny Spy">
+                                <!-- Dark Gray Image -->
+                                <img src="https://placehold.co/600x400/333333/ffffff?text=TINY+SPY" alt="Tiny Spy">
                                 <div class="play-overlay">
                                     <i class="fas fa-play-circle fa-3x text-white"></i>
                                 </div>
@@ -219,8 +277,31 @@
                                     A stealthy adventure. Sneak through levels, solve puzzles, and uncover secrets in this compact spy mission.
                                 </p>
                                 <div class="game-badges">
-                                    <span class="badge bg-primary rounded-pill">Play Now</span>
-                                    <span class="badge bg-light text-dark border">Stealth / Puzzle</span>
+                                    <span class="badge badge-play">Play Now</span>
+                                    <span class="badge badge-tag">Stealth</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- GAME ITEM 4: THE PACT -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <a href="thepact.html" class="game-card">
+                            <div class="game-thumb-wrapper">
+                                <!-- Dark Gray Image -->
+                                <img src="https://placehold.co/600x400/333333/ffffff?text=THE+PACT" alt="The Pact">
+                                <div class="play-overlay">
+                                    <i class="fas fa-play-circle fa-3x text-white"></i>
+                                </div>
+                            </div>
+                            <div class="game-card-body">
+                                <h3 class="game-title">The Pact</h3>
+                                <p class="game-desc">
+                                    An interactive game for couples. Navigate through choices on important topics and explore how your decisions align.
+                                </p>
+                                <div class="game-badges">
+                                    <span class="badge badge-play">Play Now</span>
+                                    <span class="badge badge-tag">Couples</span>
                                 </div>
                             </div>
                         </a>

@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Pact | الميثاق</title>
+    
+    <!-- Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Montserrat:wght@500;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #121212;
+            --panel-bg: #1e1e1e;
+            --text-main: #ffffff;
+            --text-sub: #aaaaaa;
+            --border-color: #333333;
+            --accent: #DC143C; /* Crimson */
+            --card-bg: #252525;
+        }
+
+        /* LOCK VIEWPORT - GLOBAL */
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; 
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Montserrat', sans-serif;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .ar-font { font-family: 'Cairo', sans-serif; direction: rtl; }
+
+        /* --- BACKGROUND --- */
+        #snow-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; pointer-events: none;
+        }
+
+        .floating-heart {
+            position: absolute;
+            color: var(--accent);
+            opacity: 0.15;
+            font-size: 3rem;
+            animation: floatUp 15s linear infinite;
+            z-index: 0;
+            text-shadow: 0 0 10px var(--accent);
+        }
+        
+        .h1 { left: 10%; bottom: -100px; animation-delay: 0s; font-size: 2rem; }
+        .h2 { left: 80%; bottom: -100px; animation-delay: 5s; font-size: 4rem; }
+        .h3 { left: 40%; bottom: -100px; animation-delay: 10s; font-size: 3rem; }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.3; }
+            100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- SCREENS --- */
+        .screen { 
+            display: none; 
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            flex-direction: column; 
+            padding: 20px;
+            z-index: 10;
+            box-sizing: border-box;
+        }
+        
+        .screen.active { display: flex !important; animation: fadeIn 0.4s; }
+
+        /* CENTER WRAPPER */
+        .center-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        /* --- SCROLLABLE LIST CONTAINER (Only for Episodes) --- */
+        .scroll-container {
+            flex-grow: 1; 
+            overflow-y: auto; 
+            width: 100%;
+            padding-bottom: 20px;
+            scrollbar-width: none; 
+            -ms-overflow-style: none;
+        }
+        .scroll-container::-webkit-scrollbar { display: none; }
+
+        /* --- UI COMPONENTS --- */
+        
+        /* CLEAN BUTTON (No Glow, No Pulse) */
+        .btn-solid {
+            background: var(--accent); color: var(--text-main);
+            border: none; padding: 15px 40px;
+            font-size: 1.1rem; font-weight: 900;
+            border-radius: 50px;
+            text-transform: uppercase;
+            cursor: pointer; transition: 0.2s;
+            width: 100%; max-width: 300px;
+            flex-shrink: 0;
+            box-shadow: none; /* Removed Glow */
+        }
+        .btn-solid:active { transform: scale(0.96); opacity: 0.9; }
+
+        .btn-icon { background: none; border: none; color: var(--text-main); font-size: 1.5rem; cursor: pointer; padding: 10px; }
+        
+        /* Episode Cards */
+        .mode-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; justify-content: space-between;
+            min-height: 90px;
+            margin-bottom: 15px;
+        }
+        .mode-card:active { transform: scale(0.98); background: #2a2a2a; }
+        
+        /* --- GAME CARD (The Fix for No Scroll) --- */
+        .game-stage {
+            flex-grow: 1; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center;
+            width: 100%;
+            overflow: hidden; /* Prevent stage scroll */
+        }
+        
+        .main-card {
+            width: 100%; max-width: 500px; 
+            max-height: 85vh; 
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 25px; 
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .card-content {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Choice Buttons (Fixed to expand) */
+        .choice-btn {
+            background: var(--bg-color); border: 1px solid var(--border-color);
+            border-radius: 12px; 
+            padding: 15px; 
+            width: 100%;
+            cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: var(--text-main);
+            
+            /* Text Handling */
+            min-height: 60px; 
+            height: auto; 
+            white-space: normal; 
+            word-break: break-word;
+            line-height: 1.4;
+            font-size: 1rem;
+        }
+        
+        .choice-btn:active {
+            background: var(--accent); border-color: var(--accent);
+        }
+
+        .gap-custom { gap: 15px; }
+
+        .progress-track { flex-grow: 1; height: 4px; background: var(--border-color); border-radius: 10px; margin: 0 20px; }
+        .progress-bar { height: 100%; background: var(--accent); width: 0%; border-radius: 10px; transition: width 0.3s; }
+
+        /* Judgement Selection */
+        .judge-option {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+        }
+        .judge-option:hover { border-color: var(--accent); }
+
+        /* Footer */
+        .dev-credit {
+            margin-top: 20px; width: 100%; text-align: center;
+            font-size: 0.7rem; color: var(--text-sub);
+            flex-shrink: 0;
+        }
+        .dev-credit a { color: var(--accent); text-decoration: none; font-weight: bold; }
+
+    </style>
+</head>
+<body>
+
+    <!-- BACKGROUND -->
+    <canvas id="snow-canvas"></canvas>
+    <div class="floating-heart h1">♥</div>
+    <div class="floating-heart h2">♥</div>
+    <div class="floating-heart h3">♥</div>
+
+    <!-- 1. LANDING -->
+    <div id="screen-landing" class="screen active">
+        <div class="center-wrapper">
+            <h1 class="display-1 fw-bold mb-0 animate__animated animate__fadeInDown" style="color:var(--text-main);">THE PACT</h1>
+            <h3 class="animate__animated animate__fadeInUp" style="color:var(--accent); margin-top: -10px;">الميثاق</h3>
+            <p class="text-sub mb-5 animate__animated animate__fadeInUp" style="letter-spacing: 2px; margin-top:20px;">COUPLES EDITION</p>
+            
+            <!-- BUTTON (NO ANIMATION, NO GLOW) -->
+            <button class="btn-solid animate__animated animate__fadeInUp" onclick="showScreen('screen-episodes')">
+                START JOURNEY
+            </button>
+
+            <div class="dev-credit">
+                Developed by <a href="https://mfouadbakr.github.io/portfolio/" target="_blank">Mohamed Bakr</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. EPISODE SELECTION (SCROLLABLE) -->
+    <div id="screen-episodes" class="screen">
+        <div class="d-flex justify-content-between align-items-center mb-4" style="flex-shrink: 0;">
+            <button class="btn-icon" onclick="showScreen('screen-landing')">←</button>
+            <h3 class="m-0 fw-bold">SELECT TOPIC</h3>
+            <div style="width: 40px;"></div>
+        </div>
+
+        <div class="scroll-container">
+            
+            <div class="mode-card" onclick="startGame('work_man')">
+                <div class="d-flex align-items-center gap-3">
+                    <span style="font-size:2rem;">👔</span>
+                    <div>
+                        <div class="fw-bold">The Man's Burden</div>
+                        <div class="text-sub" style="font-size:0.8rem;">Work Stress & Pressure</div>
+                    </div>
+                </div>
+                <span style="color:var(--accent)">➤</span>
+            </div>
+
+            <div class="mode-card" onclick="startGame('personality')">
+                <div class="d-flex align-items-center gap-3">
+                    <span style="font-size:2rem;">🧠</span>
+                    <div>
+                        <div class="fw-bold">Personality & Temper</div>
+                        <div class="text-sub" style="font-size:0.8rem;">How we react</div>
+                    </div>
+                </div>
+                <span style="color:var(--accent)">➤</span>
+            </div>
+
+            <div class="mode-card" onclick="startGame('wedding')">
+                <div class="d-flex align-items-center gap-3">
+                    <span style="font-size:2rem;">💍</span>
+                    <div>
+                        <div class="fw-bold">Wedding Plans</div>
+                        <div class="text-sub" style="font-size:0.8rem;">Budget & Choices</div>
+                    </div>
+                </div>
+                <span style="color:var(--accent)">➤</span>
+            </div>
+
+            <div class="mode-card" onclick="startGame('home')">
+                <div class="d-flex align-items-center gap-3">
+                    <span style="font-size:2rem;">🏡</span>
+                    <div>
+                        <div class="fw-bold">Future Home</div>
+                        <div class="text-sub" style="font-size:0.8rem;">Routine & Life</div>
+                    </div>
+                </div>
+                <span style="color:var(--accent)">➤</span>
+            </div>
+
+            <div class="mode-card" onclick="startGame('crisis')">
+                <div class="d-flex align-items-center gap-3">
+                    <span style="font-size:2rem;">🌪️</span>
+                    <div>
+                        <div class="fw-bold">Handling Crisis</div>
+                        <div class="text-sub" style="font-size:0.8rem;">Support & Loyalty</div>
+                    </div>
+                </div>
+                <span style="color:var(--accent)">➤</span>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 3. GAMEPLAY (NO SCROLL) -->
+    <div id="screen-game" class="screen">
+        <!-- Top Bar (Fixed) -->
+        <div class="d-flex align-items-center justify-content-between w-100 py-3" style="flex-shrink: 0;">
+            <button class="btn-icon" onclick="showScreen('screen-episodes')">✕</button>
+            <div class="progress-track"><div class="progress-bar" id="progress-bar"></div></div>
+            <div class="fw-bold" id="counter">1/15</div>
+        </div>
+
+        <!-- Flexible Card Stage -->
+        <div class="game-stage">
+            <div id="game-card" class="main-card animate__animated">
+                <div class="card-content" id="card-content">
+                    <!-- Injected Content -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center py-3 text-sub" style="flex-shrink: 0;">Discuss & Choose Together</div>
+    </div>
+
+    <!-- 4. CONCLUSION (Result) -->
+    <div id="screen-conclusion" class="screen">
+        <div class="center-wrapper text-center">
+            <h2 style="color:var(--accent); letter-spacing: 2px;">THE CONCLUSION</h2>
+            <div class="ar-font fw-bold my-4" style="font-size:1.5rem; line-height: 1.6;" id="conclusion-text">
+                Loading...
+            </div>
+            <button class="btn-solid" onclick="showWhoJudges()">Proceed to Judgement</button>
+        </div>
+    </div>
+
+    <!-- 5. WHO JUDGES? -->
+    <div id="screen-who-judges" class="screen">
+        <div class="center-wrapper text-center">
+            <h2 class="mb-5">WHO DECIDES THE PACT?</h2>
+            
+            <div class="d-flex flex-column gap-3 w-100 align-items-center">
+                <button class="btn-solid" style="background:var(--panel-bg); border:2px solid var(--accent);" onclick="pickJudgements('MAN')">
+                    THE MAN
+                </button>
+                <div class="text-sub">OR</div>
+                <button class="btn-solid" style="background:var(--panel-bg); border:2px solid var(--accent);" onclick="pickJudgements('WOMAN')">
+                    THE WOMAN
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. PICK JUDGEMENT -->
+    <div id="screen-pick" class="screen">
+        <div class="text-center my-4" style="flex-shrink: 0;">
+            <h3 class="fw-bold" style="color:var(--accent)">CHOOSE A PROMISE</h3>
+            <p class="text-sub">The other person must commit to this.</p>
+        </div>
+
+        <!-- Scrollable List if needed (though 3 items usually fit) -->
+        <div id="judgement-list" class="scroll-container d-flex flex-column gap-3 pb-5">
+            <!-- 3 Random Options -->
+        </div>
+    </div>
+
+    <!-- 7. FINAL SCREEN -->
+    <div id="screen-final" class="screen">
+        <div class="center-wrapper text-center">
+            <div style="font-size:4rem; margin-bottom:20px;">📜</div>
+            <h2 class="fw-bold mb-4">THE PACT IS SEALED</h2>
+            <div class="ar-font fw-bold mb-5" style="font-size:1.3rem; color:var(--accent); line-height:1.6;" id="final-verdict-text">
+                ...
+            </div>
+            <button class="btn-solid" onclick="showScreen('screen-episodes')">New Topic</button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // --- DATA (EGYPTIAN ARABIC) ---
+        const db = {
+            work_man: [
+                { q: "الراجل رجع من الشغل 'مقفول' ومش عايز يتكلم. الست تعمل إيه؟", opts: [{t:"تسيبه في حاله لحد ما يفك", v:"space"}, {t:"تقعد جنبه وتسأله مالك بإلحاح", v:"support"}] },
+                { q: "المدير في الشغل ضغط عليه جداً ورجع متنرفز على أهل البيت.", opts: [{t:"الست تستحمل وتقدر ظرفه", v:"support"}, {t:"تاخد موقف إنه بيفصل بين الشغل والبيت", v:"balance"}] },
+                { q: "جاله شغل إضافي في الويك إند بفلوس كويسة، بس ده وقت البيت.", opts: [{t:"يوافق عشان يزود الدخل", v:"hustle"}, {t:"يرفض عشان راحته وراحة البيت", v:"balance"}] },
+                { q: "الراجل بيشتكي من الشغل كل يوم. الست تعمل إيه؟", opts: [{t:"تسمعه وتطبطب عليه (تفريغ)", v:"support"}, {t:"تديله حلول عملية ونصايح", v:"logic"}] },
+                { q: "عنده فرصة يفتح مشروع خاص بس مخاطرة كبيرة.", opts: [{t:"الست تشجعه وتغامر معاه", v:"hustle"}, {t:"تخاف على استقرار البيت وتمنعه", v:"balance"}] },
+                { q: "الراجل حاسس إنه مقصر مادياً ومضغوط نفسياً.", opts: [{t:"يخبي مشاعره ويشتغل أكتر", v:"hustle"}, {t:"يصارح الست ويطلب دعمها النفسي", v:"support"}] },
+                { q: "مكالمة شغل جت وإحنا في خروجة حلوة.", opts: [{t:"يرد عشان الشغل مبيستناش", v:"hustle"}, {t:"يكنسل عشان ده وقتنا الخاص", v:"balance"}] },
+                { q: "المرتب خلص قبل آخر الشهر بسبب التزامات.", opts: [{t:"يستلف من غير ما يقول للست", v:"space"}, {t:"يقعدوا سوا يعيدوا تقسيم المصاريف", v:"logic"}] },
+                { q: "الراجل عايز يسيب شغله الحالي عشان مش مرتاح، بس مفيش بديل لسه.", opts: [{t:"يستحمل لحد ما يلاقي بديل", v:"logic"}, {t:"يمشي فوراً عشان صحته النفسية", v:"space"}] },
+                { q: "زمايله في الشغل بيخرجوا كتير وهو عايز يوفر.", opts: [{t:"يخرج معاهم عشان العلاقات", v:"hustle"}, {t:"يعتذر عشان يوفر لبيته", v:"balance"}] },
+                { q: "الراجل نسي مناسبة مهمة بسبب ضغط الشغل.", opts: [{t:"الست تعذره وتفهمه بالراحة", v:"support"}, {t:"تزعل وتاخد موقف عشان يهتم", v:"space"}] },
+                { q: "بيفكر يشتغل شغلانة تانية (شيفت مسائي) بس هيرجع ينام بس.", opts: [{t:"يعمل كده عشان يحسن الدخل", v:"hustle"}, {t:"بلاش عشان صحته ووجوده في البيت", v:"balance"}] },
+                { q: "الراجل عايز يقعد ساعة لوحده أول ما يرجع من الشغل يفصل.", opts: [{t:"الست تديله مساحته تماماً", v:"space"}, {t:"تستقبله وتحكي معاه عشان يفك", v:"support"}] }
+            ],
+            personality: [
+                { q: "لما حد فينا يتعصب جداً وصوته يعلى، التاني يعمل إيه؟", opts: [{t:"يسكت خالص لحد ما العاصفة تمر", v:"calm"}, {t:"يحاول يهديه ويتناقش وقتها", v:"active"}] },
+                { q: "في الخروجات، بنحب نكون اجتماعيين ولا لوحدنا؟", opts: [{t:"اجتماعيين ومعانا ناس", v:"active"}, {t:"لوحدنا في هدوء", v:"calm"}] },
+                { q: "لو حصل سوء تفاهم بسيط، نتصالح إزاي؟", opts: [{t:"نعتذر بالكلام فوراً", v:"active"}, {t:"نعمل موقف حلو ينسينا الزعل", v:"calm"}] },
+                { q: "مين فينا بيوتر التاني أكتر في المواقف الصعبة؟", opts: [{t:"أنا (محتاج أهدى)", v:"active"}, {t:"أنت (محتاج تفك)", v:"calm"}] },
+                { q: "الغيرة.. هل هي دليل حب ولا قلة ثقة؟", opts: [{t:"دليل حب (بحدود)", v:"active"}, {t:"بتعمل مشاكل ملهاش لازمة", v:"calm"}] },
+                { q: "لو واحد فينا زعلان ومخنوق، يفضل إيه؟", opts: [{t:"يتساب لوحده شوية", v:"calm"}, {t:"التاني يفضل جنبه ويضغط عليه يحكي", v:"active"}] },
+                { q: "الصراحة المطلقة (حتى لو تجرح) ولا المجاملة (عشان نمشي الدنيا)؟", opts: [{t:"الصراحة مهما كانت", v:"active"}, {t:"المجاملة وتطييب الخاطر", v:"calm"}] },
+                { q: "مين فينا بيعرف يعبر عن مشاعره أحسن؟", opts: [{t:"الراجل", v:"calm"}, {t:"الست", v:"active"}] },
+                { q: "لما نكون في مشوار، بنحب نخطط ولا نمشي بالبركة؟", opts: [{t:"تخطيط ومواعيد", v:"calm"}, {t:"زي ما تيجي تيجي", v:"active"}] },
+                { q: "هل بنحب نشارك تفاصيل يومنا عالسوشيال ميديا؟", opts: [{t:"أه، ذكريات", v:"active"}, {t:"لأ، خصوصية", v:"calm"}] },
+                { q: "لو حد فينا انتقد لبس التاني، رد الفعل بيكون؟", opts: [{t:"يغيره فوراً عشان يرضيه", v:"calm"}, {t:"يتمسك برأيه وذوقه", v:"active"}] },
+                { q: "الهدايا.. قيمتها في سعرها ولا في معناها؟", opts: [{t:"قيمتها المادية (ذهب/فضة)", v:"calm"}, {t:"قيمتها المعنوية (ورد/جواب)", v:"active"}] },
+                { q: "بتحبوا الرسايل الطويلة ولا المكالمات؟", opts: [{t:"رسايل (عشان نقراها تاني)", v:"calm"}, {t:"مكالمات (عشان نسمع الصوت)", v:"active"}] }
+            ],
+            wedding: [
+                { q: "الفرح.. ليلة العمر ولا مصاريف عالفاضي؟", opts: [{t:"ليلة العمر (لازم نفرح)", v:"dream"}, {t:"نوفر فلوسه لحاجة أهم", v:"plan"}] },
+                { q: "شهر العسل.. في مصر ولا برة؟", opts: [{t:"برة (تجربة جديدة)", v:"dream"}, {t:"جوة (أوفر وأسهل)", v:"plan"}] },
+                { q: "قائمة العفش.. نمشي بالعرف ولا بالشرع؟", opts: [{t:"العرف (عشان الأهل)", v:"plan"}, {t:"الشرع (التيسير)", v:"dream"}] },
+                { q: "الشبكة.. دهب كتير للزينة ولا حاجات بسيطة وشيك؟", opts: [{t:"دهب كتير (أمان)", v:"plan"}, {t:"بسيطة (ذوق)", v:"dream"}] },
+                { q: "التصوير.. نجيب مصور محترف غالي ولا حد من الصحاب يصور؟", opts: [{t:"محترف (الصور بتعيش)", v:"dream"}, {t:"نوفر البند ده", v:"plan"}] },
+                { q: "البوفيه.. أكل كتير ومتنوع ولا حاجات بسيطة؟", opts: [{t:"كتير (عشان الناس متتكلمش)", v:"plan"}, {t:"بسيط (المهم الفرحة)", v:"dream"}] },
+                { q: "الفستان والبدلة.. إيجار ولا شراء؟", opts: [{t:"شراء (ذكرى)", v:"dream"}, {t:"إيجار (يوم وهيعدي)", v:"plan"}] },
+                { q: "عدد المعازيم.. كل المعارف ولا القريبين بس؟", opts: [{t:"فرح كبير ولمة", v:"dream"}, {t:"فرح هادي ومحندق", v:"plan"}] },
+                { q: "الدي جي.. أغاني شعبي ورقص ولا هادي وكلاسيك؟", opts: [{t:"شعبي وهيصة", v:"dream"}, {t:"هادي وشيك", v:"plan"}] },
+                { q: "زفة العربيات.. ضرورية ولا دوشة؟", opts: [{t:"ضرورية دي فرحة", v:"dream"}, {t:"دوشة وملهاش لزمة", v:"plan"}] }
+            ],
+            home: [
+                { q: "غسيل المواعين.. مهمة مين؟", opts: [{t:"الست (دي مملكتها)", v:"tradition"}, {t:"مشاركة (إيد على إيد)", v:"modern"}] },
+                { q: "مصروف البيت.. مع مين؟", opts: [{t:"مع الست (هي أدرى بالطلبات)", v:"tradition"}, {t:"مع الراجل (هو اللي بيدفع)", v:"modern"}] },
+                { q: "الأكل.. طبخ بيت كل يوم ولا دليفري في الويك إند؟", opts: [{t:"طبخ بيت (صحة وتوفير)", v:"tradition"}, {t:"دليفري ساعات (راحة)", v:"modern"}] },
+                { q: "زيارات الأهل.. كل أسبوع ولا حسب الظروف؟", opts: [{t:"يوم مقدس أسبوعياً", v:"tradition"}, {t:"حسب الفضاوة", v:"modern"}] },
+                { q: "الخلفة.. أول سنة ولا نأجل شوية؟", opts: [{t:"أول سنة (الرزق بيجي)", v:"tradition"}, {t:"نأجل (نستمتع ببعض)", v:"modern"}] },
+                { q: "التلفزيون.. ماتشات كورة ولا مسلسلات؟", opts: [{t:"ماتشات (حقه يفصل)", v:"tradition"}, {t:"نتفق على حاجة سوا", v:"modern"}] },
+                { q: "النظافة.. يوم واحد في الأسبوع ولا كل يوم حاجة؟", opts: [{t:"حملة نظافة يوم الجمعة", v:"tradition"}, {t:"أول بأول عشان منتعش", v:"modern"}] },
+                { q: "مفتاح البيت.. مين يبقى معاه نسخة زيادة؟", opts: [{t:"الأهل (للطوارئ)", v:"tradition"}, {t:"محدش (خصوصية)", v:"modern"}] },
+                { q: "لو واحد تعب، التاني يعمل إيه؟", opts: [{t:"ياخد أجازة ويقعد جنبه", v:"modern"}, {t:"يتصل بالأهل يجوا", v:"tradition"}] },
+                { q: "الخناقات.. صوت عالي ولا خصام؟", opts: [{t:"نخلص الموضوع في وقته", v:"modern"}, {t:"كل واحد يهدى في أوضة", v:"tradition"}] }
+            ],
+            crisis: [
+                { q: "لو حد فينا ساب شغله، نعمل إيه؟", opts: [{t:"نقلل مصاريفنا فوراً", v:"logic"}, {t:"التاني يشيل البيت لو يقدر", v:"emotion"}] },
+                { q: "لو حصل تدخل من الأهل في مشكلة بينا؟", opts: [{t:"نسمع كلامهم احتراماً", v:"emotion"}, {t:"نرفض التدخل بأدب", v:"logic"}] },
+                { q: "لو حسينا بملل وزهق في العلاقة؟", opts: [{t:"نسافر نغير جو", v:"emotion"}, {t:"نقعد نتكلم بصراحة", v:"logic"}] },
+                { q: "لو واحد غلط غلطة كبيرة؟", opts: [{t:"نسامح عشان الحب", v:"emotion"}, {t:"نتعاتب وناخد موقف", v:"logic"}] },
+                { q: "لو الفلوس قصرت في نص الشهر؟", opts: [{t:"نستلف من الأهل", v:"emotion"}, {t:"ناكل أي حاجة ونمشيها", v:"logic"}] },
+                { q: "لو حد فينا جاله اكتئاب؟", opts: [{t:"نروح لدكتور فوراً", v:"logic"}, {t:"نحتويه ونطبطب عليه", v:"emotion"}] }
+            ]
+        };
+
+        const conclusions = {
+            active: "أنتوا كابلز حيوي جداً، بتحبوا الحركة والكلام والمواجهة.",
+            calm: "أنتوا كابلز هادي وعاقل، بتحبوا الروقان وتكبروا دماغكم.",
+            dream: "أنتوا رومانسيين وخيالكم واسع، بتهتموا بالمشاعر والذكريات.",
+            plan: "أنتوا واقعيين وعمليين، بتهتموا بالأمان والاستقرار المادي.",
+            modern: "تفكيركم مرن وحديث، بتؤمنوا بالمشاركة والمساواة.",
+            tradition: "بتحترموا الأصول والعادات، وبتحبوا الاستقرار الأسري.",
+            emotion: "قلبكم هو اللي بيحرككم، العاطفة عندكم أهم من الحسابات.",
+            logic: "العقل هو اللي سايق، بتحبوا تحلوا المشاكل بمنطق.",
+            // Work Stress Specific
+            hustle: "الراجل شايل حمل كبير وعايز يثبت نفسه. محتاج تشجيع.",
+            balance: "أنتوا مقدرين قيمة 'البيت' و 'العيلة' فوق أي فلوس.",
+            support: "الست هي السند الحقيقي، والبيت ده قايم على الاحتواء.",
+            space: "بتحترموا الخصوصية والمساحة الشخصية. علاقة ناضجة."
+        };
+
+        // SAFE, CONSERVATIVE, BONDING TASKS (Promises/Vows)
+        const judgementBank = [
+            "وعد: قراءة سورة الملك سوياً بنية البركة.",
+            "وعد: عدم النوم ونحن متخاصمان أبداً.",
+            "وعد: كلمة 'شكراً' و 'تسلم إيدك' تكون أساسية كل يوم.",
+            "مهمة: كتابة رسالة ورقية فيها 3 صفات تحبها في الآخر.",
+            "وعد: الدعاء للشريك في كل صلاة لمدة أسبوع.",
+            "مهمة: الاتفاق على 'كلمة سر' نقولها لما نكون محتاجين حضن/دعم.",
+            "وعد: حفظ سر البيت وعدم خروجه لأي مخلوق.",
+            "مهمة: التصدق بمبلغ بسيط سوياً بنية التوفيق.",
+            "وعد: تخصيص ساعة أسبوعياً للكلام من القلب بدون موبايلات.",
+            "مهمة: كل طرف يكتب قائمة بالحاجات اللي بتزعله والتاني يقراها.",
+            "وعد: احترام الأهل وعدم ذكرهم بسوء أبداً.",
+            "مهمة: اختيار اسم دلع جديد لبعض.",
+            "وعد: المسامحة في أخطاء الماضي وفتح صفحة جديدة.",
+            "مهمة: التخطيط لأول عمرة سوياً بعد الزواج إن شاء الله.",
+            "وعد: الراجل يوعد إنه ميخرجش مشاكل الشغل في البيت.",
+            "وعد: الست توعد إنها تكون مصدر هدوء وسكن وقت الأزمات."
+        ];
+
+        // --- STATE ---
+        let state = { deck: [], idx: 0, scores: {} };
+
+        // --- FUNCTIONS ---
+        function showScreen(id) {
+            $('.screen').removeClass('active');
+            $(`#${id}`).addClass('active');
+        }
+
+        function startGame(mode) {
+            // Shuffle and pick 15 questions max to keep it dynamic but long enough
+            let pool = [...db[mode]];
+            // Duplicate array items if less than 15 to make longer play? 
+            // Or just shuffle. Since some categories have <15, we take all of them.
+            pool.sort(() => 0.5 - Math.random());
+            state.deck = pool; // Use all available questions
+            
+            state.idx = 0;
+            state.scores = {};
+            showScreen('screen-game');
+            renderCard();
+        }
+
+        function renderCard() {
+            if(state.idx >= state.deck.length) {
+                showConclusion();
+                return;
+            }
+            
+            const item = state.deck[state.idx];
+            const content = $('#card-content');
+            $('#game-card').removeClass('animate__zoomIn');
+            void document.getElementById('game-card').offsetWidth;
+            $('#game-card').addClass('animate__zoomIn');
+
+            $('#counter').text(`${state.idx + 1}/${state.deck.length}`);
+            $('#progress-bar').css('width', ((state.idx) / state.deck.length * 100) + '%');
+
+            content.html(`
+                <div class="ar-font fw-bold mb-4" style="font-size:1.3rem; line-height:1.6;">${item.q}</div>
+                <div class="d-flex flex-column gap-custom w-100">
+                    <div class="choice-btn ar-font" onclick="vote('${item.opts[0].v}')">${item.opts[0].t}</div>
+                    <div class="choice-btn ar-font" onclick="vote('${item.opts[1].v}')">${item.opts[1].t}</div>
+                </div>
+            `);
+        }
+
+        function vote(val) {
+            state.scores[val] = (state.scores[val] || 0) + 1;
+            state.idx++;
+            renderCard();
+        }
+
+        function showConclusion() {
+            // Find max score
+            const winner = Object.keys(state.scores).reduce((a, b) => state.scores[a] > state.scores[b] ? a : b);
+            $('#conclusion-text').text(conclusions[winner] || "أنتوا كابلز متوازن جداً.");
+            showScreen('screen-conclusion');
+        }
+
+        function showWhoJudges() {
+            showScreen('screen-who-judges');
+        }
+
+        function pickJudgements(who) {
+            // Shuffle and pick 3
+            const shuffled = judgementBank.sort(() => 0.5 - Math.random());
+            const selected = shuffled.slice(0, 3);
+            
+            const list = $('#judgement-list');
+            list.html('');
+            
+            selected.forEach(j => {
+                list.append(`<div class="judge-option ar-font fw-bold" onclick="finalize('${j}')">${j}</div>`);
+            });
+
+            showScreen('screen-pick');
+        }
+
+        function finalize(text) {
+            $('#final-verdict-text').text(text);
+            showScreen('screen-final');
+        }
+
+        // --- SNOW ANIMATION ---
+        const canvas = document.getElementById('snow-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        const particles = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        
+        function initSnow() {
+            resize();
+            for(let i=0; i<60; i++) {
+                particles.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height,
+                    r: Math.random() * 2 + 1,
+                    d: Math.random() * 1 + 0.5
+                });
+            }
+            loop();
+        }
+
+        function loop() {
+            ctx.clearRect(0,0,width,height);
+            ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+            ctx.beginPath();
+            for(let i=0; i<particles.length; i++) {
+                const p = particles[i];
+                ctx.moveTo(p.x, p.y);
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI*2, true);
+                p.y += p.d;
+                if(p.y > height) p.y = -5;
+            }
+            ctx.fill();
+            requestAnimationFrame(loop);
+        }
+
+        window.addEventListener('resize', resize);
+        initSnow();
+
+    </script>
+</body>
+</html>
