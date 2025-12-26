@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Pact: Eternal</title>
+    
+    <!-- Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Cinzel:wght@500;900&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #050505;
+            --text-color: #E0E0E0;
+            --accent: #A71D31; /* Deep Cinematic Red */
+            --choice-bg: rgba(255, 255, 255, 0.08);
+            --choice-hover: rgba(167, 29, 49, 0.3);
+            --overlay: rgba(0, 0, 0, 0.85);
+        }
+
+        /* --- GLOBAL --- */
+        html, body {
+            height: 100%; width: 100%; margin: 0; padding: 0;
+            overflow: hidden; 
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Montserrat', sans-serif;
+            user-select: none; -webkit-tap-highlight-color: transparent;
+        }
+
+        .ar-font { font-family: 'Cairo', sans-serif; direction: rtl; }
+        .cinematic-font { font-family: 'Cinzel', serif; letter-spacing: 2px; text-transform: uppercase; }
+
+        /* --- BACKGROUND ANIMATION --- */
+        #fx-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; pointer-events: none; overflow: hidden;
+        }
+
+        .floater {
+            position: absolute; opacity: 0; bottom: -50px;
+            animation: floatUp linear forwards;
+        }
+        .floater.heart { 
+            color: var(--accent); font-size: 1.5rem; 
+            text-shadow: 0 0 10px rgba(167, 29, 49, 0.5);
+        }
+        .floater.card {
+            width: 30px; height: 45px;
+            border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.05);
+            border-radius: 4px;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
+            15% { opacity: 0.6; }
+            85% { opacity: 0.6; }
+            100% { transform: translateY(-110vh) rotate(360deg) scale(1.2); opacity: 0; }
+        }
+
+        /* --- SCREENS (Full Height, No Letterbox) --- */
+        .screen { 
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            flex-direction: column; padding: 40px 20px; z-index: 10; box-sizing: border-box;
+            align-items: center;
+        }
+        /* Center content vertically by default */
+        .screen-center { justify-content: center; }
+        .screen.active { display: flex !important; animation: fadeIn 0.8s; }
+
+        /* --- UI ELEMENTS --- */
+        
+        .btn-cinematic {
+            background: transparent; color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 15px 40px; font-size: 1.2rem;
+            text-transform: uppercase; letter-spacing: 3px;
+            cursor: pointer; transition: 0.3s;
+            margin-top: 20px; position: relative; overflow: hidden;
+        }
+        .btn-cinematic:hover {
+            background: white; color: black; border-color: white;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+
+        /* --- SCROLLING CONTAINERS --- */
+        /* Used for Episodes and Vows to ensure they fit */
+        .scroll-wrapper {
+            width: 100%; max-width: 600px;
+            flex-grow: 1; /* Takes all available vertical space */
+            overflow-y: auto; /* Scrolls if content is too long */
+            margin: 20px 0;
+            padding-right: 5px; /* Space for scrollbar */
+            
+            /* Hide Scrollbar for cleaner look */
+            scrollbar-width: none; 
+            -ms-overflow-style: none;
+        }
+        .scroll-wrapper::-webkit-scrollbar { display: none; }
+        
+        /* Episode Cards */
+        .episode-card {
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 25px 0; margin-bottom: 10px;
+            cursor: pointer; text-align: center; transition: 0.3s;
+        }
+        .episode-card:hover { background: rgba(255,255,255,0.1); }
+        .episode-card:active { border-color: var(--accent); }
+
+        /* Story Interface */
+        .narrative-text {
+            font-size: 1.5rem; line-height: 1.6; text-align: center;
+            color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            margin-bottom: 40px; max-width: 700px;
+        }
+
+        .choice-container {
+            width: 100%; max-width: 600px;
+            display: flex; flex-direction: column; gap: 15px;
+        }
+
+        .choice-btn {
+            background: var(--choice-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #ddd; padding: 20px;
+            text-align: center; font-size: 1.1rem;
+            cursor: pointer; transition: 0.2s;
+            position: relative;
+        }
+        .choice-btn:active {
+            background: var(--choice-hover);
+            border-color: var(--accent);
+            color: white; transform: scale(0.98);
+        }
+
+        /* Notification Toast */
+        .toast-notification {
+            position: fixed; top: 20px; left: 20px;
+            font-family: 'Montserrat', sans-serif; font-size: 0.7rem;
+            color: #aaa; text-transform: uppercase; letter-spacing: 1px;
+            opacity: 0; pointer-events: none; transition: opacity 0.5s; z-index: 100;
+        }
+        .toast-notification.show { opacity: 1; }
+
+        /* Vow Cards */
+        .vow-card {
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 25px; margin-bottom: 15px;
+            background: rgba(0,0,0,0.3);
+            font-size: 1.2rem; cursor: pointer;
+            transition: 0.2s; border-radius: 8px;
+            text-align: center;
+        }
+        .vow-card:active { 
+            border-color: var(--accent); 
+            background: rgba(167, 29, 49, 0.2); 
+            transform: scale(0.98);
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- BACKGROUND FX -->
+    <div id="fx-container"></div>
+    
+    <!-- NOTIFICATION -->
+    <div id="toast" class="toast-notification">? The story remembers...</div>
+
+    <!-- 1. LANDING SCREEN -->
+    <div id="screen-landing" class="screen screen-center active">
+        <div style="opacity: 0.7; font-size: 0.9rem; letter-spacing: 4px; margin-bottom: 10px;">INTERACTIVE SERIES</div>
+        <h1 class="cinematic-font animate__animated animate__fadeIn" style="font-size: 3.5rem; margin-bottom: 10px;">THE PACT</h1>
+        <div class="ar-font" style="font-size: 1.2rem; color: #888; margin-bottom: 40px;">الــعــهــد : الأبــدي</div>
+        
+        <button class="btn-cinematic animate__animated animate__fadeInUp" onclick="showScreen('screen-episodes')">
+            Start Episode
+        </button>
+    </div>
+
+    <!-- 2. EPISODE SELECTOR -->
+    <div id="screen-episodes" class="screen">
+        <h2 class="cinematic-font mb-4" style="color: #888;">Select Scenario</h2>
+        
+        <div class="scroll-wrapper">
+            <!-- Ep 1 -->
+            <div class="episode-card" onclick="startEpisode('friday')">
+                <div class="cinematic-font fs-4 mb-1">Episode 1: The Morning</div>
+                <div class="ar-font text-white-50">خناقة يوم الجمعة: النوم ولا الخروج؟</div>
+            </div>
+            <!-- Ep 2 -->
+            <div class="episode-card" onclick="startEpisode('shopping')">
+                <div class="cinematic-font fs-4 mb-1">Episode 2: The Market</div>
+                <div class="ar-font text-white-50">صدمة الكاشير وميزانية البيت</div>
+            </div>
+            <!-- Ep 3 -->
+            <div class="episode-card" onclick="startEpisode('inlaws')">
+                <div class="cinematic-font fs-4 mb-1">Episode 3: The Guest</div>
+                <div class="ar-font text-white-50">مكالمة مفاجأة: حماتك على الباب</div>
+            </div>
+            <!-- Ep 4 -->
+            <div class="episode-card" onclick="startEpisode('anger')">
+                <div class="cinematic-font fs-4 mb-1">Episode 4: The Accident</div>
+                <div class="ar-font text-white-50">الطفل كسر الفازة: عصبية ولا احتواء؟</div>
+            </div>
+            <!-- Ep 5 -->
+            <div class="episode-card" onclick="startEpisode('jealousy')">
+                <div class="cinematic-font fs-4 mb-1">Episode 5: The Notification</div>
+                <div class="ar-font text-white-50">رسالة نص الليل والشك</div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 10px; cursor: pointer; color: #555; padding: 10px;" onclick="showScreen('screen-landing')">BACK</div>
+    </div>
+
+    <!-- 3. GAMEPLAY -->
+    <div id="screen-game" class="screen screen-center">
+        
+        <!-- Story Text -->
+        <div id="narrative-box" class="narrative-text ar-font animate__animated">
+            <!-- Text injected here -->
+        </div>
+
+        <!-- Choices -->
+        <div id="choices-box" class="choice-container">
+            <!-- Buttons injected here -->
+        </div>
+
+    </div>
+
+    <!-- 4. DIAGNOSIS -->
+    <div id="screen-diagnosis" class="screen screen-center">
+        <div style="font-size: 0.9rem; letter-spacing: 2px; color: #666; margin-bottom: 20px;">ARCHETYPE UNLOCKED</div>
+        
+        <div id="diag-icon" style="font-size: 4rem; margin-bottom: 20px; opacity: 0.8;"></div>
+        <h2 id="diag-title" class="cinematic-font animate__animated animate__fadeIn" style="font-size: 2rem; color: var(--accent); text-align: center;"></h2>
+        
+        <p id="diag-desc" class="ar-font fs-4 text-center" style="max-width: 600px; color: #ccc; margin-top: 20px;">
+            ...
+        </p>
+
+        <button class="btn-cinematic mt-5" onclick="showWhoJudges()">
+            Enter Judgement
+        </button>
+    </div>
+
+    <!-- 5. ROULETTE -->
+    <div id="screen-who-judges" class="screen screen-center">
+        <h2 class="cinematic-font mb-5" style="color: #888;">Fate Decides</h2>
+        
+        <div id="winner-name" class="fw-bold animate__animated" style="font-size: 3rem; color: white; letter-spacing: 5px; margin-bottom: 40px;">
+            ???
+        </div>
+
+        <button id="roulette-btn" class="btn-cinematic" onclick="spinRoulette()">
+            Spin
+        </button>
+    </div>
+
+    <!-- 6. PACT SELECTION -->
+    <div id="screen-pick" class="screen">
+        <h3 class="cinematic-font mb-2" style="color: var(--accent);">Seal The Pact</h3>
+        <p class="text-white-50 mb-4 text-center" style="font-size: 0.9rem;">Choose the vow your partner must keep.</p>
+
+        <!-- Scrollable Vow List -->
+        <div id="judgement-list" class="scroll-wrapper">
+            <!-- Vows injected here -->
+        </div>
+    </div>
+
+    <!-- 7. FINAL SCENE -->
+    <div id="screen-final" class="screen screen-center">
+        <div class="animate__animated animate__fadeIn" style="font-size: 5rem; margin-bottom: 20px; color: var(--accent);">📜</div>
+        <h1 class="cinematic-font mb-4">It Is Written</h1>
+        
+        <div id="final-verdict-text" class="ar-font fs-3 text-center p-4" style="border-top: 1px solid #333; border-bottom: 1px solid #333; color: #eee; max-width: 600px;">
+            ...
+        </div>
+
+        <button class="btn-cinematic mt-5" onclick="showScreen('screen-episodes')">Return</button>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // --- ANIMATION SYSTEM ---
+        function spawnParticle() {
+            const el = document.createElement('div');
+            const type = Math.random() > 0.6 ? 'card' : 'heart';
+            el.className = `floater ${type}`;
+            if(type === 'heart') el.innerHTML = '♥';
+            
+            el.style.left = Math.random() * 95 + '%';
+            const scale = Math.random() * 0.5 + 0.8;
+            el.style.transform = `scale(${scale})`;
+            el.style.animationDuration = (Math.random() * 4 + 6) + 's';
+            
+            document.getElementById('fx-container').appendChild(el);
+            setTimeout(() => el.remove(), 10000);
+        }
+
+        // Background Loop
+        setInterval(spawnParticle, 1200);
+
+        // --- CONTENT DATABASE ---
+        const episodes = {
+            friday: {
+                questions: [
+                    { t: "الساعة 11 الظهر. هو تعبان من الشغل، وهي زهقانة من قعدة البيت. القرار؟", 
+                      opts: [{txt:"نكمل نوم ونقضي اليوم في البيت (راحة)", type:"home"}, {txt:"نيجي على نفسنا ونخرج (أكشن)", type:"out"}] },
+                    { t: "لو قعدنا في البيت، المود هيكون إيه؟", 
+                      opts: [{txt:"كل واحد يمسك موبايله ويفصل", type:"separate"}, {txt:"نعمل فشار ونتفرج على فيلم سوا", type:"together"}] },
+                    { t: "لو نزلنا، وزحمة الطريق قفلتنا.. هنتصرف إزاي؟", 
+                      opts: [{txt:"نتنرفز ونقلب وشنا", type:"angry"}, {txt:"نشغل أغاني وناخد الموضوع بضحك", type:"fun"}] },
+                    { t: "آخر اليوم.. نتعشى إيه؟", 
+                      opts: [{txt:"دليفري.. صحتنا أهم من الفلوس", type:"easy"}, {txt:"خفافي في البيت.. نوفر القرشين", type:"saving"}] }
+                ],
+                results: {
+                    default: { title:"The Balanced Duo", icon:"⚖️", desc:"بتحاولوا تلاقوا حلول وسط، وده سر النجاح." },
+                    home_separate: { title:"Roommates", icon:"🏠", desc:"عايشين سوا بس كل واحد في عالمه الخاص." },
+                    out_fun: { title:"Adventure Squad", icon:"🎢", desc:"بتحبوا الحياة وطاقتكم حلوة مع بعض." }
+                }
+            },
+            shopping: {
+                questions: [
+                    { t: "الكاشير: 'الحساب عدى الميزانية بـ 1000 جنيه'. التصرف؟", 
+                      opts: [{txt:"نرجع الحاجات الزيادة (العقل)", type:"logic"}, {txt:"ندفع بالفيزا ونخربها (التهور)", type:"yolo"}] },
+                    { t: "مين المسؤول عن اختيار المشتريات؟", 
+                      opts: [{txt:"الست بس (هي أدرى)", type:"trust"}, {txt:"لازم نراجع كل حاجة سوا", type:"control"}] },
+                    { t: "لقينا عرض مغري على حاجة مش محتاجينها..", 
+                      opts: [{txt:"نشتريها فوراً، فرصة", type:"yolo"}, {txt:"لأ، مش في الليستة", type:"logic"}] },
+                    { t: "إدارة مصروف البيت..", 
+                      opts: [{txt:"كل واحد ذمته المالية مستقلة", type:"separate"}, {txt:"محفظة واحدة مشتركة", type:"shared"}] }
+                ],
+                results: {
+                    default: { title:"Financial Partners", icon:"💰", desc:"عندكم وعي مالي وبتحاولوا تظبطوا الدنيا." },
+                    logic_control: { title:"Strict Managers", icon:"📊", desc:"الحياة 1+1=2. أمان بس محتاج مرونة." },
+                    yolo: { title:"The Spenders", icon:"💸", desc:"بتشتروا راحتكم وسعادتكم بالفلوس." }
+                }
+            },
+            inlaws: {
+                questions: [
+                    { t: "مكالمة: 'ماما جاية تزوركم كمان نص ساعة'. البيت مكركب!", 
+                      opts: [{txt:"طوارئ! نجري نروق بسرعة", type:"stress"}, {txt:"أهلاً بيها، البيت بيتهم", type:"chill"}] },
+                    { t: "لو حد من الأهل رمى كلمة ضايقتكم..", 
+                      opts: [{txt:"نرد ونوضح الحدود فوراً", type:"defend"}, {txt:"نعديها ونغير الموضوع", type:"peace"}] },
+                    { t: "نظام الزيارات عندكم..", 
+                      opts: [{txt:"بمواعيد وترتيب مسبق", type:"rules"}, {txt:"الباب مفتوح أي وقت", type:"open"}] },
+                    { t: "بعد الزيارة..", 
+                      opts: [{txt:"تحليل شامل لكل كلمة اتقالت", type:"analyze"}, {txt:"نفصل وننام", type:"relax"}] }
+                ],
+                results: {
+                    default: { title:"Family Keepers", icon:"🛡️", desc:"بتحترموا الأهل بس بتحموا خصوصيتكم." },
+                    stress_defend: { title:"Defensive Team", icon:"⚔️", desc:"بتحسوا إنكم في حرب دفاعية دايماً." },
+                    chill_open: { title:"Open Hearts", icon:"❤️", desc:"بيتكم مفتوح وقلبكم كبير." }
+                }
+            },
+            anger: {
+                questions: [
+                    { t: "الطفل كسر الفازة الغالية وهو بيلعب.", 
+                      opts: [{txt:"زعيق وعقاب فوري!", type:"strict"}, {txt:"نسأله حصل إيه ونفهمه", type:"calm"}] },
+                    { t: "لو شريكك اتعصب جداً على الولد..", 
+                      opts: [{txt:"أتدخل وأدافع عنه فوراً", type:"protect"}, {txt:"أسكت عشان مكسرش كلمته", type:"support"}] },
+                    { t: "الزن على الحلويات قبل الأكل..", 
+                      opts: [{txt:"خد واسكت", type:"easy"}, {txt:"لأ يعني لأ", type:"firm"}] },
+                    { t: "بعد ما العيال يناموا..", 
+                      opts: [{txt:"إغماء من التعب", type:"tired"}, {txt:"نص ساعة روقان سوا", type:"couple"}] }
+                ],
+                results: {
+                    default: { title:"Wise Parents", icon:"🦉", desc:"التربية صعبة، بس انتوا بتحاولوا." },
+                    strict_firm: { title:"Commanders", icon:"👮", desc:"النظام هو أساس البيت عندكم." },
+                    calm_protect: { title:"Soft Hearts", icon:"🧸", desc:"الحنية غالبة عليكم." }
+                }
+            },
+            jealousy: {
+                questions: [
+                    { t: "رسالة واتساب جت لشريكك الساعة 12 بالليل.", 
+                      opts: [{txt:"مين ده؟ (شك)", type:"jealous"}, {txt:"تلاقيه شغل (ثقة)", type:"trust"}] },
+                    { t: "باسوورد الموبايل..", 
+                      opts: [{txt:"مع بعض إحنا الاتنين", type:"open"}, {txt:"كل واحد وخصوصيته", type:"private"}] },
+                    { t: "لو حد كتب كومنت حلو لشريكك..", 
+                      opts: [{txt:"مين دي/ده؟ (مشكلة)", type:"fire"}, {txt:"عادي، شريكي محبوب", type:"cool"}] },
+                    { t: "النبش في الماضي..", 
+                      opts: [{txt:"لازم نعرف كل تفصيلة", type:"dig"}, {txt:"اللي فات مات", type:"moveon"}] }
+                ],
+                results: {
+                    default: { title:"Secure Love", icon:"🔒", desc:"فيه ثقة متبادلة مريحة." },
+                    jealous_fire: { title:"Burning Passion", icon:"🔥", desc:"الحب عندكم نار وغيرة." },
+                    trust_cool: { title:"Cool Partners", icon:"❄️", desc:"واثقين في نفسكم وفي بعض." }
+                }
+            }
+        };
+
+        const pacts = [
+            "وعد: قراءة سورة الملك سوياً كل خميس.",
+            "وعد: عدم النوم ونحن متخاصمان أبداً.",
+            "وعد: كلمة 'شكراً' و 'تسلم إيدك' تكون أساسية.",
+            "مهمة: كتابة رسالة ورقية فيها 3 صفات تحبها في الآخر.",
+            "مهمة: الاتفاق على 'كلمة سر' لطلب الحضن.",
+            "وعد: حفظ سر البيت وعدم خروجه لأي مخلوق.",
+            "مهمة: التخطيط لأول عمرة سوياً إن شاء الله.",
+            "وعد: الراجل يوعد إنه ميخرجش مشاكل الشغل في البيت.",
+            "وعد: الست توعد إنها تكون مصدر هدوء وقت الأزمات.",
+            "مهمة: مسك الإيد لمدة دقيقة في صمت تام.",
+            "وعد: خروجة شهرية بدون أولاد.",
+            "مهمة: كل واحد يعمل مشروب للتاني دلوقتي."
+        ];
+
+        // --- GAME LOGIC ---
+        let currentEp = null;
+        let qIndex = 0;
+        let score = [];
+
+        function showScreen(id) {
+            $('.screen').removeClass('active');
+            $(`#${id}`).addClass('active');
+        }
+
+        function startEpisode(key) {
+            currentEp = episodes[key];
+            qIndex = 0;
+            score = [];
+            showScreen('screen-game');
+            renderNode();
+        }
+
+        function renderNode() {
+            if(qIndex >= currentEp.questions.length) {
+                showDiagnosis();
+                return;
+            }
+
+            const q = currentEp.questions[qIndex];
+            const txt = $('#narrative-box');
+            const choices = $('#choices-box');
+
+            txt.removeClass('animate__fadeIn');
+            void txt[0].offsetWidth;
+            txt.addClass('animate__fadeIn').text(q.t);
+
+            choices.html('');
+            q.opts.forEach(opt => {
+                const btn = $(`<div class="choice-btn ar-font">${opt.txt}</div>`);
+                btn.on('click', () => {
+                    score.push(opt.type);
+                    qIndex++;
+                    showToast();
+                    renderNode();
+                });
+                choices.append(btn);
+            });
+        }
+
+        function showToast() {
+            const t = $('#toast');
+            t.addClass('show');
+            setTimeout(() => t.removeClass('show'), 2000);
+        }
+
+        function showDiagnosis() {
+            let resultKey = "default";
+            const s = score.join("_");
+            
+            if(s.includes("separate") || s.includes("home")) resultKey = "home_separate";
+            if(s.includes("out") || s.includes("fun")) resultKey = "out_fun";
+            if(s.includes("logic") && s.includes("control")) resultKey = "logic_control";
+            if(s.includes("yolo")) resultKey = "yolo";
+            if(s.includes("stress")) resultKey = "stress_defend";
+            if(s.includes("chill")) resultKey = "chill_open";
+            if(s.includes("strict")) resultKey = "strict_firm";
+            if(s.includes("calm")) resultKey = "calm_protect";
+            if(s.includes("jealous") || s.includes("fire")) resultKey = "jealous_fire";
+            if(s.includes("trust") && s.includes("cool")) resultKey = "trust_cool";
+
+            const res = currentEp.results[resultKey] || currentEp.results["default"];
+
+            $('#diag-icon').text(res.icon);
+            $('#diag-title').text(res.title);
+            $('#diag-desc').text(res.desc);
+
+            showScreen('screen-diagnosis');
+        }
+
+        // --- ROULETTE ---
+        function showWhoJudges() {
+            $('#winner-name').text("???");
+            $('#roulette-btn').show();
+            showScreen('screen-who-judges');
+        }
+
+        function spinRoulette() {
+            $('#roulette-btn').hide();
+            const el = $('#winner-name');
+            let count = 0;
+            const interval = setInterval(() => {
+                el.text(Math.random() > 0.5 ? "THE MAN" : "THE WOMAN");
+                count++;
+                if(count > 20) {
+                    clearInterval(interval);
+                    const winner = Math.random() > 0.5 ? "THE MAN" : "THE WOMAN";
+                    el.text(winner);
+                    el.addClass('animate__pulse');
+                    setTimeout(pickJudgements, 2000);
+                }
+            }, 80);
+        }
+
+        function pickJudgements() {
+            const list = $('#judgement-list');
+            list.html('');
+            const opts = pacts.sort(() => 0.5 - Math.random()).slice(0, 3);
+            opts.forEach(p => {
+                const item = $(`<div class="vow-card ar-font fw-bold text-center">${p}</div>`);
+                item.on('click', () => sealPact(p));
+                list.append(item);
+            });
+            showScreen('screen-pick');
+        }
+
+        function sealPact(txt) {
+            $('#final-verdict-text').text(txt);
+            showScreen('screen-final');
+            for(let i=0; i<20; i++) setTimeout(spawnParticle, i*100);
+        }
+
+    </script>
+</body>
+</html>
