@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Isekai Guild Officer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
         :root { --ev-green: #58b05c; --ev-blue: #4a90e2; --ev-dark: #2c3e50; --ev-yellow: #f1c40f; --ev-orange: #e67e22; --ev-pink: #ff78b5; }
-        body { background: #f0f4f8; color: #2c3e50; font-family: 'Montserrat', sans-serif; overflow: hidden; user-select: none; -webkit-tap-highlight-color: transparent; transition: background 1s ease; }
+        /* 100dvh ensures it fits mobile screens perfectly including URL bars */
+        body { background: #f0f4f8; color: #2c3e50; font-family: 'Montserrat', sans-serif; overflow: hidden; user-select: none; -webkit-tap-highlight-color: transparent; transition: background 1s ease; height: 100dvh; }
         body.night-mode { background: #1a202c; color: #e2e8f0; }
         .game-font { font-family: 'Fredoka One', cursive; }
         
@@ -20,16 +21,13 @@
         /* Station Row */
         .station-row { background: white; border-radius: 15px; margin: 10px; padding: 15px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; transition: all 0.3s ease; border: 2px solid transparent; }
         
-        /* LOCKED STATE (Cannot Afford) */
         .station-row.locked { opacity: 0.6; filter: grayscale(1); background: #e2e8f0; }
         .night-mode .station-row.locked { background: #1a202c; opacity: 0.5; }
 
-        /* UNLOCKABLE STATE (Can Afford) - GREEN */
-        .station-row.unlockable { opacity: 1; filter: none; background: #f0fdf4; border-color: #4ade80; transform: scale(1.02); box-shadow: 0 4px 12px rgba(74, 222, 128, 0.2); }
+        .station-row.unlockable { opacity: 1; filter: none; background: #f0fdf4; border-color: #4ade80; transform: scale(1.02); }
         .night-mode .station-row.unlockable { background: #064e3b; border-color: #34d399; }
 
         .night-mode .station-row { background: #2d3748; color: white; }
-        
         .icon-circle { width: 65px; height: 65px; background: #eef2f7; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; flex-shrink: 0; }
         .night-mode .icon-circle { background: #4a5568; }
         
@@ -39,13 +37,23 @@
         .bar-text { position: absolute; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; z-index: 10; font-size: 10px; font-weight: bold; color: rgba(0,0,0,0.5); }
         .night-mode .bar-text { color: rgba(255,255,255,0.7); }
 
-        /* Boost Timer Floating Pill */
-        #boost-timer-ui { position: fixed; bottom: 95px; left: 0; right: 0; display: flex; justify-content: center; z-index: 60; pointer-events: none; transition: 0.3s; opacity: 0; transform: translateY(20px); }
+        /* Boost Timer - Raised Higher */
+        #boost-timer-ui { position: fixed; bottom: 130px; left: 0; right: 0; display: flex; justify-content: center; z-index: 60; pointer-events: none; transition: 0.3s; opacity: 0; transform: translateY(20px); }
         #boost-timer-ui.visible { opacity: 1; transform: translateY(0); }
         .timer-tab { background: #2c3e50; color: white; width: 180px; height: 32px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; gap: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         
-        /* Navigation */
-        nav { background: white; border-top: 1px solid #ddd; height: 90px; display: flex; justify-content: space-around; align-items: center; z-index: 50; padding-bottom: 5px; }
+        /* Navigation - Increased Height and Padding for Mobile Bars */
+        nav { 
+            background: white; 
+            border-top: 1px solid #ddd; 
+            height: 110px; /* Taller */
+            display: flex; 
+            justify-content: space-around; 
+            align-items: flex-start; /* Items start at top */
+            padding-top: 15px;
+            z-index: 50; 
+            padding-bottom: 40px; /* Space for Android/iOS bar */
+        }
         .night-mode nav { background: #2d3748; border-color: #4a5568; }
         .nav-btn { position: relative; font-size: 24px; filter: grayscale(1); opacity: 0.6; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 2px; width: 33%; }
         .nav-btn span { font-size: 10px; font-weight: bold; }
@@ -53,16 +61,12 @@
         .night-mode .nav-btn.active { color: var(--ev-green); }
         
         .nav-btn.boost-active { filter: grayscale(0) !important; opacity: 1 !important; color: var(--ev-green) !important; animation: pulse 2s infinite; }
-        
-        /* Button States */
         .btn-disabled { opacity: 0.5 !important; pointer-events: none !important; filter: grayscale(1); }
         .btn-pulse { animation: pulse 1.5s infinite; }
 
-        /* Floating Text */
         .float-text { position: absolute; font-weight: bold; font-size: 14px; pointer-events: none; animation: floatUp 1s forwards; color: var(--ev-yellow); text-shadow: 1px 1px 0 #000; z-index: 100; }
         @keyframes floatUp { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-30px); } }
 
-        /* Adventurer Walker */
         .adventurer { position: absolute; font-size: 40px; z-index: 900; animation: walkAcross 10s linear; cursor: pointer; filter: drop-shadow(0 4px 2px rgba(0,0,0,0.2)); transition: transform 0.1s; }
         .adventurer:active { transform: scale(0.9); }
         @keyframes walkAcross { from { left: -50px; } to { left: 110%; } }
@@ -70,22 +74,38 @@
         .avatar-container { font-size: 50px; line-height: 1; position: relative; display: inline-block; }
         .avatar-acc { position: absolute; top: -10px; right: -10px; font-size: 30px; animation: bounce 2s infinite; }
 
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-
         .tab-content { display: none; height: 100%; overflow-y: auto; padding-bottom: 150px; }
         .tab-content.active { display: flex; flex-direction: column; }
+
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
     </style>
 </head>
 <body class="h-screen flex flex-col">
 
-    <!-- CUSTOM ALERTS/MODALS -->
+    <!-- END GAME / RETIRE SCREEN -->
+    <div id="end-screen" class="fixed inset-0 z-[2000] hidden flex flex-col items-center justify-center p-6 bg-slate-900 text-white text-center">
+        <h1 class="game-font text-4xl mb-2 text-yellow-400">RETIRED</h1>
+        <p class="text-sm text-slate-400 mb-8 uppercase tracking-widest">You left the guild life.</p>
+        
+        <div class="bg-slate-800 p-6 rounded-2xl w-full max-w-sm mb-8 border border-slate-700 shadow-2xl">
+            <p class="text-xs text-slate-500 mb-1">YOU HAVE WASTED</p>
+            <h2 class="game-font text-3xl mb-6 text-white" id="end-time-display">00m 00s</h2>
+            <p class="text-xs text-slate-500 mb-1">OF YOUR LIFE CLICKING</p>
+            <h2 class="game-font text-3xl text-emerald-400" id="end-upgrades-display">0</h2>
+            <p class="text-xs text-slate-500 mt-1">UPGRADES</p>
+        </div>
+
+        <button onclick="location.reload()" class="bg-white text-slate-900 px-10 py-4 rounded-full game-font hover:scale-105 transition">START NEW LIFE</button>
+    </div>
+
+    <!-- CUSTOM ALERT -->
     <div id="custom-alert" class="fixed inset-0 z-[1000] hidden flex items-center justify-center p-6 bg-black/50 backdrop-blur-sm">
         <div class="bg-white rounded-3xl p-6 text-center shadow-2xl animate__animated animate__zoomIn max-w-sm w-full">
-            <div id="alert-icon" class="text-4xl mb-2">⚡</div>
-            <h2 id="alert-title" class="game-font text-xl text-slate-800 mb-2">BOOST ACTIVATED!</h2>
-            <p id="alert-msg" class="text-sm text-slate-500 mb-6">Production speed doubled for 5 minutes.</p>
-            <button onclick="closeAlert()" class="bg-emerald-500 text-white px-8 py-3 rounded-full font-bold shadow-lg active:scale-95 transition">AWESOME!</button>
+            <div class="text-4xl mb-2">⚡</div>
+            <h2 class="game-font text-xl text-slate-800 mb-2">BOOST ACTIVATED!</h2>
+            <p class="text-sm text-slate-500 mb-6">Speed x2 for 5 minutes.</p>
+            <button onclick="closeAlert()" class="bg-emerald-500 text-white px-8 py-3 rounded-full font-bold shadow-lg active:scale-95 transition">OK!</button>
         </div>
     </div>
 
@@ -113,19 +133,24 @@
         <h1 class="game-font text-4xl text-white mb-2 tracking-widest animate__animated animate__fadeInDown">ISEKAI GUILD</h1>
         <p class="text-[10px] tracking-[0.4em] text-cyan-400 mb-8 animate__animated animate__fadeIn">MASTER'S LEGACY</p>
         <button onclick="startGame()" class="bg-cyan-400 text-slate-900 px-10 py-3 rounded-full game-font animate__animated animate__pulse animate__infinite">START GAME</button>
+        <p class="text-[10px] text-slate-600 mt-4">Full Screen Recommended</p>
     </div>
 
-    <!-- TOP BAR 1 (FIXED WIDTHS) -->
-    <header class="bg-white px-2 py-2 shadow-sm z-40 grid grid-cols-2 gap-2 transition-colors duration-500" id="header-1">
+    <!-- HEADER (3 Columns for Full Screen Btn) -->
+    <header class="bg-white px-2 py-2 shadow-sm z-40 grid grid-cols-[1fr_auto_1fr] gap-2 items-center transition-colors duration-500" id="header-1">
         <div class="flex items-center justify-center gap-2 bg-emerald-50 px-2 py-1 rounded-full border border-emerald-100 overflow-hidden">
             <span class="text-sm">🏛️</span><span id="gold-display" class="game-font text-emerald-600 truncate">0</span>
         </div>
+        
+        <!-- Full Screen Toggle -->
+        <button onclick="toggleFullScreen()" class="text-slate-400 text-xl px-2 active:scale-90 transition">⛶</button>
+
         <div class="flex items-center justify-center gap-2 bg-pink-50 px-2 py-1 rounded-full border border-pink-100 overflow-hidden">
             <span class="text-sm">🏠</span><span id="p-gold-display" class="game-font text-pink-600 truncate">0</span>
         </div>
     </header>
 
-    <!-- TOP BAR 2 -->
+    <!-- INFO BAR -->
     <div class="bg-slate-100 h-8 flex justify-between items-center px-4 shadow-inner z-30 border-b border-slate-200 transition-colors duration-500" id="header-2">
         <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Day <span id="day-display">1</span> <span id="loc-display" class="ml-2 text-indigo-400">Village</span></div>
         <div class="text-[10px] font-bold text-slate-500 font-mono bg-white px-2 py-0.5 rounded shadow-sm border border-slate-200">
@@ -142,6 +167,7 @@
         <!-- BOND TAB -->
         <section id="tab-bond" class="tab-content p-4">
             <div class="space-y-4 animate__animated animate__fadeIn">
+                <!-- Avatar & Status -->
                 <div class="bg-white p-6 rounded-3xl shadow-lg border-2 border-pink-50 text-center relative overflow-hidden">
                     <div id="date-night-banner" class="hidden absolute top-0 left-0 w-full bg-pink-500 text-white text-[10px] font-bold py-1 uppercase tracking-widest">Weekend Date Night!</div>
                     <div class="mb-4"><div class="avatar-container"><span id="partner-base">👤</span><span id="partner-acc" class="avatar-acc"></span></div></div>
@@ -150,20 +176,36 @@
                     <button onclick="startNextDay()" class="w-full py-4 bg-indigo-500 text-white rounded-2xl game-font shadow-lg active:scale-95 transition">SLEEP (START DAY)</button>
                 </div>
 
+                <!-- Statistics -->
+                <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100">
+                    <p class="game-font text-[10px] text-slate-400 mb-3 uppercase">Career Stats</p>
+                    <div class="flex justify-between items-center text-xs text-slate-600 mb-1">
+                        <span>Time Wasted:</span><span id="stat-time" class="font-mono font-bold">0m</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs text-slate-600">
+                        <span>Total Upgrades:</span><span id="stat-upgrades" class="font-mono font-bold">0</span>
+                    </div>
+                </div>
+
                 <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100">
                     <p class="game-font text-[10px] text-slate-400 mb-3 uppercase">Story Log</p>
                     <div id="episode-list" class="space-y-2 text-sm text-slate-600"></div>
                 </div>
 
                 <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100">
-                    <p class="game-font text-[10px] text-slate-400 mb-3 uppercase">Partner Gifts</p>
+                    <p class="game-font text-[10px] text-slate-400 mb-3 uppercase">Partner Gifts (Global Income+)</p>
                     <div id="partner-shop" class="space-y-2"></div>
                 </div>
 
                 <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100">
-                    <p class="game-font text-[10px] text-slate-400 mb-3 uppercase">Home Furniture</p>
+                    <p class="game-font text-[10px] text-slate-400 mb-3 uppercase">Home Furniture (Commission+)</p>
                     <div id="home-shop" class="space-y-2"></div>
                 </div>
+
+                <!-- RETIRE BUTTON -->
+                <button onclick="retireGame()" class="w-full py-4 border-2 border-red-100 bg-red-50 text-red-400 rounded-2xl font-bold text-xs hover:bg-red-100 transition mt-4 mb-20">
+                    RETIRE FROM GUILD (END GAME)
+                </button>
             </div>
         </section>
 
@@ -181,9 +223,9 @@
                 </div>
             </div>
             
-            <div id="stations-container"></div>
+            <div id="stations-container" class="pb-20"></div>
 
-            <div id="relocate-btn-container" class="hidden p-4 pb-8">
+            <div id="relocate-btn-container" class="hidden p-4 pb-24">
                 <button onclick="showPrestigeModal()" class="w-full bg-gradient-to-r from-yellow-400 to-orange-400 text-white py-3 rounded-xl font-bold shadow-lg animate-pulse">👑 PRESTIGE: RELOCATE GUILD</button>
             </div>
         </section>
@@ -191,7 +233,7 @@
         <!-- SHOP TAB -->
         <section id="tab-shop" class="tab-content p-4">
             <h2 class="game-font text-xl mb-4 text-slate-700">Infrastructure</h2>
-            <div id="shop-list" class="space-y-3 pb-20"></div>
+            <div id="shop-list" class="space-y-3 pb-24"></div>
         </section>
     </main>
 
@@ -221,8 +263,8 @@
     <script>
         // --- CONFIG & STATE ---
         let gold = 50, pGold = 0;
-        let globalMult = 1.0, boostX2 = 1.0;
-        let boostSeconds = 0;
+        let globalMult = 1.0, commissionMult = 0.1; // 10% base
+        let boostX2 = 1.0, boostSeconds = 0;
         let day = 1;
         let prestigeLevel = 0;
         const locations = ["Village", "Town", "Capital", "Kingdom"];
@@ -231,6 +273,10 @@
         let currentShiftTime = SHIFT_DURATION;
         let isShiftActive = true;
         let shiftEarnings = 0;
+
+        // Statistics
+        let totalTimePlayed = 0; 
+        let totalUpgradesPurchased = 0;
 
         // Quests
         let dailyQuest = null;
@@ -247,38 +293,32 @@
         };
 
         const infrastructure = [
-            // Tier 1
             { id: 0, name: "Rubber Stamp", desc: "Clerk Speed x2", cost: 200, type: "clerk", bought: false },
             { id: 1, name: "Notice Board", desc: "Quests Income x2", cost: 1000, type: "quest", bought: false },
             { id: 2, name: "Glass Vials", desc: "Alchemist Speed x2", cost: 4000, type: "alch", bought: false },
             { id: 3, name: "Beer Mugs", desc: "Tavern Income x2", cost: 20000, type: "tavern", bought: false },
             { id: 4, name: "Auto Hammer", desc: "Smith Speed x2", cost: 60000, type: "smith", bought: false },
-            
-            // Tier 2 (Mid Game)
             { id: 5, name: "Comfy Chair", desc: "Clerk Income x2", cost: 5000, type: "clerk", bought: false },
             { id: 6, name: "Red Markers", desc: "Quests Speed x2", cost: 15000, type: "quest", bought: false },
             { id: 7, name: "Bunsen Burner", desc: "Alchemist Income x2", cost: 50000, type: "alch", bought: false },
             { id: 8, name: "Jukebox", desc: "Tavern Speed x2", cost: 150000, type: "tavern", bought: false },
             { id: 9, name: "Lava Forge", desc: "Smith Income x2", cost: 500000, type: "smith", bought: false },
-            
-            // Tier 3 (End Game)
             { id: 10, name: "Coffee Machine", desc: "Clerk Speed x5", cost: 100000, type: "clerk", bought: false },
             { id: 11, name: "Dragon Blood", desc: "Alchemist Speed x5", cost: 1000000, type: "alch", bought: false },
-            { id: 12, name: "Mana Crystal", desc: "Mage Income x2", cost: 200000, type: "magic", bought: false },
-            { id: 13, name: "Spellbook", desc: "Mage Speed x2", cost: 1000000, type: "magic", bought: false },
-            { id: 14, name: "Time Staff", desc: "Mage Speed x5", cost: 5000000, type: "magic", bought: false }
+            { id: 12, name: "Mana Crystal", desc: "Mage Income x2", cost: 200000, type: "magic", bought: false }
         ];
 
+        // SCALING HOME ITEMS
         const partnerGifts = [
-            { name: "Flowers", cost: 100, bought: false, desc: "Smells nice", icon: "💐" },
-            { name: "Chocolate", cost: 500, bought: false, desc: "Tasty treat", icon: "🍫" },
-            { name: "Ring", cost: 5000, bought: false, desc: "Shiny!", icon: "💍" }
+            { id: 0, name: "Flowers", baseCost: 100, lvl: 0, desc: "Global Income +5%", icon: "💐" },
+            { id: 1, name: "Chocolate", baseCost: 500, lvl: 0, desc: "Global Income +10%", icon: "🍫" },
+            { id: 2, name: "Ring", baseCost: 5000, lvl: 0, desc: "Global Income +25%", icon: "💍" }
         ];
 
         const homeFurniture = [
-            { name: "New Rug", cost: 200, bought: false },
-            { name: "Soft Bed", cost: 1000, bought: false },
-            { name: "Painting", cost: 3000, bought: false }
+            { id: 0, name: "New Rug", baseCost: 200, lvl: 0, desc: "Commission +1%" },
+            { id: 1, name: "Soft Bed", baseCost: 1000, lvl: 0, desc: "Commission +2%" },
+            { id: 2, name: "Painting", baseCost: 3000, lvl: 0, desc: "Commission +5%" }
         ];
 
         const episodes = [
@@ -290,6 +330,11 @@
         // --- CORE FUNCTIONS ---
         function startGame() { 
             document.getElementById('splash').style.display='none'; 
+            // Try fullscreen
+            if(document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(e => console.log(e));
+            }
+            
             initStationDOM(); 
             initShopDOM(); 
             generateQuest();
@@ -297,21 +342,32 @@
             startLoops();
         }
 
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(e => console.log(e));
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen();
+            }
+        }
+
         function startLoops() {
             // High Speed Game Loop
-            setInterval(() => {
+            window.gameIntervals = [];
+            window.gameIntervals.push(setInterval(() => {
                 if(isShiftActive) {
                     for(let id in stations) { 
                         if(stations[id].unlocked && stations[id].lvl > 0) tick(id); 
                     }
                     document.getElementById('gold-display').innerText = formatNum(gold);
                 }
-            }, 20);
+            }, 20));
 
             // 1 Second Loop
-            setInterval(() => {
+            window.gameIntervals.push(setInterval(() => {
+                totalTimePlayed++;
+                updateStatsUI();
                 checkButtons();
-                updateStationVisuals(); // Check for affordability unlocks
+                updateStationVisuals(); 
                 updateShopVisuals(); 
                 
                 if(boostSeconds > 0) {
@@ -330,7 +386,7 @@
                     if(Math.random() < 0.2) spawnAdventurer();
                     if(currentShiftTime <= 0) autoGoHome();
                 }
-            }, 1000);
+            }, 1000));
         }
 
         // --- DOM RENDERER (GUILD) ---
@@ -342,7 +398,6 @@
                 let row = document.createElement('div');
                 row.className = "station-row";
                 row.id = `row-${id}`;
-                // NOTE: removed display:none to ensure we can see locked items
                 
                 row.innerHTML = `
                     <div class="icon-circle">${s.icon}</div>
@@ -372,18 +427,17 @@
                 
                 // Visual Logic for Locked vs Unlocked
                 if (!s.unlocked) {
-                    // Logic: Locked
-                    // If affordable: Green glow. If not: Gray/Locked.
+                    // Locked
                     if (gold >= s.cost) {
                         row.className = "station-row unlockable"; // Green
                         document.getElementById(`income-${id}`).innerText = "UNLOCK!";
-                        document.getElementById(`btn-lvl-${id}`).classList.add('btn-pulse'); // Pulse button
                         document.getElementById(`btn-lvl-${id}`).innerText = "BUY";
+                        document.getElementById(`btn-lvl-${id}`).classList.add('btn-pulse');
                     } else {
                         row.className = "station-row locked"; // Gray
                         document.getElementById(`income-${id}`).innerText = "LOCKED";
-                        document.getElementById(`btn-lvl-${id}`).classList.remove('btn-pulse');
                         document.getElementById(`btn-lvl-${id}`).innerText = formatNum(s.cost) + "g";
+                        document.getElementById(`btn-lvl-${id}`).classList.remove('btn-pulse');
                     }
                 } else {
                     // Unlocked
@@ -418,7 +472,7 @@
                 let div = document.createElement('div');
                 div.id = `shop-item-${upg.id}`;
                 div.className = "bg-white p-4 rounded-2xl flex justify-between items-center border border-slate-100 shadow-sm animate__animated animate__fadeIn";
-                div.style.display = "none"; // Hidden by default
+                div.style.display = "none"; 
                 
                 div.innerHTML = `
                     <div><p class="font-bold text-sm text-slate-700">${upg.name}</p><p class="text-[10px] text-slate-400">${upg.desc}</p></div>
@@ -427,7 +481,6 @@
                 container.appendChild(div);
             });
             
-            // Empty State Msg
             let msg = document.createElement('div');
             msg.id = "shop-empty-msg";
             msg.className = 'text-center text-slate-400 text-xs mt-10';
@@ -443,7 +496,6 @@
                     el.style.display = 'none';
                     return;
                 }
-                // Only show if station unlocked
                 if (stations[upg.type].unlocked) {
                     el.style.display = 'flex';
                     anyShown = true;
@@ -502,17 +554,13 @@
             document.getElementById('quest-reward-text').innerText = `Reward: ${dailyQuest.reward} 🏠`;
             
             if(dailyQuest.current >= dailyQuest.target) {
-                completeQuest();
+                pGold += dailyQuest.reward;
+                document.getElementById('p-gold-display').innerText = formatNum(pGold);
+                spawnFloatText(document.getElementById('quest-banner'), `+${dailyQuest.reward} pGold`, true);
+                
+                questCompletedCount++;
+                generateQuest();
             }
-        }
-
-        function completeQuest() {
-            pGold += dailyQuest.reward;
-            document.getElementById('p-gold-display').innerText = formatNum(pGold);
-            spawnFloatText(document.getElementById('quest-banner'), `+${dailyQuest.reward} pGold`, true);
-            
-            questCompletedCount++;
-            generateQuest();
         }
 
         // --- ADVENTURERS ---
@@ -557,8 +605,9 @@
                 s.income = Math.floor(s.income * 1.2); 
                 s.cost = Math.floor(s.cost * 1.5); 
                 
+                totalUpgradesPurchased++;
                 updateStationVisuals();
-                updateShopVisuals(); // Check if new upgrades unlocked
+                updateShopVisuals(); 
                 checkButtons();
                 
                 if(dailyQuest.type === 'lvl') {
@@ -576,6 +625,7 @@
             let upg = infrastructure.find(u => u.id === id);
             if(gold >= upg.cost) { 
                 gold -= upg.cost; upg.bought = true; 
+                totalUpgradesPurchased++;
                 let s = stations[upg.type];
                 if(upg.desc.includes("Speed")) s.speed *= 2; else s.income *= 2;
                 updateShopVisuals(); 
@@ -584,25 +634,65 @@
         }
 
         function buyPartner(i) {
-            if(pGold >= partnerGifts[i].cost) {
-                pGold -= partnerGifts[i].cost;
-                partnerGifts[i].bought = true;
+            let gift = partnerGifts[i];
+            let cost = Math.floor(gift.baseCost * Math.pow(1.5, gift.lvl));
+            
+            if(pGold >= cost) {
+                pGold -= cost;
+                gift.lvl++;
+                totalUpgradesPurchased++;
+                
+                // Benefit: Increase Global Multiplier
+                globalMult += (i === 2 ? 0.25 : (i === 1 ? 0.1 : 0.05));
+
                 document.getElementById('p-gold-display').innerText = formatNum(pGold);
-                document.getElementById('partner-acc').innerText = partnerGifts[i].icon;
+                document.getElementById('partner-acc').innerText = gift.icon;
                 renderBondItems();
             }
         }
 
         function buyFurniture(i) {
-            if(pGold >= homeFurniture[i].cost) {
-                pGold -= homeFurniture[i].cost;
-                homeFurniture[i].bought = true;
+            let furn = homeFurniture[i];
+            let cost = Math.floor(furn.baseCost * Math.pow(1.5, furn.lvl));
+            
+            if(pGold >= cost) {
+                pGold -= cost;
+                furn.lvl++;
+                totalUpgradesPurchased++;
+                
+                // Benefit: Increase Commission Rate
+                commissionMult += (i === 2 ? 0.05 : (i === 1 ? 0.02 : 0.01));
+
                 document.getElementById('p-gold-display').innerText = formatNum(pGold);
                 renderBondItems();
             }
         }
 
-        // --- PRESTIGE ---
+        function renderBondItems() {
+            let pCont = document.getElementById('partner-shop');
+            pCont.innerHTML = "";
+            partnerGifts.forEach((g, i) => {
+                let cost = Math.floor(g.baseCost * Math.pow(1.5, g.lvl));
+                pCont.innerHTML += `
+                    <div class="flex justify-between items-center bg-pink-50 p-3 rounded-xl mb-2">
+                        <div><span class="text-xs font-bold text-pink-600">${g.name}</span><span class="block text-[8px] text-slate-400">${g.desc}</span></div>
+                        <button onclick="buyPartner(${i})" id="btn-pgold-p${i}" data-cost="${cost}" class="bg-pink-400 text-white px-3 py-1 rounded-lg text-[10px] shadow border-b-2 border-pink-600">${formatNum(cost)}g</button>
+                    </div>`;
+            });
+
+            let fCont = document.getElementById('home-shop');
+            fCont.innerHTML = "";
+            homeFurniture.forEach((f, i) => {
+                let cost = Math.floor(f.baseCost * Math.pow(1.5, f.lvl));
+                fCont.innerHTML += `
+                    <div class="flex justify-between items-center bg-blue-50 p-3 rounded-xl mb-2">
+                        <span class="text-xs font-bold text-blue-600">${f.name}</span>
+                        <button onclick="buyFurniture(${i})" id="btn-pgold-f${i}" data-cost="${cost}" class="bg-blue-400 text-white px-3 py-1 rounded-lg text-[10px] shadow border-b-2 border-blue-600">${formatNum(cost)}g</button>
+                    </div>`;
+            });
+        }
+
+        // --- PRESTIGE & RETIRE ---
         function showPrestigeModal() {
             document.getElementById('current-loc').innerText = locations[prestigeLevel];
             document.getElementById('next-loc').innerText = locations[prestigeLevel+1] || "Kingdom";
@@ -625,6 +715,22 @@
             initStationDOM();
         }
 
+        function retireGame() {
+            // Stop Loops
+            if(window.gameIntervals) {
+                window.gameIntervals.forEach(clearInterval);
+            }
+            
+            // Calc stats
+            let m = Math.floor(totalTimePlayed / 60);
+            let s = totalTimePlayed % 60;
+            
+            document.getElementById('end-time-display').innerText = `${m}m ${s}s`;
+            document.getElementById('end-upgrades-display').innerText = totalUpgradesPurchased;
+            
+            document.getElementById('end-screen').classList.remove('hidden');
+        }
+
         // --- TRANSITIONS ---
         function autoGoHome() {
             isShiftActive = false;
@@ -633,7 +739,7 @@
             document.getElementById('header-1').classList.add('bg-slate-800', 'text-white');
             document.getElementById('header-2').classList.add('bg-slate-900', 'border-slate-700');
 
-            let commission = Math.floor(shiftEarnings * 0.1);
+            let commission = Math.floor(shiftEarnings * commissionMult);
             pGold += commission;
             document.getElementById('earnings-display').innerText = `+${formatNum(commission)}g`;
             document.getElementById('p-gold-display').innerText = formatNum(pGold);
@@ -665,6 +771,12 @@
         }
 
         // --- UTILS ---
+        function updateStatsUI() {
+            let m = Math.floor(totalTimePlayed / 60);
+            document.getElementById('stat-time').innerText = `${m}m`;
+            document.getElementById('stat-upgrades').innerText = totalUpgradesPurchased;
+        }
+
         function formatNum(n) {
             if(n >= 1000000) return (n/1000000).toFixed(1) + 'M';
             if(n >= 1000) return (n/1000).toFixed(1) + 'k';
@@ -674,9 +786,6 @@
         function checkButtons() {
             document.querySelectorAll('[id^="btn-lvl-"]').forEach(btn => {
                 let cost = parseInt(btn.getAttribute('data-cost'));
-                // Note: We do NOT disable the button if it's locked but affordable 
-                // because we want the green "Unlock" state to be clickable.
-                // We only disable if unaffordable.
                 let isMax = btn.innerText === "MAX";
                 if(gold < cost && !isMax) btn.classList.add('btn-disabled'); else btn.classList.remove('btn-disabled');
             });
@@ -699,32 +808,6 @@
             boostSeconds = 300; boostX2 = 2.0;
             document.getElementById('btn-boost').classList.add('boost-active');
             document.getElementById('boost-timer-ui').classList.add('visible');
-        }
-
-        function renderBondItems() {
-            let pCont = document.getElementById('partner-shop');
-            pCont.innerHTML = "";
-            partnerGifts.forEach((g, i) => {
-                if(g.bought) return;
-                pCont.innerHTML += `
-                    <div class="flex justify-between items-center bg-pink-50 p-3 rounded-xl mb-2">
-                        <div><span class="text-xs font-bold text-pink-600">${g.name}</span><span class="block text-[8px] text-slate-400">${g.desc}</span></div>
-                        <button onclick="buyPartner(${i})" id="btn-pgold-p${i}" data-cost="${g.cost}" class="bg-pink-400 text-white px-3 py-1 rounded-lg text-[10px] shadow border-b-2 border-pink-600">${formatNum(g.cost)}g</button>
-                    </div>`;
-            });
-            if(pCont.innerHTML === "") pCont.innerHTML = "<div class='text-[10px] text-center text-slate-400'>All gifts bought!</div>";
-
-            let fCont = document.getElementById('home-shop');
-            fCont.innerHTML = "";
-            homeFurniture.forEach((f, i) => {
-                if(f.bought) return;
-                fCont.innerHTML += `
-                    <div class="flex justify-between items-center bg-blue-50 p-3 rounded-xl mb-2">
-                        <span class="text-xs font-bold text-blue-600">${f.name}</span>
-                        <button onclick="buyFurniture(${i})" id="btn-pgold-f${i}" data-cost="${f.cost}" class="bg-blue-400 text-white px-3 py-1 rounded-lg text-[10px] shadow border-b-2 border-blue-600">${formatNum(f.cost)}g</button>
-                    </div>`;
-            });
-            if(fCont.innerHTML === "") fCont.innerHTML = "<div class='text-[10px] text-center text-slate-400'>Home fully furnished!</div>";
         }
 
         function renderEpisodes() {
