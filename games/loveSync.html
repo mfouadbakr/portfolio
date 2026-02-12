@@ -106,7 +106,6 @@
             transform: scaleX(1);
         }
     </style>
-<link rel="stylesheet" href="/index.css">
 </head>
 <body class="selection:bg-red-600 selection:text-white">
 
@@ -621,6 +620,18 @@
             render();
         }
 
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
         function updateState(updates) {
             Object.assign(state, updates);
             render();
@@ -655,7 +666,7 @@
                   </p>
 
                   <div class="w-full max-w-xs z-20">
-                    <button onclick="clickSound(); setScreen('SETUP');" class="bg-[#b91c1c] text-white hover:bg-[#991b1b] border-b-4 border-[#7f1d1d] hover:border-[#601515] relative font-ui font-bold text-sm tracking-[0.15em] uppercase py-4 px-6 rounded-md transition-all duration-200 transform active:scale-95 flex items-center justify-center gap-3 shadow-xl w-full">
+                    <button onclick="clickSound(); toggleFullScreen(); setScreen('SETUP');" class="bg-[#b91c1c] text-white hover:bg-[#991b1b] border-b-4 border-[#7f1d1d] hover:border-[#601515] relative font-ui font-bold text-sm tracking-[0.15em] uppercase py-4 px-6 rounded-md transition-all duration-200 transform active:scale-95 flex items-center justify-center gap-3 shadow-xl w-full">
                       Begin Journey
                     </button>
                   </div>
@@ -840,13 +851,19 @@
             return `
               <div class="relative z-10 flex flex-col h-screen max-w-md mx-auto w-full overflow-hidden">
                 <!-- Top Bar -->
-                <div class="pt-10 px-6 flex justify-between items-end mb-8">
+                <div class="pt-10 px-6 flex justify-between items-center mb-8">
                    <span class="font-ui text-[10px] text-zinc-500 tracking-widest uppercase">
                       Scene ${state.currentSceneIndex + 1} <span class="text-zinc-700 mx-2">/</span> ${episode.scenes.length}
                    </span>
-                   <div class="flex gap-1">
-                    ${progressBars}
-                  </div>
+                   
+                   <div class="flex items-center gap-3">
+                       <div class="flex gap-1">
+                        ${progressBars}
+                       </div>
+                       <button onclick="toggleFullScreen()" class="text-zinc-500 hover:text-[#ef4444] transition-colors p-1">
+                         <i data-lucide="maximize" class="w-4 h-4"></i>
+                       </button>
+                   </div>
                 </div>
 
                 <!-- Scene Title -->
@@ -1228,6 +1245,5 @@
         });
 
     </script>
-<script type="module" src="/index.tsx"></script>
 </body>
 </html>
