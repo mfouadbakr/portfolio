@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LoveSync - Cinematic</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- Cinematic Global Styles --- */
+        :root {
+            --crimson-primary: #dc2626;
+            --crimson-dark: #7f1d1d;
+            --bg-deep: #050505;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: #f1f5f9;
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Film Grain Texture */
+        .bg-noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Fonts */
+        .font-cinematic { font-family: 'Playfair Display', serif; }
+        .font-arabic { font-family: 'Cairo', sans-serif; }
+        .font-ui { font-family: 'Montserrat', sans-serif; }
+
+        /* Animations */
+        @keyframes slide-up-fade {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-up-fade {
+            animation: slide-up-fade 0.8s cubic-bezier(0.2, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes pulse-soft {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .animate-pulse-soft {
+            animation: pulse-soft 3s infinite ease-in-out;
+        }
+
+        @keyframes float-slow {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float { animation: float-slow 6s ease-in-out infinite; }
+        
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.3; filter: blur(80px); }
+            50% { opacity: 0.5; filter: blur(90px); }
+        }
+        .animate-pulse-glow { animation: pulse-glow 4s ease-in-out infinite; }
+
+        /* UI Elements */
+        .glass-panel {
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 1);
+        }
+
+        .text-glow {
+            text-shadow: 0 0 15px rgba(220, 38, 38, 0.5);
+        }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Input Animation */
+        .input-group:focus-within .input-line {
+            transform: scaleX(1);
+        }
+        
+        /* Utility for input line animation */
+        .group:focus-within .group-focus-within\:scale-x-100 {
+            transform: scaleX(1);
+        }
+    </style>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="selection:bg-red-600 selection:text-white">
+
+    <!-- Background Elements -->
+    <canvas id="heartCanvas" class="fixed inset-0 pointer-events-none z-0 mix-blend-plus-lighter opacity-60"></canvas>
+    <div class="bg-noise z-0"></div>
+    <div class="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,#000000_100%)] z-10 opacity-80"></div>
+    
+    <!-- Letterbox Bars -->
+    <div class="fixed top-0 left-0 right-0 h-0 md:h-10 bg-black z-50 transition-all duration-1000 border-b border-white/5"></div>
+    <div class="fixed bottom-0 left-0 right-0 h-0 md:h-10 bg-black z-50 transition-all duration-1000 border-t border-white/5"></div>
+
+    <!-- Main App Container -->
+    <div id="app" class="relative w-full h-full min-h-screen overflow-hidden">
+        <!-- Content injected by JS -->
+    </div>
+
+    <script>
+        // --- DATA ---
+        const EPISODES = [
+          {
+            id: 0,
+            title: "1. Beginnings & Traits",
+            subtitle: "On personalities, habits, and first impressions.",
+            icon: "🌙",
+            color: "from-indigo-900 to-slate-900",
+            scenes: [
+              {
+                name: "طبعي ولا طبعك؟",
+                dialogue: [
+                  { speaker: "Narrator", text: "كل واحد فينا عنده طبع معين بيرتاح فيه، خصوصاً في أول الجواز." },
+                  { speaker: "p1", text: "أنا بحس إني بحب الهدوء وأقعد في البيت أكتر." },
+                  { speaker: "p2", text: "بس أنا بحب الحركة والناس والخروج!" },
+                ],
+                question: "لو جالنا يوم أجازة مفاجئ، إيه أكتر حاجة تبسطنا نعملها؟",
+                choices: [
+                  "نقضيه في البيت، أكل ونوم وروقان.",
+                  "نخرج نتمشى أو نتعشى في مكان جديد.",
+                  "نعزم صحابنا أو قرايبنا ونعمل لمه.",
+                  "نركب العربية ونسافر أي حته قريبة."
+                ],
+                outcomes: [
+                  { title: "عشاق الهدوء", description: "أنتو الاتنين بتقدروا الراحة والخصوصية. بيتكوا هو مملكتكم.", matchBonus: 100 },
+                  { title: "محبي الحياة", description: "بتحبوا الاستكشاف والتغيير، الملل ملوش مكان بينكم.", matchBonus: 90 },
+                  { title: "اجتماعيين جداً", description: "اللمة والناس هما مصدر طاقتكم، بيتكم هيبقى مفتوح دايماً.", matchBonus: 85 },
+                  { title: "مغامرين", description: "عندكم روح انطلاق، ومستعدين لأي حاجة مجنونة سوا.", matchBonus: 95 }
+                ],
+                discussionTopic: "إيه أكتر طبع فيا بتخاف إنه يضايقك بعد الجواز؟ وإزاي نتعامل معاه؟"
+              },
+              {
+                name: "وقت الزعل",
+                dialogue: [
+                  { speaker: "Narrator", text: "الخلافات بتحصل في أحسن البيوت، المهم إزاي بنتعامل وقتها." },
+                  { speaker: "p2", text: "أنا لما بتعصب مش بعرف اتكلم." },
+                  { speaker: "p1", text: "وأنا بكون عايز أحل المشكلة دلوقتي حالاً!" },
+                ],
+                question: "لما نشد مع بعض جامد، إيه الحل الأنسب لينا؟",
+                choices: [
+                  "نسيب بعض ساعة نهدى وبعدين نتكلم.",
+                  "نتعاتب في ساعتها ومننامش زعلانين.",
+                  "واحد فينا يتنازل عشان المركب تمشي.",
+                  "نكتب لبعض رسايل لو الكلام صعب."
+                ],
+                outcomes: [
+                  { title: "العقلاء", description: "بتدي لبعض مساحة، وده دليل نضج كبير.", matchBonus: 95 },
+                  { title: "القلب الطيب", description: "مش بتطيقوا الزعل، ودي حاجة جميلة بس محتاجة صبر.", matchBonus: 90 },
+                  { title: "المضحين", description: "التنازل جميل، بس لازم يكون متبادل عشان محدش يجي على نفسه.", matchBonus: 80 },
+                  { title: "الرومانسيين", description: "التعبير بالكتابة بيخليكم تطلعوا اللي جواكم بصدق.", matchBonus: 85 }
+                ],
+                discussionTopic: "هل في مرة زعلنا من بعض وحليناها غلط؟ إيه الطريقة اللي تريحك لما تكون مضايق؟"
+              }
+            ]
+          },
+          {
+            id: 1,
+            title: "2. Future Home",
+            subtitle: "Daily life, chores, and household responsibilities.",
+            icon: "🏠",
+            color: "from-blue-900 to-slate-900",
+            scenes: [
+              {
+                name: "شغل البيت",
+                dialogue: [
+                  { speaker: "Narrator", text: "البيت عشان يفضل نضيف ومريح محتاج مجهود من الطرفين." },
+                  { speaker: "p1", text: "أنا بعرف أطبخ حلو أوي على فكرة." },
+                  { speaker: "p2", text: "وأنا مبحبش غسيل المواعين خالص!" },
+                ],
+                question: "هنقسم شغل البيت إزاي؟",
+                choices: [
+                  "كل حاجة بالنص بالظبط، عدل.",
+                  "اللي يطبخ، التاني يغسل المواعين وينضف.",
+                  "كل واحد يعمل اللي بيحبه، والباقي نتعاون فيه.",
+                  "نجيب حد يساعدنا ونشتري دماغنا."
+                ],
+                outcomes: [
+                  { title: "فريق متساوي", description: "العدل أساس علاقتكم، مفيش حد شايل أكتر من التاني.", matchBonus: 90 },
+                  { title: "فريق متكامل", description: "بتكملوا بعض، ودي أحلى حاجة في المشاركة.", matchBonus: 100 },
+                  { title: "المريحين", description: "بتاخدوا الأمور ببساطة ومش بتعقدوا الدنيا.", matchBonus: 85 },
+                  { title: "العمليين", description: "بتقدروا وقتكم وراحتكم، وده تفكير عملي.", matchBonus: 80 }
+                ],
+                discussionTopic: "إيه أكتر شغلانة في البيت بتكرها ومستحيل تعملها؟"
+              },
+              {
+                name: "الميزانية والمصاريف",
+                dialogue: [
+                  { speaker: "Narrator", text: "الفلوس جزء مهم من إدارة البيت، ولازم نتفق عليه من دلوقتي." },
+                  { speaker: "p1", text: "نحوش ولا نصرف ونتبسط؟" },
+                ],
+                question: "لو معانا مبلغ زيادة آخر الشهر، نعمل بيه إيه؟",
+                choices: [
+                  "نشيله للزمن (تحويش).",
+                  "نجيب حاجة ناقصة في البيت (تجهيز).",
+                  "نخرج خروجة حلوة أو نسافر (رفاهية).",
+                  "نتصدق بجزء ونشيل الباقي (بركة)."
+                ],
+                outcomes: [
+                  { title: "الحريصين", description: "الأمان المادي مهم ليكم جداً.", matchBonus: 90 },
+                  { title: "بناة العش", description: "البيت هو استثماركم الأول.", matchBonus: 85 },
+                  { title: "عشاق اللحظة", description: "بتحبوا تعيشوا اليوم بيومه وتستمتعوا.", matchBonus: 80 },
+                  { title: "أهل الكرم", description: "البركة هي أساس حياتكم، وتفكيركم متوازن.", matchBonus: 100 }
+                ],
+                discussionTopic: "إزاي هندير مرتباتنا؟ هل هنعمل ذمة مالية مشتركة ولا كل واحد مستقل؟"
+              }
+            ]
+          },
+          {
+            id: 2,
+            title: "3. Family & In-Laws",
+            subtitle: "Boundaries, visits, and family relationships.",
+            icon: "👨‍👩‍👧‍👦",
+            color: "from-emerald-900 to-slate-900",
+            scenes: [
+              {
+                name: "زيارة حماتي",
+                dialogue: [
+                  { speaker: "Narrator", text: "العلاقة مع الأهل بتأثر جداً على استقرار البيت." },
+                  { speaker: "p2", text: "أمي بتحب تشوفنا كتير." },
+                  { speaker: "p1", text: "واحنا كمان محتاجين وقت لبيتنا." },
+                ],
+                question: "شايفين المعدل المناسب لزيارة الأهل إيه؟",
+                choices: [
+                  "يوم الجمعة ده مقدس للعيلة كلها.",
+                  "مرة في نص الأسبوع ومرة في الأجازة.",
+                  "حسب الظروف والفضى، من غير مواعيد ثابتة.",
+                  "لازم نخصص يوم لينا لوحدنا، ويوم للأهل."
+                ],
+                outcomes: [
+                  { title: "الواصلين", description: "صلة الرحم عندكم أساسية، ربنا يبارك لكم.", matchBonus: 90 },
+                  { title: "الاجتماعيين", description: "بتحبوا الود ومش عايزين حد يزعل.", matchBonus: 85 },
+                  { title: "المودرن", description: "مش بتحبوا الروتين، وده بيخلي الزيارات أخف.", matchBonus: 80 },
+                  { title: "المتوازنين", description: "بتحافظوا على خصوصيتكم وبرضه بترضوا أهلكم.", matchBonus: 100 }
+                ],
+                discussionTopic: "لو حصل تدخل من الأهل في مشكلة بينا، هنتصرف إزاي؟"
+              },
+              {
+                name: "أسرار البيت",
+                dialogue: [
+                  { speaker: "Narrator", text: "اللي بيحصل في البيت المفروض يفضل في البيت." },
+                ],
+                question: "لو حصلت مشكلة كبيرة بينا، مين أول واحد ممكن تحكيله؟",
+                choices: [
+                  "أمي / أبويا طبعاً.",
+                  "أقرب صاحب ليا.",
+                  "محدش خالص، دي أسرارنا.",
+                  "حد حكيم من العيلة نثق فيه."
+                ],
+                outcomes: [
+                  { title: "ابن أمه/أبوه", description: "الثقة في الأهل كبيرة، بس خدوا بالكم من الخصوصية.", matchBonus: 70 },
+                  { title: "الأصدقاء", description: "الصحاب سند، بس مش في كل حاجة.", matchBonus: 75 },
+                  { title: "الكتومين", description: "وده الصح! مشاكلكم حلها بينكم أنتو الاتنين.", matchBonus: 100 },
+                  { title: "العقلاء", description: "اللجوء لحكم وقت الأزمات الكبيرة تصرف شرعي وسليم.", matchBonus: 90 }
+                ],
+                discussionTopic: "نتفق دلوقتي: إيه الخط الأحمر اللي ممنوع يطلع بره باب شقتنا؟"
+              }
+            ]
+          },
+          {
+            id: 3,
+            title: "4. Faith & Spirituality",
+            subtitle: "Relationship with God and household worship.",
+            icon: "🕌",
+            color: "from-amber-900 to-slate-900",
+            scenes: [
+              {
+                name: "الصلاة والقرآن",
+                dialogue: [
+                  { speaker: "Narrator", text: "البيت اللي فيه طاعة فيه بركة وسكينة." },
+                  { speaker: "p1", text: "نفسي نشجع بعض على الصلاة." },
+                ],
+                question: "إيه أكتر حاجة تحب نعملها سوا عشان نقرب من ربنا؟",
+                choices: [
+                  "نصلي ركعتين قيام سوا كل ليلة.",
+                  "نحفظ قرآن مع بعض ونسمع لبعض.",
+                  "نعمل ورد استغفار يومي سوا.",
+                  "نسمع درس ديني ونتناقش فيه."
+                ],
+                outcomes: [
+                  { title: "القوامين", description: "نور الصلاة هيملى بيتكم سكينة.", matchBonus: 100 },
+                  { title: "أهل القرآن", description: "خيركم من تعلم القرآن وعلمه، أجمل هدف.", matchBonus: 100 },
+                  { title: "الذاكرين", description: "ذكر الله بيحفظ البيت والقلوب.", matchBonus: 95 },
+                  { title: "المتدبرين", description: "الفهم والعلم هيقوي إيمانكم جداً.", matchBonus: 90 }
+                ],
+                discussionTopic: "إزاي نصحي بعض لصلاة الفجر من غير ما نكسل أو نتضايق؟"
+              },
+              {
+                name: "رمضان والعيد",
+                dialogue: [
+                  { speaker: "Narrator", text: "المواسم الدينية ليها طعم تاني وانتوا مع بعض." },
+                ],
+                question: "رمضان في بيتنا هيكون شكله إيه؟",
+                choices: [
+                  "عزومات ولمة عيلة كل يوم.",
+                  "عبادة واعتكاف وهدوء.",
+                  "ميكس بين العبادة والخروجات والسحور.",
+                  "نعمل خير ونوزع وجبات سوا."
+                ],
+                outcomes: [
+                  { title: "أهل الكرم", description: "بيتكم مفتوح وعامر بالخير.", matchBonus: 90 },
+                  { title: "المتبتلين", description: "بتركزوا في الروحانيات وده بيشحنكم لباقي السنة.", matchBonus: 95 },
+                  { title: "الوسطيين", description: "بتعرفوا تستمتعوا بكل جوانب الشهر الكريم.", matchBonus: 100 },
+                  { title: "الخيرين", description: "مساعدتكم للناس هتكون سبب سعادتكم.", matchBonus: 100 }
+                ],
+                discussionTopic: "ناويين نعمل إيه صدقة جارية باسمنا إحنا الاتنين؟"
+              }
+            ]
+          },
+          {
+            id: 4,
+            title: "5. Raising Children",
+            subtitle: "Future family, names, and parenting styles.",
+            icon: "👶",
+            color: "from-pink-900 to-slate-900",
+            scenes: [
+              {
+                name: "الأسماء والعدد",
+                dialogue: [
+                  { speaker: "Narrator", text: "لما ربنا يكرمنا بأطفال، هنختلف ولا هنتفق؟" },
+                  { speaker: "p2", text: "أنا بحب الأسامي القديمة." },
+                  { speaker: "p1", text: "أنا بحب الأسامي الجديدة والمطرقعة." },
+                ],
+                question: "تحبوا تخلفوا كام طفل مبدئياً؟",
+                choices: [
+                  "طفل واحد كفاية عشان نركز معاه.",
+                  "اتنين (بنت وولد) حلو أوي.",
+                  "تلاتة أو أكتر، العزوة حلوة.",
+                  "نسيبها على الله منخططش دلوقتي."
+                ],
+                outcomes: [
+                  { title: "المركزين", description: "عايزين تطلعوا جودة تربية عالية.", matchBonus: 85 },
+                  { title: "التقليديين", description: "الأسرة النموذجية في خيالكم.", matchBonus: 95 },
+                  { title: "عشاق العزوة", description: "بتحبوا الدوشة والحياة والبيت المليان.", matchBonus: 90 },
+                  { title: "المتوكلين", description: "الرضا بقضاء الله أجمل حاجة.", matchBonus: 100 }
+                ],
+                discussionTopic: "لو بنتنا أو ابننا غلط غلطة كبيرة، مين فينا اللي هيعاقب ومين اللي هيصالح؟ (الشرطي الطيب والشرير)"
+              },
+              {
+                name: "أسلوب التربية",
+                dialogue: [
+                  { speaker: "Narrator", text: "الزمن صعب والتربية محتاجة حكمة." },
+                ],
+                question: "إيه أهم قيمة لازم نزرعها في أولادنا؟",
+                choices: [
+                  "التدين والأخلاق.",
+                  "التفوق والنجاح الدراسي.",
+                  "قوة الشخصية والاعتماد على النفس.",
+                  "الحنية وصلة الرحم."
+                ],
+                outcomes: [
+                  { title: "المربين", description: "الدين هو الأساس اللي هيحميهم.", matchBonus: 100 },
+                  { title: "الطموحين", description: "عايزينهم قادة وناجحين في دنياهم.", matchBonus: 85 },
+                  { title: "الأقوياء", description: "عايزينهم يواجهوا الحياة بقلب جامد.", matchBonus: 95 },
+                  { title: "الحنينين", description: "القلب الأبيض كنز في الزمن ده.", matchBonus: 90 }
+        ],
+        discussionTopic: "هل توافقوا على ضرب الأطفال كوسيلة عقاب؟ وليه؟"
+      }
+    ]
+  },
+  {
+    id: 5,
+    title: "6. Love Languages",
+    subtitle: "Expressing feelings and affection.",
+    icon: "❤️",
+    color: "from-red-900 to-slate-900",
+    scenes: [
+      {
+        name: "التعبير عن الحب",
+        dialogue: [
+          { speaker: "Narrator", text: "كل واحد فينا بيستقبل الحب بطريقة مختلفة." },
+          { speaker: "p1", text: "أنا بحب الكلام الحلو." },
+          { speaker: "p2", text: "أنا بحب الأفعال أكتر." },
+        ],
+        question: "إيه أكتر حاجة تحسسك إن الطرف التاني بيحبك بجد؟",
+        choices: [
+          "لما يقولي كلام حلو ويمدحني.",
+          "لما يجيبلي هدية مفاجأة.",
+          "لما يساعدني في حاجة تقيلة عليا.",
+          "لما يقضي وقت خاص معايا من غير موبايل."
+        ],
+        outcomes: [
+          { title: "أهل الكلام", description: "الكلمة الطيبة صدقة، وبتفرق معاكم جداً.", matchBonus: 90 },
+          { title: "أهل الهدايا", description: "التقدير المادي معناه إنك فاكره/اها.", matchBonus: 85 },
+          { title: "أهل الأفعال", description: "المواقف هي اللي بتثبت الحب عندكم.", matchBonus: 100 },
+          { title: "أهل الوقت", description: "وجودكم سوا هو أغلى ما تملكون.", matchBonus: 95 }
+        ],
+        discussionTopic: "إيه أكتر تصرف أنا بعمله بيحسسك إني مهتم بيك؟"
+      },
+      {
+        name: "الرومانسية الواقعية",
+        dialogue: [
+          { speaker: "Narrator", text: "بعد الجواز الرومانسية شكلها بيتغير." },
+        ],
+        question: "الرومانسية بالنسبالك بعد 10 سنين جواز هتبقى إيه؟",
+        choices: [
+          "خروجة عشاء شيك في ذكرى جوازنا.",
+          "كوباية شاي سوا في البلكونة بعد ما العيال تنام.",
+          "سفرية لوحدنا نجدد فيها شهر العسل.",
+          "رسالة حب على التلاجة الصبح."
+        ],
+        outcomes: [
+          { title: "الكلاسيكيين", description: "بتحبوا تحافظوا على الطقوس والمناسبات.", matchBonus: 85 },
+          { title: "البسطاء", description: "السعادة في التفاصيل الصغيرة والهدوء.", matchBonus: 100 },
+          { title: "المتجددين", description: "التغيير مهم عشان الحب يفضل مولع.", matchBonus: 95 },
+          { title: "اللطفاء", description: "المفاجآت الصغيرة بتخلي اليوم أحلى.", matchBonus: 90 }
+        ],
+        discussionTopic: "توعدني بإيه عشان منبقاش زوجين تقليديين ومملين؟"
+      }
+    ]
+  },
+  {
+    id: 6,
+    title: "7. Ambition & Career",
+    subtitle: "Work, growth, and balancing life.",
+    icon: "💼",
+    color: "from-slate-800 to-black",
+    scenes: [
+      {
+        name: "السفر للخارج",
+        dialogue: [
+          { speaker: "Narrator", text: "لو جات فرصة شغل لواحد فيكم بره مصر بمبلغ كبير." },
+        ],
+        question: "رد فعلك هيكون إيه؟",
+        choices: [
+          "نسافر فوراً، دي فرصة العمر.",
+          "أنا أسافر الأول أكون نفسي وبعدين أبعتلكم.",
+          "نرفض، الغربة صعبة واللمة بالدنيا.",
+          "نصلي استخارة ونشوف الأهل رأيهم إيه."
+        ],
+        outcomes: [
+          { title: "الطموحين", description: "المستقبل المادي أولوية ليكم.", matchBonus: 90 },
+          { title: "المضحين", description: "واحد بيشيل عشان التاني يرتاح، بس البعد صعب.", matchBonus: 80 },
+          { title: "القنوعين", description: "الاستقرار النفسي أهم من الفلوس عندكم.", matchBonus: 95 },
+          { title: "المتزنين", description: "التوكل والمشورى هما طريقكم للقرار الصح.", matchBonus: 100 }
+        ],
+        discussionTopic: "لو شغلي أثر على وقتي في البيت، هتستحملني ولا هتطلب مني أغيره؟"
+      },
+      {
+        name: "تطوير الذات",
+        dialogue: [
+          { speaker: "Narrator", text: "الواحد مينفعش يقف مكانه، لازم يتطور." },
+        ],
+        question: "لو شريكك قرر يكمل دراسة وده هياخد من وقت البيت والفلوس؟",
+        choices: [
+          "أشجعه جداً وأشيل عنه مسؤوليات.",
+          "أوافق بس بشرط ميأثرش على أساسيات البيت.",
+          "أرفض، البيت والأولاد أولى بالوقت والفلوس.",
+          "أشاركه وأدرس أنا كمان حاجة."
+        ],
+        outcomes: [
+          { title: "الداعمين", description: "نجاح شريكك هو نجاحك، علاقة صحية جداً.", matchBonus: 100 },
+          { title: "الواقعيين", description: "الحق حق، التوازن مطلوب.", matchBonus: 90 },
+          { title: "التقليديين", description: "الأسرة أولاً، وده رأي يحترم.", matchBonus: 80 },
+          { title: "المتنافسين", description: "بتعلوا ببعض وبتشجعوا بعض، ثنائي ناجح.", matchBonus: 95 }
+        ],
+        discussionTopic: "إيه الحلم اللي نفسك تحققه وأنا أقدر أساعدك فيه؟"
+      }
+    ]
+  },
+  {
+    id: 7,
+    title: "8. Jealousy & Boundaries",
+    subtitle: "Trust, social media, and limits.",
+    icon: "🔒",
+    color: "from-zinc-900 to-black",
+    scenes: [
+      {
+        name: "الغيرة",
+        dialogue: [
+          { speaker: "Narrator", text: "الغيرة ملح الحب، بس لو زادت بتقلب نكد." },
+          { speaker: "p1", text: "أنا بغير عليك/ي جداً." },
+        ],
+        question: "لو حد علق تعليق سخيف أو عاكس واحنا ماشيين، التصرف الصح إيه؟",
+        choices: [
+          "نتجاهل تماماً ونكمل طريقنا.",
+          "نرد عليه ونوقفه عند حده.",
+          "نمشي بسرعة من المكان عشان المشاكل.",
+          "نبص لبعض ونضحك وخلاص."
+        ],
+        outcomes: [
+          { title: "العقلاء", description: "التجاهل صدقة على الحمقى، وبتحموا نفسكم.", matchBonus: 100 },
+          { title: "الحمشيين", description: "الكرامة خط أحمر، بس خلوا بالكم من العواقب.", matchBonus: 85 },
+          { title: "المسالمين", description: "السلامة غنيمة، بتبعدوا عن الشر.", matchBonus: 90 },
+          { title: "الواثقين", description: "واثقين في بعض فكلام الناس ميهزكوش.", matchBonus: 95 }
+        ],
+        discussionTopic: "إيه التصرف اللي ممكن أعمله بعفوية بس بيثير غيرتك جداً؟"
+      },
+      {
+        name: "السوشيال ميديا",
+        dialogue: [
+          { speaker: "Narrator", text: "الفيس بوك والانستجرام بقوا جزء من حياتنا." },
+        ],
+        question: "إيه سياستنا في الـ Add والـ Like للجنس الآخر؟",
+        choices: [
+          "عادي، دي مجرد مجاملات اجتماعية.",
+          "للزملاء والقرايب بس، وبحدود.",
+          "ممنوع تماماً، الباب اللي يجيلك منه الريح.",
+          "نعرف باسووردات بعض وكل حاجة على المكشوف."
+        ],
+        outcomes: [
+          { title: "المنفتحين", description: "شايفين إن الثقة أكبر من لايك وكومنت.", matchBonus: 80 },
+          { title: "المحترمين", description: "بتحطوا حدود شرعية واجتماعية سليمة.", matchBonus: 95 },
+          { title: "الحاسمين", description: "بتقطعوا الشك باليقين، راحة بال.", matchBonus: 90 },
+          { title: "كتاب مفتوح", description: "الشفافية حلوة، بس الثقة أهم من المراقبة.", matchBonus: 85 }
+        ],
+        discussionTopic: "هل تقبل إني أمسك موبايلك وأقلب فيه براحتي؟"
+      }
+    ]
+  },
+  {
+    id: 8,
+    title: "9. Free Time",
+    subtitle: "Hobbies, vacations, and personal space.",
+    icon: "🎨",
+    color: "from-amber-900 to-black",
+    scenes: [
+      {
+        name: "الهوايات الشخصية",
+        dialogue: [
+          { speaker: "Narrator", text: "الجواز مش معناه إننا نلزق في بعض 24 ساعة." },
+        ],
+        question: "لو أنا عايز ألعب بلايستيشن / أنزل شوبنج وانتي/انت مش عايز، هتعمل إيه؟",
+        choices: [
+          "هشاركك حتى لو مش عاجبني عشان نبقى سوا.",
+          "هسيبك براحتك وأشوف أنا حاجة تانية أعملها.",
+          "هتضايق وأحس إنك بتهملني.",
+          "نتفق على وقت محدد لكل واحد مع نفسه."
+        ],
+        outcomes: [
+          { title: "المجاملين", description: "بتيجوا على نفسكم عشان التاني، حب جميل.", matchBonus: 90 },
+          { title: "المستقلين", description: "كل واحد ليه شخصيته، وده صحي جداً.", matchBonus: 100 },
+          { title: "المتطلبين", description: "محتاجين أمان واهتمام أكتر.", matchBonus: 75 },
+          { title: "المنظمين", description: "الاتفاق مريح، حقك وحقي.", matchBonus: 95 }
+        ],
+        discussionTopic: "إيه الهواية اللي نفسك نتعلمها ونمارسها سوا؟"
+      }
+    ]
+  },
+  {
+    id: 9,
+    title: "10. The Vow",
+    subtitle: "Promises for a lifetime.",
+    icon: "💍",
+    color: "from-rose-900 to-black",
+    scenes: [
+      {
+        name: "وعد العمر",
+        dialogue: [
+          { speaker: "Narrator", text: "احنا بنبني بيت عشان يعيش العمر كله إن شاء الله." },
+          { speaker: "p1", text: "أنا عايز وعد منك." },
+        ],
+        question: "إيه أهم وعد تديهولي دلوقتي واحنا بنبدأ الطريق؟",
+        choices: [
+          "أوعدك إني هتقي ربنا فيكي/فيك دايماً.",
+          "أوعدك إننا عمرنا ما هننام زعلانين من بعض.",
+          "أوعدك إني هفضل سند وضهر ليكي/ليك.",
+          "أوعدك إن حبي ليكي/ليك هيزيد كل يوم."
+        ],
+        outcomes: [
+          { title: "أهل التقوى", description: "من يتق الله يجعل له مخرجاً، ده أقوى وعد.", matchBonus: 100 },
+          { title: "أهل السلام", description: "راحة البال والقلب الصافي نعمة.", matchBonus: 95 },
+          { title: "أهل السند", description: "الرجولة والجدعنة هما عمود البيت.", matchBonus: 100 },
+          { title: "أهل الحب", description: "المشاعر وقود الرحلة، حافظوا عليها.", matchBonus: 95 }
+        ],
+        discussionTopic: "دعوة حلوة تدعيها لبيتنا ولمستقبلنا دلوقتي بصوت عالي."
+      }
+    ]
+  }
+];
+
+        // --- GAME STATE ---
+        const state = {
+            screen: 'SPLASH',
+            p1Name: '',
+            p2Name: '',
+            currentEpisodeId: 0,
+            currentSceneIndex: 0,
+            dialogueIndex: 0,
+            p1Choice: null,
+            p2Choice: null,
+            turn: 1,
+            scores: []
+        };
+
+        const INITIAL_STATE = JSON.parse(JSON.stringify(state));
+
+        // --- ACTIONS ---
+        function clickSound() {
+            // Placeholder for sound
+        }
+
+        function setScreen(newScreen) {
+            state.screen = newScreen;
+            render();
+        }
+
+        function updateState(updates) {
+            Object.assign(state, updates);
+            render();
+        }
+
+        function getEpisode() {
+            return EPISODES[state.currentEpisodeId];
+        }
+
+        function getScene() {
+            return getEpisode().scenes[state.currentSceneIndex];
+        }
+
+        // --- RENDERERS ---
+
+        function renderSplash() {
+            return `
+                <div class="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 text-center animate-slide-up-fade">
+                  <div class="mb-14 relative group cursor-pointer" onclick="clickSound()">
+                    <div class="absolute inset-0 bg-[#dc2626] blur-[80px] opacity-20 group-hover:opacity-30 transition-opacity duration-1000 rounded-full"></div>
+                    <i data-lucide="heart" class="text-[#dc2626] w-32 h-32 animate-float fill-[#dc2626]/10 relative z-10 drop-shadow-[0_0_30px_rgba(220,38,38,0.6)]"></i>
+                  </div>
+                  
+                  <div class="mb-16">
+                    <h2 class="font-ui text-[#ef4444] tracking-[0.4em] uppercase text-[10px] font-bold mb-6 opacity-80">The Couple's Game</h2>
+                    <h1 class="font-cinematic font-bold text-white drop-shadow-2xl text-5xl md:text-6xl text-center leading-tight">LoveSync</h1>
+                    <div class="w-16 h-1 bg-[#b91c1c] mx-auto mt-8 rounded-full shadow-[0_0_10px_#ef4444]"></div>
+                  </div>
+                  
+                  <p class="font-cinematic text-zinc-400 mb-16 text-xl max-w-sm mx-auto leading-relaxed italic border-l-2 border-[#b91c1c] pl-4 text-left">
+                    "Explore the depths of your connection. Meaningful questions. Real conversations."
+                  </p>
+
+                  <div class="w-full max-w-xs z-20">
+                    <button onclick="clickSound(); setScreen('SETUP');" class="bg-[#b91c1c] text-white hover:bg-[#991b1b] border-b-4 border-[#7f1d1d] hover:border-[#601515] relative font-ui font-bold text-sm tracking-[0.15em] uppercase py-4 px-6 rounded-md transition-all duration-200 transform active:scale-95 flex items-center justify-center gap-3 shadow-xl w-full">
+                      Begin Journey
+                    </button>
+                  </div>
+                  
+                  <div class="absolute bottom-8 text-center w-full opacity-40 hover:opacity-100 transition-opacity">
+                    <span class="font-ui text-[10px] tracking-widest text-zinc-500 uppercase">Developed by Mohamed Bakr</span>
+                  </div>
+                </div>
+            `;
+        }
+
+        function renderSetup() {
+            // Need to handle input state without re-rendering on every keystroke
+            return `
+                <div class="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 animate-slide-up-fade max-w-md mx-auto w-full">
+                  <div class="glass-panel rounded-lg p-8 md:p-10 relative overflow-hidden w-full bg-black/80 border-t-4 border-t-[#b91c1c]">
+                    <div class="text-center mb-10">
+                       <h2 class="font-ui text-zinc-500 uppercase tracking-[0.2em] text-xs font-bold">Cast of Characters</h2>
+                       <h1 class="font-cinematic font-bold text-white drop-shadow-2xl text-2xl md:text-3xl text-center leading-tight mt-2">The Protagonists</h1>
+                    </div>
+
+                    <div class="space-y-8">
+                      <div>
+                        <label class="block text-center font-cinematic text-lg text-zinc-400 mb-3 italic">Partner One</label>
+                        <div class="relative group w-full">
+                            <input 
+                              type="text" 
+                              value="${state.p1Name}" 
+                              oninput="state.p1Name = this.value; checkSetupValidity()"
+                              placeholder="Enter name..."
+                              class="w-full bg-black/40 backdrop-blur-md border-b-2 border-zinc-700 focus:border-[#dc2626] px-4 py-4 text-xl font-cinematic text-white focus:outline-none transition-all placeholder:text-zinc-700 placeholder:italic text-center rounded-t-md"
+                            />
+                            <div class="absolute bottom-0 left-0 w-full h-0.5 bg-[#dc2626] scale-x-0 group-focus-within:scale-x-100 transition-transform duration-500 origin-center"></div>
+                        </div>
+                      </div>
+                      <div>
+                        <label class="block text-center font-cinematic text-lg text-zinc-400 mb-3 italic">Partner Two</label>
+                        <div class="relative group w-full">
+                            <input 
+                              type="text" 
+                              value="${state.p2Name}" 
+                              oninput="state.p2Name = this.value; checkSetupValidity()"
+                              placeholder="Enter name..."
+                              class="w-full bg-black/40 backdrop-blur-md border-b-2 border-zinc-700 focus:border-[#dc2626] px-4 py-4 text-xl font-cinematic text-white focus:outline-none transition-all placeholder:text-zinc-700 placeholder:italic text-center rounded-t-md"
+                            />
+                            <div class="absolute bottom-0 left-0 w-full h-0.5 bg-[#dc2626] scale-x-0 group-focus-within:scale-x-100 transition-transform duration-500 origin-center"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="mt-12 flex flex-col gap-4">
+                      <button id="enterStoryBtn" onclick="clickSound(); setScreen('EPISODES');" disabled class="bg-[#b91c1c] text-white hover:bg-[#991b1b] border-b-4 border-[#7f1d1d] hover:border-[#601515] relative font-ui font-bold text-sm tracking-[0.15em] uppercase py-4 px-6 rounded-md transition-all duration-200 transform active:scale-95 flex items-center justify-center gap-3 shadow-xl w-full disabled:opacity-50 disabled:cursor-not-allowed">
+                        Enter Story
+                      </button>
+                      <button onclick="setScreen('SPLASH')" class="bg-transparent text-zinc-500 hover:text-[#ef4444] shadow-none hover:bg-white/5 relative font-ui font-bold text-sm tracking-[0.15em] uppercase py-4 px-6 rounded-md transition-all duration-200 transform active:scale-95 flex items-center justify-center gap-3 w-full">Back</button>
+                    </div>
+                  </div>
+                </div>
+            `;
+        }
+
+        // Helper to enable/disable button based on input
+        function checkSetupValidity() {
+            const btn = document.getElementById('enterStoryBtn');
+            if (btn) {
+                if (state.p1Name && state.p2Name) {
+                    btn.disabled = false;
+                } else {
+                    btn.disabled = true;
+                }
+            }
+        }
+
+        function renderEpisodes() {
+            let episodesHtml = EPISODES.map(ep => `
+              <button
+                onclick="startEpisode(${ep.id})"
+                class="w-full group relative overflow-hidden rounded-lg transition-all duration-300 hover:scale-[1.02] border border-zinc-800 hover:border-[#b91c1c] bg-zinc-900/80 text-left shrink-0"
+              >
+                <div class="absolute inset-0 bg-gradient-to-r ${ep.color} opacity-20 group-hover:opacity-40 transition-opacity duration-500"></div>
+                
+                <div class="relative p-6 flex items-center gap-5">
+                  <div class="text-3xl opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-transform duration-300">${ep.icon}</div>
+                  <div class="flex-1">
+                    <h3 class="font-cinematic text-xl text-slate-100 mb-1 group-hover:text-white transition-colors">${ep.title}</h3>
+                    <p class="font-ui text-zinc-500 text-[10px] uppercase tracking-wider group-hover:text-[#ef4444] transition-colors">${ep.subtitle}</p>
+                  </div>
+                  <div class="w-8 h-8 rounded-full border border-zinc-700 flex items-center justify-center group-hover:bg-[#b91c1c] group-hover:border-[#b91c1c] transition-colors">
+                     <i data-lucide="play" class="w-3 h-3 text-zinc-500 group-hover:text-white fill-current"></i>
+                  </div>
+                </div>
+              </button>
+            `).join('');
+
+            return `
+                <div class="relative z-10 flex flex-col h-screen pt-10 pb-10 px-6 max-w-lg mx-auto w-full animate-slide-up-fade">
+                  <div class="text-center mb-8 flex-none">
+                    <h2 class="font-ui text-[#ef4444] text-xs tracking-[0.3em] uppercase mb-4 font-bold">Select Chapter</h2>
+                    <h1 class="font-cinematic font-bold text-white drop-shadow-2xl text-2xl md:text-3xl text-center leading-tight">Your Story</h1>
+                  </div>
+
+                  <div class="w-full space-y-5 flex-1 overflow-y-auto no-scrollbar pb-10 px-1">
+                    ${episodesHtml}
+                  </div>
+                </div>
+            `;
+        }
+
+        function startEpisode(id) {
+            clickSound();
+            state.currentEpisodeId = id;
+            state.currentSceneIndex = 0;
+            state.dialogueIndex = 0;
+            state.scores = [];
+            setScreen('GAME');
+        }
+
+        function renderGame() {
+            const episode = getEpisode();
+            const scene = getScene();
+            const currentSpeaker = state.turn === 1 ? state.p1Name : state.p2Name;
+            const isChoicePhase = state.dialogueIndex >= scene.dialogue.length;
+
+            // Progress Bars
+            const progressBars = episode.scenes.map((_, i) => 
+                `<div class="h-1 rounded-full transition-all duration-500 ${i === state.currentSceneIndex ? 'w-6 bg-[#ef4444]' : i < state.currentSceneIndex ? 'w-2 bg-[#7f1d1d]' : 'w-2 bg-zinc-800'}"></div>`
+            ).join('');
+
+            // Dialogue Layer Logic
+            let dialogueLayerClass = isChoicePhase ? 'opacity-0 pointer-events-none scale-95' : 'opacity-100 scale-100';
+            let dialogueContent = '';
+            
+            if (!isChoicePhase) {
+                const step = scene.dialogue[state.dialogueIndex];
+                const speakerName = step.speaker === 'Narrator' ? 'Narrator' : (step.speaker === 'p1' ? state.p1Name : state.p2Name);
+                
+                dialogueContent = `
+                   <div class="font-cinematic text-sm text-[#ef4444] mb-6 tracking-widest uppercase relative z-10">
+                     ${speakerName}
+                   </div>
+                   <p class="font-arabic text-2xl text-slate-100 leading-relaxed text-glow px-2 relative z-10" dir="rtl">
+                     ${step.text}
+                   </p>
+                   <div class="mt-8 text-[10px] font-ui text-zinc-600 uppercase tracking-widest animate-pulse relative z-10">Tap to Continue</div>
+                `;
+            }
+
+            // Choice Layer Logic
+            let choiceLayerClass = isChoicePhase ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10';
+            
+            const choicesHtml = scene.choices.map((choice, idx) => {
+                const selected = state.turn === 1 ? state.p1Choice === idx : state.p2Choice === idx;
+                const activeClass = selected 
+                    ? 'bg-[#7f1d1d] border-[#ef4444] text-white shadow-lg' 
+                    : 'bg-zinc-900 border-black text-zinc-400 hover:bg-zinc-800';
+                const indicatorClass = selected ? 'bg-[#ef4444]' : 'bg-transparent group-hover:bg-zinc-700';
+
+                return `
+                  <button
+                    onclick="handleChoice(${idx})"
+                    class="w-full text-right p-5 border-b-2 transition-all duration-200 group relative overflow-hidden ${activeClass}"
+                  >
+                    <div class="absolute left-0 top-0 bottom-0 w-1 transition-all duration-300 ${indicatorClass}"></div>
+                    <span class="font-arabic text-lg font-semibold relative z-10 block pr-2" dir="rtl">${choice}</span>
+                  </button>
+                `;
+            }).join('');
+
+            const hasSelected = state.turn === 1 ? state.p1Choice !== null : state.p2Choice !== null;
+            let lockButtonHtml = '';
+            
+            if (hasSelected) {
+                lockButtonHtml = `
+                  <div class="absolute bottom-4 left-0 right-0 animate-slide-up-fade">
+                    <button onclick="lockIn()" class="bg-[#b91c1c] text-white hover:bg-[#991b1b] border-b-4 border-[#7f1d1d] hover:border-[#601515] relative font-ui font-bold text-sm tracking-[0.15em] uppercase py-4 px-6 transition-all duration-200 transform active:scale-95 flex items-center justify-center gap-3 shadow-xl w-full rounded-none">
+                       <i data-lucide="lock" class="w-4 h-4"></i> <span>Lock Answer</span>
+                    </button>
+                  </div>
+                `;
+            }
+
+            return `
+              <div class="relative z-10 flex flex-col h-screen max-w-md mx-auto w-full overflow-hidden">
+                <!-- Top Bar -->
+                <div class="pt-10 px-6 flex justify-between items-end mb-8">
+                   <span class="font-ui text-[10px] text-zinc-500 tracking-widest uppercase">
+                      Scene ${state.currentSceneIndex + 1} <span class="text-zinc-700 mx-2">/</span> ${episode.scenes.length}
+                   </span>
+                   <div class="flex gap-1">
+                    ${progressBars}
+                  </div>
+                </div>
+
+                <!-- Scene Title -->
+                <div class="px-6 text-center mb-6 animate-slide-up-fade">
+                   <h2 class="font-arabic font-bold text-2xl md:text-3xl text-white drop-shadow-md" dir="rtl">${scene.name}</h2>
+                </div>
+
+                <!-- Main Stage -->
+                <div class="flex-1 relative w-full px-6 pb-6">
+                  
+                  <!-- DIALOGUE LAYER -->
+                  <div 
+                    onclick="handleDialogueTap()"
+                    class="absolute inset-0 z-20 flex flex-col justify-center items-center px-6 transition-all duration-500 cursor-pointer ${dialogueLayerClass}"
+                  >
+                     <div class="w-full max-w-md bg-black/80 backdrop-blur-xl p-2 rounded-xl shadow-2xl border border-white/10">
+                        <div class="border-2 border-dashed border-[#b91c1c]/50 rounded-lg p-6 min-h-[250px] flex flex-col justify-center items-center text-center relative overflow-hidden">
+                          ${dialogueContent}
+                        </div>
+                     </div>
+                  </div>
+
+                  <!-- CHOICE LAYER -->
+                  <div class="absolute inset-0 z-10 flex flex-col transition-all duration-700 ${choiceLayerClass}">
+                    
+                    <div class="text-center mb-6">
+                       <span class="bg-[#b91c1c] text-white px-3 py-1 rounded text-[10px] font-ui uppercase tracking-widest font-bold shadow-lg">
+                          ${currentSpeaker}'s Turn
+                       </span>
+                    </div>
+                    
+                    <!-- Question -->
+                    <div class="bg-black/40 backdrop-blur-sm p-4 rounded-lg mb-6 text-center">
+                       <p class="font-arabic text-lg text-white leading-loose" dir="rtl">"${scene.question}"</p>
+                    </div>
+                    
+                    <!-- Choices Grid -->
+                    <div class="flex-1 overflow-y-auto no-scrollbar space-y-3 pb-20">
+                      ${choicesHtml}
+                    </div>
+
+                    ${lockButtonHtml}
+                  </div>
+
+                </div>
+              </div>
+            `;
+        }
+
+        function handleDialogueTap() {
+             const scene = getScene();
+             if (state.dialogueIndex < scene.dialogue.length) {
+                 state.dialogueIndex++;
+                 render();
+             }
+        }
+
+        function handleChoice(index) {
+            clickSound();
+            if (state.turn === 1) {
+                state.p1Choice = index;
+            } else {
+                state.p2Choice = index;
+            }
+            render();
+        }
+
+        function lockIn() {
+            clickSound();
+            if (state.turn === 1) {
+                setScreen('PASS');
+            } else {
+                setScreen('REVEAL');
+            }
+        }
+
+        function renderPass() {
+            return `
+                <div class="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 text-center animate-slide-up-fade">
+                  <div class="w-24 h-24 rounded-full flex items-center justify-center mb-8 bg-zinc-900 border-4 border-[#18181b] relative shadow-2xl">
+                    <div class="absolute inset-0 rounded-full border border-[#ef4444] animate-ping opacity-20"></div>
+                    <i data-lucide="users" class="w-8 h-8 text-[#ef4444]"></i>
+                  </div>
+                  
+                  <h1 class="font-cinematic font-bold text-white drop-shadow-2xl text-4xl md:text-5xl text-center leading-tight mb-8">Switch Players</h1>
+                  
+                  <div class="w-full max-w-xs bg-zinc-900/50 p-8 rounded-lg border border-zinc-800 mb-12">
+                    <p class="font-cinematic text-xl text-zinc-300 italic mb-6">"Silence is golden."</p>
+                    <div class="w-full h-px bg-zinc-800 mb-6"></div>
+                    <p class="font-ui text-xs text-zinc-500 uppercase tracking-widest">Pass device to</p>
+                    <p class="font-cinematic text-2xl text-[#ef4444] mt-2">${state.p2Name}</p>
+                  </div>
+
+                  <div class="w-full max-w-xs">
+                    <button onclick="clickSound(); updateState({ turn: 2, dialogueIndex: 999 }); setScreen('GAME');" class="bg-[#b91c1c] text-white hover:bg-[#991b1b] border-b-4 border-[#7f1d1d] hover:border-[#601515] relative font-ui font-bold text-sm tracking-[0.15em] uppercase py-4 px-6 rounded-md transition-all duration-200 transform active:scale-95 flex items-center justify-center gap-3 shadow-xl w-full">
+                      I am ${state.p2Name}
+                    </button>
+                  </div>
+                </div>
+            `;
+        }
+
+        function renderReveal() {
+            const scene = getScene();
+            const p1C = state.p1Choice;
+            const p2C = state.p2Choice;
+            const isMatch = p1C === p2C;
+            const outcome = scene.outcomes[p1C]; // Logic: use the choice selected by P1 to determine outcome text roughly, but match bonus decides score
+            // Actually in original code: const outcome = scene.outcomes[isMatch ? p1C : p1C]; (Always p1C)
+            
+            const matchPercent = isMatch ? 100 : Math.floor(Math.random() * 30) + 40; 
+            const isHighMatch = matchPercent >= 85;
+            
+            // Note: We need to store this result logic temporarily or just calc it when clicking "Deep Dive"
+            // For render, we just show visualization
+            
+            return `
+              <div class="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 py-10 max-w-md mx-auto w-full animate-slide-up-fade">
+                <div class="text-center mb-10">
+                  <span class="font-ui text-[10px] text-[#ef4444] tracking-[0.3em] uppercase mb-3 block font-bold">The Verdict</span>
+                  <h1 class="font-cinematic font-bold text-white drop-shadow-2xl text-2xl md:text-3xl text-center leading-tight">${isMatch ? "Perfect Harmony" : "Different Perspectives"}</h1>
+                </div>
+
+                <div class="w-full grid grid-cols-2 gap-4 mb-8">
+                  <div class="bg-zinc-900/80 p-5 rounded border-t-4 border-[#ef4444] text-center shadow-lg relative overflow-hidden group">
+                     <div class="absolute inset-0 bg-gradient-to-b from-[#ef4444]/10 to-transparent opacity-50"></div>
+                     <div class="text-[10px] font-ui font-bold text-[#ef4444] mb-3 tracking-widest uppercase relative z-10">${state.p1Name}</div>
+                     <div class="font-arabic text-md leading-snug text-white relative z-10" dir="rtl">"${scene.choices[p1C]}"</div>
+                  </div>
+                  <div class="bg-zinc-900/80 p-5 rounded border-t-4 border-indigo-500 text-center shadow-lg relative overflow-hidden group">
+                     <div class="absolute inset-0 bg-gradient-to-b from-indigo-500/10 to-transparent opacity-50"></div>
+                     <div class="text-[10px] font-ui font-bold text-indigo-400 mb-3 tracking-widest uppercase relative z-10">${state.p2Name}</div>
+                     <div class="font-arabic text-md leading-snug text-white relative z-10" dir="rtl">"${scene.choices[p2C]}"</div>
+                  </div>
+                </div>
+
+                <div class="glass-panel rounded-lg p-8 md:p-10 relative overflow-hidden w-full mb-10 bg-gradient-to-b from-zinc-900 to-black border-zinc-800">
+                   <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+                   <div class="text-center relative z-10">
+                     <div class="inline-flex items-center justify-center p-4 rounded-full mb-6 bg-zinc-950 border border-zinc-800 shadow-xl">
+                       <i data-lucide="heart" class="w-7 h-7 ${isHighMatch ? 'text-[#ef4444] fill-[#ef4444]' : 'text-zinc-600'}"></i>
+                     </div>
+                     <h3 class="font-arabic font-bold text-2xl text-white mb-4" dir="rtl">${outcome.title}</h3>
+                     <p class="font-arabic text-zinc-400 text-lg leading-loose" dir="rtl">${outcome.description}</p>
+                     
+                     <div class="mt-8 pt-6 border-t border-white/5 flex justify-center items-center gap-3">
+                        <span class="text-[10px] text-zinc-500 font-ui uppercase tracking-widest">Compatibility</span>
+                        <span class="font-cinematic font-bold text-3xl ${isHighMatch ? 'text-[#ef4444]' : 'text-zinc-500'}">${matchPercent}%</span>
+                     </div>
+                   </div>
+                </div>
+
+                <button onclick="goToDiscussion()" class="bg-[#b91c1c] text-white hover:bg-[#991b1b] border-b-4 border-[#7f1d1d] hover:border-[#601515] relative font-ui font-bold text-sm tracking-[0.15em] uppercase py-4 px-6 rounded-md transition-all duration-200 transform active:scale-95 flex items-center justify-center gap-3 shadow-xl w-full">
+                  Deep Dive
+                </button>
+              </div>
+            `;
+        }
+
+        function goToDiscussion() {
+            clickSound();
+            const scene = getScene();
+            const p1C = state.p1Choice;
+            const p2C = state.p2Choice;
+            const isMatch = p1C === p2C;
+            const outcome = scene.outcomes[p1C];
+            const roundScore = isMatch ? outcome.matchBonus : Math.round(outcome.matchBonus * 0.5);
+            state.scores.push(roundScore);
+            setScreen('DISCUSSION');
+        }
+
+        function renderDiscussion() {
+            const scene = getScene();
+            return `
+              <div class="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 text-center animate-slide-up-fade">
+                <div class="w-16 h-16 rounded-full flex items-center justify-center mb-8 bg-zinc-900 border border-zinc-800 shadow-2xl">
+                  <i data-lucide="message-circle" class="w-6 h-6 text-[#ef4444]"></i>
+                </div>
+                
+                <h2 class="font-cinematic text-4xl text-white mb-10">Real Talk</h2>
+                
+                <div class="glass-panel rounded-lg p-8 md:p-10 relative overflow-hidden w-full max-w-md mb-12 bg-zinc-900/50 border-[#ef4444]/30">
+                   <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+                   <p class="text-[10px] text-[#ef4444] font-ui font-bold tracking-[0.2em] mb-6 uppercase">Discussion Topic</p>
+                   <p class="font-arabic text-2xl text-white leading-loose drop-shadow-lg" dir="rtl">
+                     "${scene.discussionTopic}"
+                   </p>
+                   <div class="mt-10 p-4 bg-black/40 rounded border border-white/5">
+                     <p class="text-xs font-cinematic text-zinc-500 italic">"Listen to understand, not to reply."</p>
+                   </div>
+                </div>
+
+                <div class="w-full max-w-xs">
+                    <button onclick="nextScene()" class="bg-zinc-800 text-white hover:bg-zinc-700 border-b-4 border-zinc-950 relative font-ui font-bold text-sm tracking-[0.15em] uppercase py-4 px-6 rounded-md transition-all duration-200 transform active:scale-95 flex items-center justify-center gap-3 shadow-xl w-full">
+                      Continue Story
+                    </button>
+                </div>
+              </div>
+            `;
+        }
+
+        function nextScene() {
+            clickSound();
+            const ep = getEpisode();
+            if (state.currentSceneIndex < ep.scenes.length - 1) {
+                updateState({ 
+                  currentSceneIndex: state.currentSceneIndex + 1,
+                  dialogueIndex: 0,
+                  p1Choice: null,
+                  p2Choice: null,
+                  turn: 1,
+                });
+            } else {
+                setScreen('FINAL');
+            }
+        }
+
+        function renderFinal() {
+            const totalScore = state.scores.reduce((a, b) => a + b, 0);
+            const maxScore = getEpisode().scenes.length * 100;
+            const percentage = Math.round((totalScore / maxScore) * 100);
+
+            let title = "The Journey Ends";
+            let desc = "You have the foundation. Now build the castle.";
+            
+            if (percentage > 90) { title = "Soulmates"; desc = "Your hearts speak the same language."; }
+            else if (percentage > 75) { title = "Beautiful Harmony"; desc = "A strong resonance exists between you."; }
+            else if (percentage > 60) { title = "Complementary"; desc = "Your differences will make you stronger."; }
+
+            return `
+              <div class="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 text-center animate-slide-up-fade">
+                <div class="mb-10 relative">
+                  <div class="absolute inset-0 bg-[#ef4444] blur-[80px] opacity-20"></div>
+                  <i data-lucide="sparkles" class="w-16 h-16 text-[#ef4444] animate-pulse relative z-10"></i>
+                </div>
+                
+                <div class="font-ui text-zinc-500 text-[10px] tracking-[0.3em] uppercase mb-4 font-bold">Episode Complete</div>
+                <h1 class="font-cinematic font-bold text-white drop-shadow-2xl text-4xl md:text-5xl text-center leading-tight mb-6">${title}</h1>
+                <p class="font-cinematic text-xl text-zinc-400 leading-relaxed max-w-sm mx-auto mb-12 italic">"${desc}"</p>
+                
+                <div class="w-40 h-40 rounded-full flex flex-col items-center justify-center mx-auto border-4 border-[#b91c1c] bg-zinc-900 shadow-[0_0_30px_rgba(220,38,38,0.2)] mb-12 relative">
+                  <div class="text-[10px] text-zinc-500 uppercase tracking-widest mb-1 font-ui">Match</div>
+                  <div class="text-4xl font-cinematic font-bold text-white">${percentage}%</div>
+                </div>
+
+                <div class="flex flex-col gap-4 w-full max-w-xs">
+                  <button onclick="clickSound(); setScreen('EPISODES');" class="bg-[#b91c1c] text-white hover:bg-[#991b1b] border-b-4 border-[#7f1d1d] hover:border-[#601515] relative font-ui font-bold text-sm tracking-[0.15em] uppercase py-4 px-6 rounded-md transition-all duration-200 transform active:scale-95 flex items-center justify-center gap-3 shadow-xl w-full">Next Chapter</button>
+                  <button onclick="resetGame()" class="bg-transparent text-zinc-500 hover:text-[#ef4444] shadow-none hover:bg-white/5 relative font-ui font-bold text-sm tracking-[0.15em] uppercase py-4 px-6 rounded-md transition-all duration-200 transform active:scale-95 flex items-center justify-center gap-3 w-full">
+                    <i data-lucide="rotate-ccw" class="w-4 h-4 mr-2"></i> Exit to Title
+                  </button>
+                </div>
+              </div>
+            `;
+        }
+
+        function resetGame() {
+            Object.assign(state, JSON.parse(JSON.stringify(INITIAL_STATE)));
+            setScreen('SPLASH');
+        }
+
+        // --- MAIN RENDER LOOP ---
+        function render() {
+            const app = document.getElementById('app');
+            let content = '';
+
+            switch(state.screen) {
+                case 'SPLASH': content = renderSplash(); break;
+                case 'SETUP': content = renderSetup(); break;
+                case 'EPISODES': content = renderEpisodes(); break;
+                case 'GAME': content = renderGame(); break;
+                case 'PASS': content = renderPass(); break;
+                case 'REVEAL': content = renderReveal(); break;
+                case 'DISCUSSION': content = renderDiscussion(); break;
+                case 'FINAL': content = renderFinal(); break;
+            }
+
+            app.innerHTML = content;
+            lucide.createIcons();
+            
+            // Re-apply focus if needed (simplified here just to ensure input focus doesn't get totally lost if we were re-rendering heavily, though we optimized setup to not re-render)
+        }
+
+        // --- HEART ANIMATION ---
+        function initHearts() {
+            const canvas = document.getElementById('heartCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            let width = window.innerWidth;
+            let height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+
+            const hearts = [];
+            const colors = ['#7f1d1d', '#991b1b', '#b91c1c', '#dc2626', '#ef4444']; 
+
+            class Heart {
+              constructor(initialY) {
+                this.x = Math.random() * width;
+                this.y = initialY ?? height + Math.random() * 100;
+                this.size = Math.random() * 15 + 5; 
+                this.speedY = Math.random() * 1.2 + 0.4;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.opacity = Math.random() * 0.5 + 0.1;
+                this.wobble = Math.random() * Math.PI * 2;
+                this.wobbleSpeed = Math.random() * 0.02;
+              }
+
+              update() {
+                this.y -= this.speedY;
+                this.wobble += this.wobbleSpeed;
+                this.x += Math.sin(this.wobble) * 0.5;
+
+                if (this.y < -50) {
+                  this.y = height + 50;
+                  this.x = Math.random() * width;
+                }
+              }
+
+              draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                const topCurveHeight = this.size * 0.3;
+                ctx.moveTo(this.x, this.y + topCurveHeight);
+                ctx.bezierCurveTo(
+                  this.x, this.y, 
+                  this.x - this.size / 2, this.y, 
+                  this.x - this.size / 2, this.y + topCurveHeight
+                );
+                ctx.bezierCurveTo(
+                  this.x - this.size / 2, this.y + (this.size + topCurveHeight) / 2, 
+                  this.x, this.y + (this.size + topCurveHeight) / 2, 
+                  this.x, this.y + this.size
+                );
+                ctx.bezierCurveTo(
+                  this.x, this.y + (this.size + topCurveHeight) / 2, 
+                  this.x + this.size / 2, this.y + (this.size + topCurveHeight) / 2, 
+                  this.x + this.size / 2, this.y + topCurveHeight
+                );
+                ctx.bezierCurveTo(
+                  this.x + this.size / 2, this.y, 
+                  this.x, this.y, 
+                  this.x, this.y + topCurveHeight
+                );
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+              }
+            }
+
+            for (let i = 0; i < 60; i++) {
+              hearts.push(new Heart(Math.random() * height));
+            }
+
+            function animate() {
+              ctx.clearRect(0, 0, width, height);
+              hearts.forEach(h => {
+                h.update();
+                h.draw();
+              });
+              requestAnimationFrame(animate);
+            }
+
+            animate();
+
+            window.addEventListener('resize', () => {
+              width = window.innerWidth;
+              height = window.innerHeight;
+              canvas.width = width;
+              canvas.height = height;
+            });
+        }
+
+        // --- INIT ---
+        window.addEventListener('DOMContentLoaded', () => {
+            initHearts();
+            render();
+        });
+
+    </script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
