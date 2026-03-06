@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Pact Infinity</title>
+    
+    <!-- Libraries & Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Playfair+Display:wght@700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- Link to our Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body style="--bg-color: #0a0a0a;">
+
+    <!-- Background Canvas -->
+    <canvas id="floatCanvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+
+    <!-- Global Navigation -->
+    <div id="nav-header" class="fixed top-6 left-6 right-6 z-[100] flex justify-between items-center opacity-0 pointer-events-none transition-opacity duration-300">
+        <button onclick="goBack()" class="flex items-center gap-2 text-zinc-500 hover:text-white transition-colors">
+            <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            <span class="text-[10px] uppercase tracking-widest font-bold">Back</span>
+        </button>
+        <button onclick="toggleFullScreen()" class="p-2 text-zinc-500 hover:text-white">
+            <i data-lucide="maximize" class="w-5 h-5"></i>
+        </button>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="app" class="relative z-10 w-full h-full flex flex-col overflow-hidden"></div>
+
+    <!-- Load Data and Logic Scripts -->
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
