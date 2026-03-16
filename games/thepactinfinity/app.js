@@ -13,7 +13,8 @@ const state = {
     p1Self: null, p1Guess: null,
     p2Self: null, p2Guess: null,
     randomFate: null,
-    chosenJudgement: null
+    chosenJudgement: null,
+    selectedMusic: 'theme1' // <-- ADD THIS LINE
 };
 
 function setScreen(newScreen, save = true) {
@@ -31,13 +32,27 @@ function goBack() {
     } else if (current === 'ARCS') {
         setScreen('SETUP', false);
     } else if (current === 'SETUP') {
+        stopMusic(); // <--- Add this line here
         setScreen('SPLASH', false);
     }
 }
 
 function toggleFullScreen() {
-    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-    else document.exitFullscreen();
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+            console.log(`Error attempting to enable full-screen mode: ${err.message}`);
+        });
+    } else {
+        // Only exit if this function is called specifically to toggle.
+        // We'll create a separate check for the Start button.
+    }
+}
+
+// Add this helper for the Start button
+function ensureFullScreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(e => {});
+    }
 }
 
 function startEpisode(id) {
@@ -85,7 +100,7 @@ function render() {
     const app = document.getElementById('app');
     const nav = document.getElementById('nav-header');
     
-    if (['SPLASH', 'SETUP', 'ARCS'].includes(state.screen)) {
+    if (state.screen === 'SPLASH') {
         nav.classList.replace('opacity-100', 'opacity-0');
         nav.classList.add('pointer-events-none');
     } else {
@@ -98,19 +113,34 @@ function render() {
 
     switch(state.screen) {
         case 'SPLASH':
+            // Modify the easter egg heart here if you haven't already!
             content = `
                 <div class="flex flex-col items-center justify-center h-full px-8 text-center anim-fade-in">
-                    <i data-lucide="heart" class="w-20 h-20 text-[#e82a50] mb-10 fill-current"></i>
+                    <div class="relative mb-10 cursor-pointer transition-transform active:scale-90" onclick="handleHeartClick()">
+                        <i data-lucide="heart" class="w-20 h-20 text-[#e82a50] fill-current"></i>
+                        <span id="easter-counter" class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-[#e82a50] tracking-widest font-bold opacity-0 transition-opacity duration-300 whitespace-nowrap"></span>
+                    </div>
 
                     <h2 class="font-ui text-zinc-600 tracking-[0.4em] uppercase text-[10px] font-bold mb-4">
                         Beyond Love and Time
                     </h2>
 
-                    <h1 class="font-cinematic text-6xl text-white mb-16">
+                    <h1 class="font-cinematic text-6xl text-white mb-12">
                         THE PACT INFINITY
                     </h1>
 
-                    <button onclick="setScreen('SETUP'); toggleFullScreen();" class="w-full max-w-xs ${btnClass}">
+                    <!-- MUSIC SELECTOR -->
+                    <div class="w-full max-w-xs mb-8">
+                        <label class="text-[9px] text-zinc-500 uppercase font-bold tracking-widest block mb-3">Background Music</label>
+                        <div class="flex bg-[#1a1a1a] p-1 rounded-full border border-zinc-800 shadow-inner">
+                            <button onclick="setMusicSelection('theme1')" class="flex-1 text-[9px] uppercase tracking-widest py-2.5 rounded-full transition-all duration-300 ${state.selectedMusic === 'theme1' ? 'bg-[#e82a50] text-white shadow-lg' : 'text-zinc-500 hover:text-white'}">Theme 1</button>
+                            <button onclick="setMusicSelection('theme2')" class="flex-1 text-[9px] uppercase tracking-widest py-2.5 rounded-full transition-all duration-300 ${state.selectedMusic === 'theme2' ? 'bg-[#e82a50] text-white shadow-lg' : 'text-zinc-500 hover:text-white'}">Theme 2</button>
+                            <button onclick="setMusicSelection('none')" class="flex-1 text-[9px] uppercase tracking-widest py-2.5 rounded-full transition-all duration-300 ${state.selectedMusic === 'none' ? 'bg-zinc-700 text-white shadow-lg' : 'text-zinc-500 hover:text-white'}">None</button>
+                        </div>
+                    </div>
+
+                    <!-- UPDATED START BUTTON -->
+                    <button onclick="startJourneyWithMusic()" class="w-full max-w-xs ${btnClass}">
                         Start Journey
                     </button>
 
@@ -481,6 +511,130 @@ function initTapRipple(){
     });
 
 }
+
+// --- EASTER EGG LOGIC ---
+let heartClickCount = 0;
+
+function handleHeartClick() {
+    heartClickCount++;
+    const counterEl = document.getElementById('easter-counter');
+    
+    // Show countdown after the 5th click
+    if (heartClickCount > 5 && heartClickCount < 15) {
+        const remaining = 15 - heartClickCount;
+        if (counterEl) {
+            counterEl.innerText = `${remaining} clicks left...`;
+            counterEl.classList.remove('opacity-0');
+        }
+    } 
+    // Trigger on the 15th click
+    else if (heartClickCount === 15) {
+        if (counterEl) counterEl.classList.add('opacity-0');
+        heartClickCount = 0; // Reset for future
+        showEasterEggPopup();
+    }
+}
+
+function showEasterEggPopup() {
+    // 1. Create a dark overlay background
+    const overlay = document.createElement('div');
+    overlay.className = 'fixed inset-0 z-[200] bg-black/95 flex items-center justify-center opacity-0 transition-opacity duration-500';
+    
+    // 2. Create the image element
+    const img = document.createElement('img');
+    img.src = 'images/easter_01.png'; // First Image
+    // Make it square, rounded, with a cool red glow
+    img.className = 'w-3/4 max-w-xs aspect-square object-cover rounded-2xl cursor-pointer transition-all duration-300 active:scale-95';
+    
+    let clickStage = 0;
+    
+    // 3. Handle clicking the image
+    img.onclick = () => {
+        clickStage++;
+        if (clickStage === 1) {
+            // Fade out, swap image, fade in
+            img.style.opacity = '0';
+            setTimeout(() => {
+                // Change this to whatever your second image is named
+                img.src = 'images/easter_02.png'; 
+                img.style.opacity = '1';
+            }, 300);
+        } else if (clickStage === 2) {
+            // Fade out and remove the entire popup
+            overlay.classList.add('opacity-0');
+            setTimeout(() => overlay.remove(), 500);
+        }
+    };
+    
+    overlay.appendChild(img);
+    document.body.appendChild(overlay);
+    
+    // Trigger animation frame to fade it in smoothly
+    requestAnimationFrame(() => {
+        overlay.classList.remove('opacity-0');
+    });
+}
+// --- END EASTER EGG LOGIC ---
+
+// --- AUDIO LOGIC ---
+let bgMusic = null;
+let isMuted = false;
+
+function toggleMute() {
+    isMuted = !isMuted;
+    
+    // Mute or unmute the audio if it's currently initialized
+    if (bgMusic) {
+        bgMusic.muted = isMuted;
+    }
+    
+    // Switch the icons in the navigation bar
+    const iconUnmuted = document.getElementById('icon-unmuted');
+    const iconMuted = document.getElementById('icon-muted');
+    
+    if (iconUnmuted && iconMuted) {
+        if (isMuted) {
+            iconUnmuted.classList.add('hidden');
+            iconMuted.classList.remove('hidden');
+        } else {
+            iconUnmuted.classList.remove('hidden');
+            iconMuted.classList.add('hidden');
+        }
+    }
+}
+
+function setMusicSelection(option) {
+    state.selectedMusic = option;
+    render(); // Re-render to show the active button
+}
+
+function startJourneyWithMusic() {
+    if (bgMusic) {
+        bgMusic.pause();
+        bgMusic.currentTime = 0;
+    }
+
+    if (state.selectedMusic !== 'none') {
+        const musicFile = state.selectedMusic === 'theme1' ? 'music/theme1.mp3' : 'music/theme2.mp3';
+        bgMusic = new Audio(musicFile);
+        bgMusic.loop = true;
+        bgMusic.volume = 0.4;
+        bgMusic.muted = isMuted; 
+        bgMusic.play().catch(err => {});
+    }
+
+    setScreen('SETUP');
+    ensureFullScreen(); // Use the new helper here!
+}
+
+function stopMusic() {
+    if (bgMusic) {
+        bgMusic.pause();
+        bgMusic.currentTime = 0;
+        bgMusic = null; // Clear the object
+    }
+}
+// --- END AUDIO LOGIC ---
 
 // START THE APPLICATION
 window.onload = () => { 

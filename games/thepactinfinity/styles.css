@@ -6,6 +6,12 @@ body {
     height: 100dvh;
     width: 100vw;
     -webkit-tap-highlight-color: transparent;
+
+    /* ADD THESE LINES TO PREVENT TEXT HIGHLIGHTING */
+    -webkit-user-select: none; /* Safari/iOS */
+    -moz-user-select: none;    /* Firefox */
+    -ms-user-select: none;     /* Older Edge/IE */
+    user-select: none;         /* Standard syntax */
 }
 
 .game-card {
@@ -52,3 +58,26 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 .anim-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+
+/* Only show on screens smaller than 1024px (phones/tablets) when in landscape */
+@media screen and (max-width: 1024px) and (orientation: landscape) {
+    #orientation-overlay {
+        opacity: 1;
+        pointer-events: all;
+    }
+    /* Hide the rest of the app to save performance while rotated */
+    #app, #nav-header, #floatCanvas {
+        display: none !important;
+    }
+}
+
+/* Animation for the rotating phone icon */
+@keyframes rotateDevice {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(90deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.anim-rotate-device {
+    animation: rotateDevice 2s ease-in-out infinite;
+}
