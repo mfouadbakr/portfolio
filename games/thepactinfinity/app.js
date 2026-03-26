@@ -172,20 +172,31 @@ function render() {
             break;
 
         case 'ARCS':
-            content = `
-                <div class="flex flex-col h-full pt-24 px-8 max-w-md mx-auto w-full anim-fade-in">
-                    <h1 class="font-cinematic text-4xl text-white text-center mb-12">Arcs</h1>
-                    <div class="flex-1 space-y-4 overflow-y-auto no-scrollbar pb-10">
-                        ${ARCS.map(arc => `
-                            <div onclick="state.currentArcId = ${arc.id}; setScreen('EPISODES')" class="bg-[#181818] p-7 rounded-xl border border-zinc-800 relative cursor-pointer hover:bg-[#202020] active:scale-[0.98] transition-all overflow-hidden">
-                                <h3 class="font-cinematic text-2xl text-white">${arc.title}</h3>
-                                <p class="text-[9px] text-zinc-500 uppercase tracking-widest mt-1">${arc.subtitle}</p>
-                                <div class="absolute -bottom-2 -right-2 text-7xl font-bold font-cinematic" style="color: ${THEME_CONFIG.colors.arcNumber}">${arc.id}</div>
+        content = `
+            <div class="flex flex-col h-full pt-24 px-8 max-w-md mx-auto w-full anim-fade-in">
+                <h1 class="font-cinematic text-4xl text-white text-center mb-12">Arcs</h1>
+                <div class="flex-1 space-y-4 overflow-y-auto no-scrollbar pb-10">
+                    ${ARCS.map(arc => {
+                        // Determine classes based on type
+                        const arcClass = arc.type === 'special' 
+                            ? 'bg-[#1a1200] p-7 rounded-xl border border-yellow-400 relative cursor-pointer hover:bg-[#2a1a00] active:scale-[0.98] transition-all overflow-hidden shadow-lg ring-2 ring-yellow-400'
+                            : 'bg-[#181818] p-7 rounded-xl border border-zinc-800 relative cursor-pointer hover:bg-[#202020] active:scale-[0.98] transition-all overflow-hidden';
+                        
+                        const titleColor = arc.type === 'special' ? 'text-yellow-400' : 'text-white';
+                        const subtitleColor = arc.type === 'special' ? 'text-yellow-200' : 'text-zinc-500';
+                        const arcNumberColor = arc.type === 'special' ? '#FFD700' : THEME_CONFIG.colors.arcNumber;
+
+                        return `
+                            <div onclick="state.currentArcId = ${arc.id}; setScreen('EPISODES')" class="${arcClass}">
+                                <h3 class="font-cinematic text-2xl ${titleColor}">${arc.title}</h3>
+                                <p class="text-[9px] ${subtitleColor} uppercase tracking-widest mt-1">${arc.subtitle}</p>
+                                <div class="absolute -bottom-2 -right-2 text-7xl font-bold font-cinematic" style="color: ${arcNumberColor}">${arc.id}</div>
                             </div>
-                        `).join('')}
-                    </div>
-                </div>`;
-            break;
+                        `;
+                    }).join('')}
+                </div>
+            </div>`;
+        break;
 
         case 'EPISODES':
     const eps = EPISODES.filter(e => e.arcId === state.currentArcId);
