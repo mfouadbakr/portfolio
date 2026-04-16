@@ -1,0 +1,266 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Apps | Mohamed Bakr</title>
+
+    <!-- Favicon/Icon -->
+    <link rel="icon" href="../assets/images/icon.png" type="image/png">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Animate.css -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+
+    <!-- Google Font Import -->
+    <!-- Poppins/Inter (Site UI) | Russo One (Card Titles) | Kanit (Card Text) -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Inter:wght@300;400;500&family=Russo+One&family=Kanit:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Import -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <!-- css -->
+    <link href="../assets/css/common.css" rel="stylesheet">
+
+    <!-- CUSTOM STYLES FOR GAMES PAGE -->
+    <style>
+        /* 
+           1. Header / Global Styles (Kept Original)
+        */
+        .section-title {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .section-subtitle {
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            color: #666;
+        }
+
+        /* 
+           2. Game Card Container 
+        */
+        .game-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background: #fff;
+            border-radius: 16px; 
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.08);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px);
+            /* Red glow on hover to match theme */
+            box-shadow: 0 15px 30px rgba(220, 53, 69, 0.15); 
+            border-color: rgba(220, 53, 69, 0.2);
+        }
+
+        /* Image Container */
+        .game-thumb-wrapper {
+            height: 220px;
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .game-thumb-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .game-card:hover .game-thumb-wrapper img {
+            transform: scale(1.05);
+        }
+
+        /* Card Content */
+        .game-card-body {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        /* 
+           3. NEW FONTS & THEME COLORS 
+        */
+        .game-title {
+            font-family: 'Russo One', sans-serif; /* Modern/Gaming Header */
+            font-weight: 400;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.5px;
+            color: #333; /* Dark Gray Base */
+            transition: color 0.3s ease;
+        }
+        
+        /* On hover, title turns Red */
+        .game-card:hover .game-title {
+            color: #dc3545; 
+        }
+
+        .game-desc {
+            font-family: 'Kanit', sans-serif; /* Clean Modern Text */
+            font-size: 1rem;
+            font-weight: 300;
+            color: #555;
+            margin-bottom: 1.2rem;
+            line-height: 1.4;
+            flex-grow: 1;
+        }
+
+        .game-badges {
+            margin-top: auto;
+        }
+
+        /* Custom Badges */
+        .badge-play {
+            font-family: 'Kanit', sans-serif;
+            font-weight: 500;
+            font-size: 0.85rem;
+            padding: 8px 16px;
+            border-radius: 50rem;
+            background-color: #dc3545; /* Theme Red */
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid #dc3545;
+            transition: all 0.3s;
+        }
+        
+        .game-card:hover .badge-play {
+            background-color: #bb2d3b; /* Darker Red on Hover */
+        }
+        
+        .badge-tag {
+            font-family: 'Kanit', sans-serif;
+            font-weight: 400;
+            font-size: 0.85rem;
+            padding: 8px 12px;
+            background-color: #f8f9fa;
+            color: #333;
+            border: 1px solid #dee2e6;
+            border-radius: 50rem;
+            margin-left: 5px;
+        }
+        
+        /* Play Icon Overlay */
+        .play-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); /* Darker overlay */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .game-card:hover .play-overlay {
+            opacity: 1;
+        }
+    </style>
+
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-light bg-light navbar-expand-lg" style="z-index: 1000;">
+        <div class="container">
+            <a class="navbar-brand" href="../index.html">
+                <img src="../assets/images/logo-dark.png" alt="Logo" height="40">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../services.html">Services</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../portfolio.html">Portfolio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../about.html">About Me</a></li>
+                    <li class="nav-item"><a class="nav-link highlight-bta" href="index.html">Apps</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../games/index.html">Games</a></li>
+                </ul>
+
+                <a href="../index.html#section-contact" class="btn btn-custom rounded-pill"><i
+                        class="fas fa-graduation-cap fa-lg me-2"></i> Contact Me</a>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        
+        <!-- Header / Title Section -->
+        <section class="container-fluid py-5 section-starter">
+            <div class="text-center">
+                <h2 class="mb-1 section-title animate__animated animate__fadeInUp">Apps Library</h2>
+                <p class="mb-0 section-subtitle animate__animated animate__fadeInUp">Interactive web-based apps & experiments</p>
+            </div>
+        </section>
+
+        <!-- Games Grid Section -->
+        <section class="container-fluid py-4 bg-texture-1" style="min-height: 60vh;">
+            <div class="container mb-4">
+                <div class="row animate__animated animate__slideInUp">
+                    
+                    <!-- APP ITEM 1: Muslim -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <a href="muslim/index.html" class="game-card">
+                            <div class="game-thumb-wrapper">
+                                <!-- Dark Gray Image -->
+                                <img src="https://placehold.co/600x400/333333/ffffff?text=Muslim" alt="Muslim">
+                                <div class="play-overlay">
+                                    <i class="fas fa-play-circle fa-3x text-white"></i>
+                                </div>
+                            </div>
+                            <div class="game-card-body">
+                                <h3 class="game-title">Muslim</h3>
+                                <p class="game-desc">
+                                    A web based muslim support guideline application thats aimed at reminding muslims of essentials.
+                                </p>
+                                <div class="game-badges">
+                                    <span class="badge badge-play">Islamic</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-3 border-top mt-auto">
+        <div class="container text-center">
+            <p class="mb-0">© 2025 <strong>Mohamed Bakr</strong>. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <!-- Bootstrap 5 JavaScript Bundle (includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JS -->
+    <script src="../assets/js/backgroundChanger.js"></script>
+    <script src="../assets/js/common.js"></script>
+
+</body>
+
+</html>
