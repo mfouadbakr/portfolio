@@ -25,6 +25,7 @@
 
     <!-- css -->
     <link href="assets/css/common.css" rel="stylesheet">
+    <link href="assets/css/loader.css" rel="stylesheet">
 
     <!-- CUSTOM STYLES FOR POPUP BACKGROUND -->
     <style>
@@ -109,11 +110,17 @@
 </head>
 
 <body>
+    <!--Splash-->
+    <div class="splash-screen" id="splash">
+        <img src="assets/images/logo-dark.png" alt="Logo" class="splash-logo">
+        <div class="spinner"></div>
+    </div>
+
     <!-- Navbar -->
     <nav class="navbar navbar-light bg-light navbar-expand-lg" style="z-index: 1000;">
         <div class="container">
             <a class="navbar-brand" href="index.html">
-                <img src="assets/images/logo-dark.png" alt="Logo" height="40">
+                <img loading="lazy" src="assets/images/logo-dark.png" alt="Logo" height="40">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -124,6 +131,7 @@
                     <li class="nav-item"><a class="nav-link" href="services.html">Services</a></li>
                     <li class="nav-item"><a class="nav-link" href="portfolio.html">Portfolio</a></li>
                     <li class="nav-item"><a class="nav-link" href="about.html">About Me</a></li>
+                    <li class="nav-item"><a class="nav-link" href="apps/index.html">Apps</a></li>
                     <li class="nav-item"><a class="nav-link" href="games/index.html">Games</a></li>
                 </ul>
 
@@ -140,7 +148,7 @@
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-lg-3 order-md-2 text-center hero-left animate__animated animate__fadeInLeft">
-                        <img src="assets/images/bakr.png" class="img-fluid" alt="Profile Image">
+                        <img loading="lazy" src="assets/images/bakr.png" class="img-fluid" alt="Profile Image">
                     </div>
                     <div class="col-lg-9 order-md-1 hero-content animate__animated animate__fadeInRight">
                         <h1 class="hero-title">Hello! I am <span class="highlight-bta">Mohamed Bakr</span></h1>
@@ -172,17 +180,17 @@
                         <div class="row">
                             <!-- Left Side: Big Image -->
                             <div class="col-md-7">
-                                <img src="assets/images/general/project-1.jpg" class="img-fluid rounded"
+                                <img loading="lazy" src="assets/images/general/project-1.jpg" class="img-fluid rounded"
                                     alt="Featured Item">
                             </div>
                             <!-- Right Side: Title + Thumbnails + Description -->
                             <div class="col-md-5 d-flex flex-column">
                                 <h3 class="item-title">Story-Based Game <span class="badge bg-warning text-dark rounded-pill">In Progress</span></h3>
                                 <div class="item-thumbnails">
-                                    <img src="assets/images/general/project-1-1.png" alt="Item Screenshot">
-                                    <img src="assets/images/general/project-1-2.png" alt="Item Screenshot">
-                                    <img src="assets/images/general/project-1-3.png" alt="Item Screenshot">
-                                    <img src="assets/images/general/project-1-4.png" alt="Item Screenshot">
+                                    <img loading="lazy" src="assets/images/general/project-1-1.png" alt="Item Screenshot">
+                                    <img loading="lazy" src="assets/images/general/project-1-2.png" alt="Item Screenshot">
+                                    <img loading="lazy" src="assets/images/general/project-1-3.png" alt="Item Screenshot">
+                                    <img loading="lazy" src="assets/images/general/project-1-4.png" alt="Item Screenshot">
                                 </div>
                                 <p class="item-description">
                                     Web-Based Story-Based Game with 2-Player Turn-Based Combat Subsystem with
@@ -266,7 +274,7 @@
                     <div class="col-lg-3">
                         <div class="card item-card">
                             <a href="portfolio.html">
-                                <img src="assets/images/general/project-1.jpg" alt="item 1">
+                                <img loading="lazy" src="assets/images/general/project-1.jpg" alt="item 1">
                                 <div class="item-card-body">
                                     <h3 class="item-name">Story-Based Game</h3>
                                     <p class="item-info">Web-Based Story-Based Game with 2-Player Turn-Based Combat
@@ -280,7 +288,7 @@
                     <div class="col-lg-3">
                         <div class="card item-card">
                             <a href="portfolio.html">
-                                <img src="assets/images/general/project-2.jpg" alt="item 4">
+                                <img loading="lazy" src="assets/images/general/project-2.jpg" alt="item 4">
                                 <div class="item-card-body">
                                     <h3 class="item-name">Artz: Visual Novels Builder &amp; E-Commerce Website</h3>
                                     <p class="item-info">E-Commerce and Builder Website for Visual Novels</p>
@@ -293,7 +301,7 @@
                     <div class="col-lg-3">
                         <div class="card item-card">
                             <a href="portfolio.html">
-                                <img src="assets/images/general/project-3.jpg" alt="item 3">
+                                <img loading="lazy" src="assets/images/general/project-3.jpg" alt="item 3">
                                 <div class="item-card-body">
                                     <h3 class="item-name">My School</h3>
                                     <p class="item-info">Website for parents to apply for schools, and has a request
@@ -307,7 +315,7 @@
                     <div class="col-lg-3">
                         <div class="card item-card">
                             <a href="portfolio.html">
-                                <img src="assets/images/general/project-4.jpg" alt="item 2">
+                                <img loading="lazy" src="assets/images/general/project-4.jpg" alt="item 2">
                                 <div class="item-card-body">
                                     <h3 class="item-name">Rainmeter Creator</h3>
                                     <p class="item-info">Desktop App that creates rainmeter desktop skins</p>
@@ -472,6 +480,7 @@
     <!-- JS -->
     <script src="assets/js/backgroundChanger.js"></script>
     <script src="assets/js/common.js"></script>
+    <script src="assets/js/loader.js"></script>
 
     <!-- Script to Trigger Modal on Load (With 5s Delay & Testing Enabled) -->
     <script>

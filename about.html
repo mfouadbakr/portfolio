@@ -25,15 +25,22 @@
 
     <!-- css -->
     <link href="assets/css/common.css" rel="stylesheet">
+    <link href="assets/css/loader.css" rel="stylesheet">
 
 </head>
 
 <body>
+    <!--Splash-->
+    <div class="splash-screen" id="splash">
+        <img src="assets/images/logo-dark.png" alt="Logo" class="splash-logo">
+        <div class="spinner"></div>
+    </div>
+
     <!-- Navbar -->
     <nav class="navbar navbar-light bg-light navbar-expand-lg" style="z-index: 1000;">
         <div class="container">
             <a class="navbar-brand" href="index.html">
-                <img src="assets/images/logo-dark.png" alt="Logo" height="40">
+                <img loading="lazy" src="assets/images/logo-dark.png" alt="Logo" height="40">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -44,6 +51,7 @@
                     <li class="nav-item"><a class="nav-link" href="services.html">Services</a></li>
                     <li class="nav-item"><a class="nav-link" href="portfolio.html">Portfolio</a></li>
                     <li class="nav-item"><a class="nav-link highlight-bta" href="about.html">About Me</a></li>
+                    <li class="nav-item"><a class="nav-link" href="apps/index.html">Apps</a></li>
                     <li class="nav-item"><a class="nav-link" href="games/index.html">Games</a></li>
                 </ul>
 
@@ -66,7 +74,7 @@
         <section class="container my-5">
             <div class="row align-items-center">
                 <div class="col-lg-3 text-center mb-4 mb-lg-0">
-                    <img src="assets/images/bakr.png" alt="Mohamed Bakr"
+                    <img loading="lazy" src="assets/images/bakr.png" alt="Mohamed Bakr"
                         class="img-fluid rounded animate__animated animate__fadeInLeft">
                 </div>
                 <div class="col-lg-9 bg-light rounded p-5">
@@ -350,6 +358,7 @@
     <!-- JS -->
     <script src="assets/js/backgroundChanger.js"></script>
     <script src="assets/js/common.js"></script>
+    <script src="assets/js/loader.js"></script>
 
 </body>
 
