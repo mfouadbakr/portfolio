@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الرئيسية | زاد المُسلم</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <!-- Google Fonts (Tajawal) -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Tajawal', sans-serif; background-color: #f8fafc; }
+        
+        .mobile-details { display: none; }
+        .mobile-details.open { display: flex; animation: fadeIn 0.3s ease-in-out; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #10b981; border-radius: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #059669; }
+    </style>
+</head>
+<body class="text-gray-800 antialiased pb-10">
+
+    <!-- Navbar -->
+    <nav class="bg-emerald-700 text-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center py-3">
+                
+                <!-- Logo -->
+                <div class="flex items-center space-x-2 space-x-reverse">
+                    <i class="fa-solid fa-mosque text-2xl text-emerald-200"></i>
+                    <span class="text-2xl font-bold">زاد المُسلم</span>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-6 space-x-reverse font-medium">
+                    <a href="#" class="bg-emerald-800 text-white px-4 py-2 rounded-lg border-b-2 border-emerald-300">الرئيسية</a>
+                    <a href="#" class="hover:text-emerald-200 transition">المدونات</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button onclick="toggleMobileMenu()" class="md:hidden text-2xl focus:outline-none">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden pb-4 pt-2 space-y-2 font-medium border-t border-emerald-600 mt-2">
+                <a href="#" class="block px-4 py-2 bg-emerald-800 rounded border-r-4 border-emerald-300 text-white">الرئيسية</a>
+                <a href="#" class="block px-4 py-2 hover:bg-emerald-600 rounded text-emerald-50">المدونات</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mx-auto p-4 md:p-6 space-y-8 mt-4">
+
+        <!-- الجدول الزمني للصلوات -->
+        <div class="animate__animated animate__fadeInUp">
+            <h2 class="text-2xl font-bold text-emerald-800 mb-4"><i class="fa-solid fa-clock ml-2"></i> الجدول الزمني للصلوات والأذكار</h2>
+            
+            <div class="md:bg-white md:rounded-xl md:shadow-md md:border md:border-emerald-100 overflow-hidden">
+                <table class="w-full text-right border-collapse">
+                    <thead class="hidden md:table-header-group bg-emerald-600 text-white">
+                        <tr>
+                            <th class="p-4 font-bold text-lg w-1/5">الصلاة</th>
+                            <th class="p-4 font-bold text-center w-1/5">القراءة</th>
+                            <th class="p-4 font-bold text-center w-1/5">السنة القبلية</th>
+                            <th class="p-4 font-bold text-center w-1/5">الفرض</th>
+                            <th class="p-4 font-bold text-center w-1/5">السنة البعدية</th>
+                        </tr>
+                    </thead>
+                    <tbody class="block md:table-row-group divide-y-0 md:divide-y divide-gray-100">
+                        <!-- الفجر -->
+                        <tr class="block md:table-row bg-white md:bg-transparent border border-gray-200 md:border-none rounded-xl mb-4 md:mb-0 shadow-sm md:shadow-none hover:bg-emerald-50 transition duration-200">
+                            <td onclick="toggleAccordion(this)" class="flex md:table-cell justify-between items-center p-4 cursor-pointer md:cursor-auto border-b border-gray-100 md:border-none">
+                                <span class="font-bold text-emerald-700 text-lg">🌅 الفجر</span>
+                                <i class="fa-solid fa-chevron-down text-emerald-500 md:hidden transition-transform duration-300 icon-arrow"></i>
+                            </td>
+                            <td class="mobile-details md:!table-cell flex-col md:flex-row justify-between items-center p-4 border-b border-gray-100 md:border-none text-center">
+                                <span class="md:hidden font-bold text-gray-500 mb-1">القراءة:</span>
+                                <span class="bg-emerald-100 px-3 py-1 rounded font-bold text-emerald-900">جهرية</span>
+                            </td>
+                            <td class="mobile-details md:!table-cell flex-col md:flex-row justify-between items-center p-4 border-b border-gray-100 md:border-none text-center">
+                                <span class="md:hidden font-bold text-gray-500 mb-1">السنة القبلية:</span>
+                                <span class="bg-emerald-100 text-emerald-800 px-5 py-1 rounded-full font-bold text-lg">2</span>
+                            </td>
+                            <td class="mobile-details md:!table-cell flex-col md:flex-row justify-between items-center p-4 border-b border-gray-100 md:border-none text-center">
+                                <span class="md:hidden font-bold text-gray-500 mb-1">الفرض:</span>
+                                <span class="bg-blue-100 text-blue-800 px-5 py-1 rounded-full font-bold text-lg">2</span>
+                            </td>
+                            <td class="mobile-details md:!table-cell flex-col md:flex-row justify-between items-center p-4 text-center">
+                                <span class="md:hidden font-bold text-gray-500 mb-1">السنة البعدية:</span>
+                                <span class="text-gray-400 font-bold">-</span>
+                            </td>
+                        </tr>
+
+                        <!-- أذكار الصباح -->
+                        <tr class="block md:table-row bg-teal-50 border border-teal-200 md:border-y-2 md:border-teal-200 rounded-xl mb-4 md:mb-0">
+                            <td colspan="5" class="block md:table-cell p-4 md:text-center text-right">
+                                <span class="block md:inline font-bold text-teal-800 text-lg mb-1 md:mb-0"><i class="fa-solid fa-sun ml-2"></i> أذكار الصباح:</span>
+                                <span class="block md:inline text-teal-700 font-medium"> وقتها من بعد صلاة الفجر إلى وقت الشروق </span>
+                            </td>
+                        </tr>
+
+                        <!-- الضحى -->
+                        <tr class="block md:table-row bg-yellow-50 border border-yellow-200 md:border-b-2 md:border-yellow-200 rounded-xl mb-4 md:mb-0">
+                            <td colspan="5" class="block md:table-cell p-4 md:text-center text-right">
+                                <div class="flex flex-col md:flex-row items-start md:items-center justify-center gap-2">
+                                    <span class="font-bold text-yellow-700 text-lg"><i class="fa-solid fa-circle-sun ml-2"></i> صلاة الضحى:</span>
+                                    <span class="text-gray-700 font-medium"> من بعد الشروق بـ 15 دقيقة إلى قبل الظهر </span>
+                                    <span class="bg-yellow-200 text-yellow-800 px-3 py-1 rounded-full font-bold text-sm mt-2 md:mt-0">2 - 8</span>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- الظهر -->
+                        <tr class="block md:table-row bg-white md:bg-gray-50 border border-gray-200 md:border-none rounded-xl mb-4 md:mb-0 shadow-sm md:shadow-none hover:bg-emerald-50 transition duration-200">
+                            <td onclick="toggleAccordion(this)" class="flex md:table-cell justify-between items-center p-4 cursor-pointer md:cursor-auto border-b border-gray-100 md:border-none">
+                                <span class="font-bold text-emerald-700 text-lg">☀️ الظهر</span>
+                                <i class="fa-solid fa-chevron-down text-emerald-500 md:hidden transition-transform duration-300 icon-arrow"></i>
+                            </td>
+                            <td class="mobile-details md:!table-cell flex-col md:flex-row justify-between items-center p-4 border-b border-gray-100 md:border-none text-center">
+                                <span class="md:hidden font-bold text-gray-500 mb-1">القراءة:</span>
+                                <span class="bg-gray-200 px-3 py-1 rounded font-bold text-gray-600">سرية</span>
+                            </td>
+                            <td class="mobile-details md:!table-cell flex-col md:flex-row justify-between items-center p-4 border-b border-gray-100 md:border-none text-center">
+                                <span class="md:hidden font-bold text-gray-500 mb-1">السنة القبلية:</span>
+                                <span class="bg-emerald-100 text-emerald-800 px-5 py-1 rounded-full font-bold text-lg">4</span>
+                            </td>
+                            <td class="mobile-details md:!table-cell flex-col md:flex-row justify-between items-center p-4 border-b border-gray-100 md:border-none text-center">
+                                <span class="md:hidden font-bold text-gray-500 mb-1">الفرض:</span>
+                                <span class="bg-blue-100 text-blue-800 px-5 py-1 rounded-full font-bold text-lg">4</span>
+                            </td>
+                            <td class="mobile-details md:!table-cell flex-col md:flex-row justify-between items-center p-4 text-center">
+                                <span class="md:hidden font-bold text-gray-500 mb-1">السنة البعدية:</span>
+                                <span class="bg-emerald-100 text-emerald-800 px-5 py-1 rounded-full font-bold text-lg">2</span>
+                            </td>
+                        </tr>
+
+                        <!-- العصر -->
+                        <tr class="block md:table-row bg-white md:bg-transparent border border-gray-200 md:border-none rounded-xl mb-4 md:mb-0 shadow-sm md:shadow-none hover:bg-emerald-50 transition duration-200">
+                            <td onclick="toggleAccordion(this)" class="flex md:table-cell justify-between items-center p-4 cursor-pointer md:cursor-auto border-b border-gray-100 md:border-none">
+                                <span class="font-bold text-emerald-700 text-lg">🌤️ العصر</span>
+                                <i class="fa-solid fa-chevron-down text-emerald-500 md:hidden transition-transform duration-300 icon-arrow"></i>
+                            </td>
+                            <td class="mobile-details md:!table-cell flex-col md:flex-row justify-between items-center p-4 border-b border-gray-100 md:border-none text-center">
+                                <span class="md:hidden font-bold text-gray-500 mb-1">القراءة:</span>
+                                <span class="bg-gray-200 px-3 py-1 rounded font-bold text-gray-600">سرية</span>
+                            </td>
+                            <td class="mobile-details md:!table-cell flex-col md:flex-row justify-between items-center p-4 border-b border-gray-100 md:border-none text-center">
+                                <span class="md:hidden font-bold text-gray-500 mb-1">السنة القبلية:</span>
+                                <span class="text-gray-400 font-bold">-</span>
+                            </td>
+                            <td class="mobile-details md:!table-cell flex-col md:flex-row justify-between items-center p-4 border-b border-gray-100 md:border-none text-center">
+                                <span class="md:hidden font-bold text-gray-500 mb-1">الفرض:</span>
+                                <span class="bg-blue-100 text-blue-800 px-5 py-1 rounded-full font-bold text-lg">4</span>
+                            </td>
+                            <td class="mobile-details md:!table-cell flex-col md:flex-row justify-between items-center p-4 text-center">
+                                <span class="md:hidden font-bold text-gray-500 mb-1">السنة البعدية:</span>
+                                <span class="text-gray-400 font-bold">-</span>
+                            </td>
+                        </tr>
+
+                        <!-- أذكار المساء -->
+                        <tr class="block md:table-row bg-orange-50 border border-orange-200 md:border-y-2 md:border-orange-200 rounded-xl mb-4 md:mb-0">
+                            <td colspan="5" class="block md:table-cell p-4 md:text-center text-right">
+                                <span class="block md:inline font-bold text-orange-800 text-lg mb-1 md:mb-0"><i class="fa-solid fa-cloud-sun ml-2"></i> أذكار المساء:</span>
+                                <span class="block md:inline text-orange-700 font-medium"> وقتها من بعد صلاة العصر إلى غروب الشمس </span>
+                            </td>
+                        </tr>
+
+                        <!-- المغرب -->
+                        <tr class="block md:table-row bg-white md:bg-gray-50 border border-gray-200 md:border-none rounded-xl mb-4 md:mb-0 shadow-sm md:shadow-none hover:bg-emerald-50 transition duration-200">
+                            <td onclick="toggleAccordion(this)" class="flex md:table-cell justify-between items-center p-4 cursor-pointer md:cursor-auto border-b border-gray-100 md:border-none">
+                                <span class="font-bold text-emerald-700 text-lg">🌇 المغرب</span>
+                                <i class="fa-solid fa-chevron-down text-emerald-500 md:hidden transition-transform duration-300 icon-arrow"></i>
+                            </td>
+                            <td class="mobile-details md:!table-cell flex-col md:flex-row justify-between items-center p-4 border-b border-gray-100 md:border-none text-center">
+                                <span class="md:hidden font-bold text-gray-500 mb-1">القراءة:</span>
+                                <span class="bg-emerald-100 px-3 py-1 rounded font-bold text-emerald-900">جهرية</span>
+                            </td>
+                            <td class="mobile-details md:!table-cell flex-col md:flex-row justify-between items-center p-4 border-b border-gray-100 md:border-none text-center">
+                                <span class="md:hidden font-bold text-gray-500 mb-1">السنة القبلية:</span>
+                                <span class="text-gray-400 font-bold">-</span>
+                            </td>
+                            <td class="mobile-details md:!table-cell flex-col md:flex-row justify-between items-center p-4 border-b border-gray-100 md:border-none text-center">
+                                <span class="md:hidden font-bold text-gray-500 mb-1">الفرض:</span>
+                                <span class="bg-blue-100 text-blue-800 px-5 py-1 rounded-full font-bold text-lg">3</span>
+                            </td>
+                            <td class="mobile-details md:!table-cell flex-col md:flex-row justify-between items-center p-4 text-center">
+                                <span class="md:hidden font-bold text-gray-500 mb-1">السنة البعدية:</span>
+                                <span class="bg-emerald-100 text-emerald-800 px-5 py-1 rounded-full font-bold text-lg">2</span>
+                            </td>
+                        </tr>
+
+                        <!-- العشاء -->
+                        <tr class="block md:table-row bg-white md:bg-transparent border border-gray-200 md:border-none rounded-xl mb-4 md:mb-0 shadow-sm md:shadow-none hover:bg-emerald-50 transition duration-200">
+                            <td onclick="toggleAccordion(this)" class="flex md:table-cell justify-between items-center p-4 cursor-pointer md:cursor-auto border-b border-gray-100 md:border-none">
+                                <span class="font-bold text-emerald-700 text-lg">🌙 العشاء</span>
+                                <i class="fa-solid fa-chevron-down text-emerald-500 md:hidden transition-transform duration-300 icon-arrow"></i>
+                            </td>
+                            <td class="mobile-details md:!table-cell flex-col md:flex-row justify-between items-center p-4 border-b border-gray-100 md:border-none text-center">
+                                <span class="md:hidden font-bold text-gray-500 mb-1">القراءة:</span>
+                                <span class="bg-emerald-100 px-3 py-1 rounded font-bold text-emerald-900">جهرية</span>
+                            </td>
+                            <td class="mobile-details md:!table-cell flex-col md:flex-row justify-between items-center p-4 border-b border-gray-100 md:border-none text-center">
+                                <span class="md:hidden font-bold text-gray-500 mb-1">السنة القبلية:</span>
+                                <span class="text-gray-400 font-bold">-</span>
+                            </td>
+                            <td class="mobile-details md:!table-cell flex-col md:flex-row justify-between items-center p-4 border-b border-gray-100 md:border-none text-center">
+                                <span class="md:hidden font-bold text-gray-500 mb-1">الفرض:</span>
+                                <span class="bg-blue-100 text-blue-800 px-5 py-1 rounded-full font-bold text-lg">4</span>
+                            </td>
+                            <td class="mobile-details md:!table-cell flex-col md:flex-row justify-between items-center p-4 text-center">
+                                <span class="md:hidden font-bold text-gray-500 mb-1">السنة البعدية:</span>
+                                <span class="bg-emerald-100 text-emerald-800 px-5 py-1 rounded-full font-bold text-lg">2</span>
+                            </td>
+                        </tr>
+
+                        <!-- قيام الليل -->
+                        <tr class="block md:table-row bg-purple-50 border border-purple-200 md:border-t-2 md:border-purple-200 rounded-xl mb-4 md:mb-0">
+                            <td colspan="5" class="block md:table-cell p-4 md:text-center text-right">
+                                <div class="flex flex-col md:flex-row items-start md:items-center justify-center gap-2">
+                                    <span class="font-bold text-purple-700 text-lg"><i class="fa-solid fa-moon ml-2"></i> قيام الليل والوتر:</span>
+                                    <span class="text-gray-700 font-medium"> يبدأ بعد صلاة العشاء ويمتد <strong class="text-purple-800 underline">حتى الفجر</strong> </span>
+                                    <span class="bg-purple-200 text-purple-800 px-3 py-1 rounded-full font-bold text-sm mt-2 md:mt-0">مَثنى مَثنى</span>
+                                </div>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- الأقسام الفقهية وآداب الدعاء -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate__animated animate__fadeInUp animate__delay-1s">
+            
+            <!-- ملاحظات فقهية -->
+            <div class="bg-gray-50 p-6 rounded-xl shadow-md border border-gray-200 lg:col-span-1">
+                <h2 class="text-xl font-bold text-gray-800 mb-4"><i class="fa-solid fa-clipboard-list ml-2"></i> ملاحظات هامة في الصلاة</h2>
+                <ul class="space-y-4 text-gray-700 text-sm md:text-base font-medium">
+                    <li><strong class="text-emerald-700 block mb-1">سنة الفجر:</strong> يُستحب قراءة سورة (الكافرون) في الركعة الأولى، وسورة (الإخلاص) في الثانية.</li>
+                    <li><strong class="text-purple-700 block mb-1">قيام الليل والدعاء:</strong> أفضل وقت له <strong>الثلث الأخير من الليل</strong>، لقوله ﷺ: "ينزل ربنا تبارك وتعالى كل ليلة إلى السماء الدنيا... فيقول: من يدعوني فأستجيب له".</li>
+                    <li><strong class="text-indigo-700 block mb-1">التكبيرات في الصلاة:</strong> <br>1. تكبيرة الإحرام: ركن لا تنعقد الصلاة إلا به.<br>2. تكبيرات الانتقال: واجبة (عند النزول للركوع والسجود).</li>
+                </ul>
+            </div>
+
+            <!-- كيفية الدعاء المستجاب -->
+            <div class="bg-amber-50 p-6 rounded-xl shadow-md border border-amber-200 lg:col-span-2">
+                <h2 class="text-xl font-bold text-amber-800 mb-4"><i class="fa-solid fa-hands-praying ml-2"></i> آداب وطريقة الدعاء المستجاب</h2>
+                <p class="text-amber-900 text-sm md:text-base font-medium mb-4">للدعاء ترتيب نبوي صحيح يجعله أرجى للقبول والإجابة بإذن الله:</p>
+                
+                <div class="space-y-3 mb-4">
+                    <div class="flex items-start gap-3 bg-white p-3 rounded-lg border border-amber-100">
+                        <span class="bg-amber-200 text-amber-800 font-bold px-3 py-1 rounded-full text-sm">1</span>
+                        <div>
+                            <strong class="text-amber-800 block text-sm md:text-base">الثناء وتمجيد الله ﷻ:</strong>
+                            <span class="text-gray-600 text-sm">البدء بحمد الله وشكره، مثال: "يا رب لك الحمد كما ينبغي لجلال وجهك وعظيم سلطانك".</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3 bg-white p-3 rounded-lg border border-amber-100">
+                        <span class="bg-amber-200 text-amber-800 font-bold px-3 py-1 rounded-full text-sm">2</span>
+                        <div>
+                            <strong class="text-amber-800 block text-sm md:text-base">الصلاة على النبي ﷺ:</strong>
+                            <span class="text-gray-600 text-sm">"اللهم صل وسلم وبارك على نبينا محمد وعلى آله وصحبه أجمعين".</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3 bg-white p-3 rounded-lg border border-amber-100">
+                        <span class="bg-amber-200 text-amber-800 font-bold px-3 py-1 rounded-full text-sm">3</span>
+                        <div>
+                            <strong class="text-amber-800 block text-sm md:text-base">الدعاء والمسألة:</strong>
+                            <span class="text-gray-600 text-sm">اطلب من الله حاجتك للدنيا والآخرة بإلحاح وتوسل بأسمائه الحسنى.</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3 bg-white p-3 rounded-lg border border-amber-100">
+                        <span class="bg-amber-200 text-amber-800 font-bold px-3 py-1 rounded-full text-sm">4</span>
+                        <div>
+                            <strong class="text-amber-800 block text-sm md:text-base">الختم بالصلاة على النبي والحمد:</strong>
+                            <span class="text-gray-600 text-sm">تختم دعائك قائلاً: "وصلى الله وسلم على نبينا محمد، والحمد لله رب العالمين".</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- إضافة الدعاء بظهر الغيب (الجديد) -->
+                <div class="p-4 bg-orange-100 border border-orange-200 rounded-lg flex items-start gap-3">
+                    <i class="fa-solid fa-user-group text-orange-600 mt-1"></i>
+                    <div>
+                        <strong class="text-orange-800 block text-sm md:text-base">سر الاستجابة السريعة (بظهر الغيب):</strong>
+                        <span class="text-gray-700 text-sm font-medium">إذا دعوت لأخيك المسلم بظهر الغيب (وهو لا يعلم)، فإن الله يوكّل بك مَلَكاً يقول لك: <span class="font-bold text-orange-900">"آمين، ولك بمثل"</span>، فيُستجاب دعاؤك ويُعطيك الله مثل ما تمنيت لغيرك.</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- أسماء الله الحسنى -->
+        <div class="bg-teal-50 p-6 rounded-xl shadow-md border border-teal-200 animate__animated animate__fadeInUp animate__delay-1s">
+            <h2 class="text-xl font-bold text-teal-800 mb-4"><i class="fa-solid fa-star-and-crescent ml-2"></i> أسماء الله الحُسنى (99 اسماً)</h2>
+            <p class="text-teal-900 text-sm md:text-base font-medium mb-4">يُستحب التوسل إلى الله بأسمائه وصفاته في الدعاء: <span class="italic text-teal-700">"وَلِلَّهِ الْأَسْمَاءُ الْحُسْنَى فَادْعُوهُ بِهَا"</span></p>
+            
+            <div class="bg-white p-4 rounded-lg border border-teal-100 max-h-60 overflow-y-auto custom-scrollbar">
+                <div class="flex flex-wrap gap-2 justify-center" id="names-of-allah-container">
+                    <!-- Javascript Data -->
+                </div>
+            </div>
+        </div>
+
+        <!-- الصف الأول من الأقسام السفلية (أوقات النهي، الفوائت، مواضع النظر) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate__animated animate__fadeInUp animate__delay-2s">
+            
+            <!-- أوقات النهي -->
+            <div class="bg-red-50 p-6 rounded-xl shadow-md border border-red-200">
+                <h2 class="text-xl font-bold text-red-700 mb-3"><i class="fa-solid fa-ban ml-2"></i> أوقات النهي (للنوافل فقط)</h2>
+                <ul class="space-y-2 text-red-900 text-sm font-medium leading-relaxed">
+                    <li><i class="fa-solid fa-xmark text-red-500 ml-2"></i>من بعد الفجر حتى الشروق.</li>
+                    <li><i class="fa-solid fa-xmark text-red-500 ml-2"></i>وقت الشروق (يمتد لحوالي 15 دقيقة <strong>بعد</strong> شروق الشمس).</li>
+                    <li><i class="fa-solid fa-xmark text-red-500 ml-2"></i>وقت الاستواء (حوالي 15 دقيقة <strong>قبل</strong> أذان الظهر).</li>
+                    <li><i class="fa-solid fa-xmark text-red-500 ml-2"></i>من بعد صلاة العصر حتى أذان المغرب.</li>
+                </ul>
+            </div>
+
+            <!-- قضاء الفوائت -->
+            <div class="bg-blue-50 p-6 rounded-xl shadow-md border border-blue-200">
+                <h2 class="text-xl font-bold text-blue-800 mb-3"><i class="fa-solid fa-clock-rotate-left ml-2"></i> قضاء الفوائت</h2>
+                <ul class="space-y-3 text-blue-900 text-sm font-medium leading-relaxed">
+                    <li><i class="fa-solid fa-check text-blue-500 ml-2"></i> يجوز قضاء الصلاة الفائتة في <strong>أي وقت</strong>.</li>
+                    <li><i class="fa-solid fa-check text-blue-500 ml-2"></i> <strong>الترتيب:</strong> يجب أداء الفوائت بالترتيب، وتقديم الفرض على السنة.</li>
+                    <li><i class="fa-solid fa-check text-blue-500 ml-2"></i> قضاء السنن الرواتب <strong>جائز</strong> لمن فاتته لعذر.</li>
+                </ul>
+            </div>
+
+            <!-- مواضع النظر (مستقلة وبنصوص دقيقة) -->
+            <div class="bg-cyan-50 p-6 rounded-xl shadow-md border border-cyan-200">
+                <h2 class="text-xl font-bold text-cyan-800 mb-4"><i class="fa-solid fa-eye ml-2"></i> مواضع النظر (الخشوع)</h2>
+                <ul class="space-y-4 text-cyan-900 text-sm md:text-base font-medium">
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-person-praying mt-1 w-5 text-cyan-600"></i> <span><strong>في القيام:</strong> يُستحب النظر إلى موضع السجود.</span></li>
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-arrow-turn-down mt-1 w-5 text-cyan-600"></i> <span><strong>في الركوع:</strong> النظر إلى موضع السجود (أو القدمين).</span></li>
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-face-smile-beam mt-1 w-5 text-cyan-600"></i> <span><strong>في السجود:</strong> النظر إلى موضع الأنف.</span></li>
+                    <li class="flex items-start gap-2"><i class="fa-solid fa-hand-point-up mt-1 w-5 text-cyan-600"></i> <span><strong>في التشهد:</strong> النظر إلى إصبع السبابة أثناء تحريكها أو الإشارة بها.</span></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- الصف الثاني من الأقسام السفلية (مساعد السهو، الأذكار البعدية) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6 animate__animated animate__fadeInUp animate__delay-2s">
+            
+            <!-- مساعد سجود السهو -->
+            <div class="bg-orange-50 p-6 rounded-xl shadow-md border border-orange-200 lg:col-span-1">
+                <h2 class="text-xl font-bold text-orange-800 mb-4"><i class="fa-solid fa-brain ml-2"></i> مساعد سجود السهو</h2>
+                <div class="flex flex-col gap-3">
+                    <button onclick="calcSahw('زيادة')" class="bg-orange-200 hover:bg-orange-300 text-orange-800 px-3 py-3 rounded-lg font-bold transition text-sm">زيادة بالصلاة</button>
+                    <button onclick="calcSahw('نقص')" class="bg-orange-200 hover:bg-orange-300 text-orange-800 px-3 py-3 rounded-lg font-bold transition text-sm">نقص (واجب)</button>
+                    <button onclick="calcSahw('شك')" class="bg-orange-200 hover:bg-orange-300 text-orange-800 px-3 py-3 rounded-lg font-bold transition text-sm">شك بالعدد</button>
+                </div>
+                <div id="sahw-result" class="mt-4 hidden p-3 bg-white border border-orange-300 rounded-lg text-sm font-bold text-orange-700 leading-relaxed"></div>
+            </div>
+
+            <!-- الأذكار البعدية (مستقلة وبنصوص دقيقة) -->
+            <div class="bg-emerald-50 p-6 rounded-xl shadow-md border border-emerald-200 lg:col-span-2">
+                <h2 class="text-xl font-bold text-emerald-800 mb-4"><i class="fa-solid fa-book-open ml-2"></i> الأذكار دُبر كل صلاة مكتوبة</h2>
+                <div class="bg-white p-5 rounded-lg shadow-sm border border-emerald-100">
+                    <ul class="list-disc list-inside space-y-3 text-emerald-900 font-medium text-sm md:text-base leading-relaxed">
+                        <li><strong>الاستغفار:</strong> أستغفر الله (3 مرات)، ثم قول: (اللَّهُمَّ أَنْتَ السَّلامُ، ومِنكَ السَّلامُ، تَبارَكْتَ يا ذَا الجَلالِ والإِكْرامِ).</li>
+                        <li><strong>قراءة آية الكرسي</strong> (ويُستحب معها الإخلاص، والفلق، والناس).</li>
+                        <li><strong>التسبيح:</strong> سبحان الله (33 مرة).</li>
+                        <li><strong>التحميد:</strong> الحمد لله (33 مرة).</li>
+                        <li><strong>التكبير:</strong> الله أكبر (34 مرة).</li>
+                        <li><strong>الختام:</strong> لإتمام المائة يقول: (لا إلَهَ إلَّا اللَّهُ وَحْدَهُ لا شَرِيكَ له، له المُلْكُ وَلَهُ الحَمْدُ وَهو علَى كُلِّ شيءٍ قَدِيرٌ).</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // قائمة الموبايل
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+            menu.classList.toggle('animate__animated');
+            menu.classList.toggle('animate__fadeInDown');
+        }
+
+        // طي الجدول في الموبايل
+        function toggleAccordion(tdElement) {
+            if (window.innerWidth >= 768) return;
+            const trElement = tdElement.parentElement;
+            const details = trElement.querySelectorAll('.mobile-details');
+            const icon = tdElement.querySelector('.icon-arrow');
+            details.forEach(detail => detail.classList.toggle('open'));
+            if (icon) icon.classList.toggle('rotate-180');
+        }
+
+        // مساعد السهو
+        function calcSahw(type) {
+            const resultBox = document.getElementById('sahw-result');
+            resultBox.classList.remove('hidden');
+            resultBox.classList.remove('animate__animated', 'animate__headShake');
+            void resultBox.offsetWidth; 
+            resultBox.classList.add('animate__animated', 'animate__headShake');
+
+            let message = "";
+            if(type === 'زيادة') {
+                message = "سجدتان <strong class='text-red-600'>بعد السلام</strong> (تسلم، ثم تسجد سجدتين للسهو، ثم تسلم).";
+            } else if (type === 'نقص') {
+                message = "سجدتان <strong class='text-red-600'>قبل السلام</strong> (بعد الانتهاء من التشهد الأخير).";
+            } else if (type === 'شك') {
+                message = "ابنِ على الأقل (اليقين). مثال: شككت صليت 3 أم 4؟ اعتبرها 3 وكمل صلاتك، ثم اسجد سجدتين <strong class='text-red-600'>قبل السلام</strong>.";
+            }
+            resultBox.innerHTML = `<i class="fa-solid fa-lightbulb text-yellow-500 ml-2"></i> ${message}`;
+        }
+
+        // توليد أسماء الله الحسنى الـ 99 لملء الحاوية
+        const namesOfAllah = [
+            "الله","الرَّحْمَن","الرَّحِيم","الْمَلِك","الْقُدُّوس","السَّلَام","الْمُؤْمِن","الْمُهَيْمِن","الْعَزِيز","الْجَبَّار",
+            "الْمُتَكَبِّر","الْخَالِق","الْبَارِئ","الْمُصَوِّر","الْغَفَّار","الْقَهَّار","الْوَهَّاب","الرَّزَّاق","الْفَتَّاح","الْعَلِيم",
+            "الْقَابِض","الْبَاسِط","الْخَافِض","الرَّافِع","الْمُعِزّ","الْمُذِلّ","السَّمِيع","الْبَصِير","الْحَكَم","الْعَدْل",
+            "اللَّطِيف","الْخَبِير","الْحَلِيم","الْعَظِيم","الْغَفُور","الشَّكُور","الْعَلِيّ","الْكَبِير","الْحَفِيظ","الْمُقِيت",
+            "الْحَسِيب","الْجَلِيل","الْكَرِيم","الرَّقِيب","الْمُجِيب","الْوَاسِع","الْحَكِيم","الْوَدُود","الْمَجِيد","الْبَاعِث",
+            "الشَّهِيد","الْحَقّ","الْوَكِيل","الْقَوِيّ","الْمَتِين","الْوَلِيّ","الْحَمِيد","الْمُحْصِي","الْمُبْدِئ","الْمُعِيد",
+            "الْمُحْيِي","الْمُمِيت","الْحَيّ","الْقَيُّوم","الْوَاجِد","الْمَاجِد","الْوَاحِد","الْأَحَد","الصَّمَد","الْقَادِر",
+            "الْمُقْتَدِر","الْمُقَدِّم","الْمُؤَخِّر","الْأَوَّل","الْآخِر","الظَّاهِر","الْبَاطِن","الْوَالِي","الْمُتَعَالِي","الْبَرّ",
+            "التَّوَّاب","الْمُنْتَقِم","الْعَفُوّ","الرَّءُوف","مَالِكُ الْمُلْكِ","ذُو الْجَلَالِ وَالْإِكْرَامِ","الْمُقْسِط","الْجَامِع","الْغَنِيّ","الْمُغْنِي",
+            "الْمَانِع","الضَّارّ","النَّافِع","النُّور","الْهَادِي","الْبَدِيع","الْبَاقِي","الْوَارِث","الرَّشِيد","الصَّبُور"
+        ];
+
+        const container = document.getElementById('names-of-allah-container');
+        namesOfAllah.forEach(name => {
+            const span = document.createElement('span');
+            span.className = 'bg-teal-100 text-teal-800 border border-teal-200 px-3 py-1.5 rounded-full text-sm font-bold shadow-sm hover:bg-teal-600 hover:text-white transition duration-200 cursor-default';
+            span.textContent = name;
+            container.appendChild(span);
+        });
+    </script>
+
+</body>
+</html>
