@@ -1,1 +1,548 @@
-Coming Soon!
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academy | Explore Courses</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Include Inter & Poppins Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- Global Styles --- */
+        body {
+            font-family: 'Inter', sans-serif;
+            padding-top: 64px; /* Offset for the fixed navbar */
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        h2, h3, h4 {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Input specific styling to make it look premium */
+        input[type="text"], input[type="email"], input[type="tel"], input[type="number"], select, textarea {
+            transition: all 0.2s ease-in-out;
+        }
+        
+        input:read-only, textarea:read-only {
+            cursor: not-allowed;
+            background-color: #f3f4f6 !important;
+            color: #4b5563 !important;
+            border-color: #e5e7eb !important;
+        }
+
+        /* Custom Checkbox and Radio Color */
+        input[type="checkbox"], input[type="radio"] {
+            accent-color: #e70000;
+        }
+        input[type="checkbox"]:checked, input[type="radio"]:checked {
+            background-color: #e70000;
+            border-color: #e70000;
+        }
+
+        /* Buttons */
+        .btn-custom {
+            font-family: 'Poppins', sans-serif;
+            background-color: #e70000;
+            color: #fff;
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-custom:hover {
+            background-color: #cc0000;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(231, 0, 0, 0.2);
+        }
+
+        .btn-dark {
+            background-color: #1f1f1f;
+        }
+        .btn-dark:hover {
+            background-color: #000;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Textures Styles */
+        .bg-texture-2 {
+            background-image: linear-gradient(to left, #ff2b2b, #1f1f1f);
+            background-position: center;
+            background-size: cover;
+        }
+
+        /* Hero */
+        .hero {
+            position: relative;
+            min-height: 40vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .hero { min-height: 50vh; }
+            @keyframes breathing {
+                0% { background-size: 100%; }
+                50% { background-size: 105%; }
+                100% { background-size: 100%; }
+            }
+            .hero { animation: breathing 8s infinite ease-in-out; }
+        }
+
+        /* Footer */
+        footer {
+            background-color: #1a1a1a; 
+            padding: 24px 0;
+            text-align: center;
+            margin-top: auto; 
+        }
+        footer a {
+            color: #e70000; 
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        footer a:hover {
+            color: #ff3333;
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Fixed Navbar -->
+    <nav class="fixed top-0 w-full z-40 bg-white shadow-sm border-b border-gray-200 h-16 flex items-center justify-center">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-[#e70000] text-white rounded flex items-center justify-center font-bold text-xl">A</div>
+            <span class="font-bold text-2xl tracking-tight text-gray-900">Academy</span>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero bg-texture-2">
+        <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight mb-4">Empower Your Future</h1>
+        <p class="text-base md:text-xl text-gray-200 max-w-2xl mx-auto">Explore our industry-leading courses and kickstart your career with expert-led training.</p>
+    </header>
+
+    <!-- Courses Section -->
+    <main class="max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 md:py-16 flex-grow">
+        <div class="mb-8 border-b-2 border-gray-200 pb-2">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 text-center md:text-left">Available Programs</h2>
+        </div>
+
+        <div id="course-list" class="flex flex-col gap-6 md:gap-8">
+            <!-- Courses dynamically injected here via JS -->
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p class="text-gray-400 text-sm">Developed by <a href="https://mfouadbakr.github.io/portfolio/index.html" target="_blank">Mohamed Bakr</a></p>
+        </div>
+    </footer>
+
+    <!-- Hidden Iframe to prevent page redirection after form submit -->
+    <iframe name="hidden_iframe" id="hidden_iframe" class="hidden" onload="handleIframeLoad()"></iframe>
+
+    <!-- Registration Modal -->
+    <div id="registration-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <!-- Background Overlay -->
+        <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity backdrop-blur-sm" onclick="closeModal()"></div>
+
+        <!-- Modal Content Container -->
+        <div class="fixed inset-0 z-10 overflow-y-auto no-scrollbar py-6 sm:py-10">
+            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                <!-- Modal Card -->
+                <div class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-2xl transition-all sm:w-full sm:max-w-3xl border-t-4 border-[#e70000]">
+                    
+                    <div class="bg-white px-5 pb-6 pt-5 sm:p-8">
+                        <!-- Modal Header -->
+                        <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
+                            <div>
+                                <h3 class="text-2xl font-bold text-gray-900" id="modal-title">Registration Form</h3>
+                                <p class="text-sm text-gray-500 mt-1">Please fill in your details to apply.</p>
+                            </div>
+                            <button type="button" onclick="closeModal()" class="text-gray-400 hover:text-[#e70000] hover:bg-red-50 p-2 rounded-full transition-colors focus:outline-none">
+                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Success Message -->
+                        <div id="success-message" class="hidden text-center py-12">
+                            <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-100 mb-5">
+                                <svg class="h-10 w-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-2">Registration Successful!</h3>
+                            <p class="text-gray-600">Thank you for registering. We will contact you soon regarding your application.</p>
+                        </div>
+
+                        <!-- Form -->
+                        <form id="gform" action="https://docs.google.com/forms/d/e/1FAIpQLSfXGaY-dvBfr2amJbiEtVA9vcDczAHrElDXDVsVwgdaqBaREQ/formResponse" method="POST" target="hidden_iframe" onsubmit="return prepareSubmit()">
+                            
+                            <!-- Hidden Fields populated by JS on Submit -->
+                            <input type="hidden" name="entry.1580927698" id="real-address">
+                            <input type="hidden" name="entry.1245295070" id="real-days">
+                            <input type="hidden" name="entry.587636556" id="real-times">
+                            <input type="hidden" name="entry.743884959" id="form-course-instructor">
+                            <input type="hidden" name="entry.1995981978" id="form-course-mode">
+                            <input type="hidden" name="entry.899661260" id="real-course-name">
+
+                            <div class="space-y-8">
+                                
+                                <!-- SECTION: Course Details -->
+                                <div class="bg-gray-50 p-5 rounded-lg border border-gray-200 shadow-sm">
+                                    <h4 class="text-sm font-bold text-[#e70000] mb-4 uppercase tracking-wider flex items-center gap-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                        Course Overview
+                                    </h4>
+                                    
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div class="sm:col-span-2">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-1">Course Name <span class="text-red-500">*</span></label>
+                                            <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-[#e70000] bg-white">
+                                                <span id="custom-prefix" class="flex select-none items-center pl-3 text-[#e70000] font-bold bg-gray-100 rounded-l-md border-r border-gray-300 hidden">Custom:</span>
+                                                <input type="text" id="ui-course-name" required class="block w-full min-w-0 flex-1 rounded-r-md border-0 py-2 px-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 font-semibold disabled:bg-gray-100 disabled:text-gray-500" placeholder="e.g. Advanced Data Science">
+                                            </div>
+                                        </div>
+
+                                        <div class="sm:col-span-2">
+                                            <label class="block text-sm font-semibold text-gray-700 mb-1">Course Description <span id="desc-opt" class="text-gray-400 font-normal text-xs ml-1"></span></label>
+                                            <textarea name="entry.1617163909" id="form-course-desc" rows="2" class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#e70000] sm:text-sm sm:leading-6 bg-white disabled:bg-gray-100 disabled:text-gray-500" placeholder="Describe your preferred learning topics..."></textarea>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-1">Instructor</label>
+                                            <input type="text" id="ui-course-instructor" readonly class="block w-full rounded-md border-0 py-2 px-3 font-medium sm:text-sm sm:leading-6">
+                                        </div>
+                                        
+                                        <div>
+                                            <label class="block text-sm font-semibold text-gray-700 mb-1">Mode</label>
+                                            <input type="text" id="ui-course-mode" readonly class="block w-full rounded-md border-0 py-2 px-3 font-medium sm:text-sm sm:leading-6">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- SECTION: Personal Information -->
+                                <div>
+                                    <h4 class="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider border-b border-gray-200 pb-2">Personal Information</h4>
+                                    
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div class="sm:col-span-2">
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Full Name <span class="text-red-500">*</span></label>
+                                            <input type="text" name="entry.177066322" required placeholder="John Doe" class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#e70000] sm:text-sm sm:leading-6 bg-white">
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Email <span class="text-red-500">*</span></label>
+                                            <input type="email" name="entry.858229098" required placeholder="john@example.com" class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#e70000] sm:text-sm sm:leading-6 bg-white">
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Phone <span class="text-red-500">*</span></label>
+                                            <input type="tel" name="entry.522745691" required placeholder="+20 123 456 7890" class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#e70000] sm:text-sm sm:leading-6 bg-white">
+                                        </div>
+
+                                        <div class="flex gap-4">
+                                            <div class="w-1/3">
+                                                <label class="block text-sm font-medium text-gray-700 mb-1">Age <span class="text-red-500">*</span></label>
+                                                <input type="number" name="entry.349430112" required placeholder="e.g. 25" min="10" max="100" class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#e70000] sm:text-sm sm:leading-6 bg-white">
+                                            </div>
+                                            <!-- Radio buttons for Gender -->
+                                            <div class="w-2/3">
+                                                <label class="block text-sm font-medium text-gray-700 mb-1">Gender <span class="text-red-500">*</span></label>
+                                                <div class="flex items-center gap-4 h-full pb-1">
+                                                    <label class="flex items-center gap-2 cursor-pointer">
+                                                        <input type="radio" name="entry.775464880" value="Male" required class="w-4 h-4 border-gray-300 focus:ring-[#e70000]">
+                                                        <span class="text-sm text-gray-700 font-medium">Male</span>
+                                                    </label>
+                                                    <label class="flex items-center gap-2 cursor-pointer">
+                                                        <input type="radio" name="entry.775464880" value="Female" required class="w-4 h-4 border-gray-300 focus:ring-[#e70000]">
+                                                        <span class="text-sm text-gray-700 font-medium">Female</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Composite Address Section -->
+                                        <div class="sm:col-span-2">
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                                <input type="text" id="addr-country" placeholder="Country" class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#e70000] sm:text-sm sm:leading-6 bg-white">
+                                                <input type="text" id="addr-state" placeholder="State/City" class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#e70000] sm:text-sm sm:leading-6 bg-white">
+                                                <input type="text" id="addr-area" placeholder="Area" class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#e70000] sm:text-sm sm:leading-6 bg-white">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- SECTION: Educational Background -->
+                                <div>
+                                    <h4 class="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider border-b border-gray-200 pb-2">Educational Background</h4>
+                                    
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div class="sm:col-span-2">
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Educational Stage</label>
+                                            <select name="entry.1897653936" class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#e70000] sm:text-sm sm:leading-6 bg-white">
+                                                <option value="" disabled selected>Select Stage</option>
+                                                <option value="School">School</option>
+                                                <option value="University">University</option>
+                                                <option value="Master">Master</option>
+                                                <option value="PHd">PHd</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">School / University</label>
+                                            <input type="text" name="entry.1044133502" placeholder="e.g. Cairo University" class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#e70000] sm:text-sm sm:leading-6 bg-white">
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Faculty / Dept.</label>
+                                            <input type="text" name="entry.1710170668" placeholder="e.g. Engineering" class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#e70000] sm:text-sm sm:leading-6 bg-white">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- SECTION: Schedule Preferences -->
+                                <div>
+                                    <h4 class="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider border-b border-gray-200 pb-2">Schedule Preferences</h4>
+                                    
+                                    <div class="grid grid-cols-1 gap-5">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Preferred Days</label>
+                                            <p id="predetermined-days-label" class="text-sm text-[#e70000] font-semibold bg-red-50 py-2 px-3 rounded border border-red-100 hidden"></p>
+                                            <div id="interactive-days" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="pref-day" value="Saturday" class="w-4 h-4 rounded border-gray-300 focus:ring-[#e70000]"><span class="text-sm text-gray-700">Saturday</span></label>
+                                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="pref-day" value="Sunday" class="w-4 h-4 rounded border-gray-300 focus:ring-[#e70000]"><span class="text-sm text-gray-700">Sunday</span></label>
+                                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="pref-day" value="Monday" class="w-4 h-4 rounded border-gray-300 focus:ring-[#e70000]"><span class="text-sm text-gray-700">Monday</span></label>
+                                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="pref-day" value="Tuesday" class="w-4 h-4 rounded border-gray-300 focus:ring-[#e70000]"><span class="text-sm text-gray-700">Tuesday</span></label>
+                                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="pref-day" value="Wednesday" class="w-4 h-4 rounded border-gray-300 focus:ring-[#e70000]"><span class="text-sm text-gray-700">Wednesday</span></label>
+                                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="pref-day" value="Thursday" class="w-4 h-4 rounded border-gray-300 focus:ring-[#e70000]"><span class="text-sm text-gray-700">Thursday</span></label>
+                                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="pref-day" value="Friday" class="w-4 h-4 rounded border-gray-300 focus:ring-[#e70000]"><span class="text-sm text-gray-700">Friday</span></label>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Preferred Times</label>
+                                            <p id="predetermined-times-label" class="text-sm text-[#e70000] font-semibold bg-red-50 py-2 px-3 rounded border border-red-100 hidden"></p>
+                                            <div id="interactive-times" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="pref-time" value="Morning" class="w-4 h-4 rounded border-gray-300 focus:ring-[#e70000]"><span class="text-sm text-gray-700">Morning</span></label>
+                                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="pref-time" value="Afternoon" class="w-4 h-4 rounded border-gray-300 focus:ring-[#e70000]"><span class="text-sm text-gray-700">Afternoon</span></label>
+                                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="pref-time" value="Evening" class="w-4 h-4 rounded border-gray-300 focus:ring-[#e70000]"><span class="text-sm text-gray-700">Evening</span></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- SECTION: Extra -->
+                                <div>
+                                    <h4 class="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider border-b border-gray-200 pb-2">Additional Info</h4>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Comments or Questions</label>
+                                    <textarea name="entry.711119809" rows="3" placeholder="Any special requirements or questions?" class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#e70000] sm:text-sm sm:leading-6 bg-white"></textarea>
+                                </div>
+
+                            </div>
+
+                            <div class="mt-8 flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-gray-200">
+                                <button type="button" onclick="closeModal()" class="w-full sm:w-auto px-6 py-2.5 bg-white text-gray-700 font-semibold rounded-lg border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors">Cancel</button>
+                                <button type="submit" class="w-full sm:w-auto btn-custom focus:outline-none focus:ring-4 focus:ring-red-200">Submit Application</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include external data file -->
+    <script src="courses.js"></script>
+
+    <script>
+        let submitted = false;
+        let currentActiveCourse = null;
+
+        // Render on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCourses();
+        });
+
+        // Render Courses List
+        function renderCourses() {
+            const container = document.getElementById('course-list');
+            container.innerHTML = '';
+            
+            if (typeof coursesData !== 'undefined') {
+                coursesData.forEach(course => {
+                    const div = document.createElement('div');
+                    div.innerHTML = course.html;
+                    container.appendChild(div.firstElementChild);
+                });
+            } else {
+                container.innerHTML = '<p class="text-red-500 text-center">Error: courses.js could not be loaded.</p>';
+            }
+        }
+
+        // Open Modal and apply course-specific rules
+        function openModal(courseId) {
+            currentActiveCourse = coursesData.find(c => c.id === courseId);
+            if(!currentActiveCourse) return;
+
+            const nameInput = document.getElementById('ui-course-name');
+            const descInput = document.getElementById('form-course-desc');
+            const customPrefix = document.getElementById('custom-prefix');
+            const instructorInput = document.getElementById('ui-course-instructor');
+            const modeInput = document.getElementById('ui-course-mode');
+
+            // Set background logic & UI
+            document.getElementById('form-course-instructor').value = currentActiveCourse.instructor;
+            document.getElementById('form-course-mode').value = currentActiveCourse.mode;
+            instructorInput.value = currentActiveCourse.instructor;
+            modeInput.value = currentActiveCourse.mode;
+
+            // Handle Custom vs Regular
+            if (currentActiveCourse.isCustom) {
+                customPrefix.classList.remove('hidden');
+                nameInput.classList.remove('rounded-l-md');
+                
+                nameInput.value = "";
+                nameInput.removeAttribute('readonly');
+                nameInput.disabled = false;
+                
+                descInput.value = "";
+                descInput.removeAttribute('readonly');
+                descInput.disabled = false;
+                descInput.setAttribute('required', 'true');
+                document.getElementById('desc-opt').innerText = "(*Required)";
+            } else {
+                customPrefix.classList.add('hidden');
+                nameInput.classList.add('rounded-l-md');
+
+                nameInput.value = currentActiveCourse.name;
+                nameInput.setAttribute('readonly', 'true');
+                
+                descInput.value = currentActiveCourse.description;
+                descInput.setAttribute('readonly', 'true');
+                descInput.removeAttribute('required');
+                document.getElementById('desc-opt').innerText = "";
+            }
+
+            // Handle Predetermined Days
+            const daysLabel = document.getElementById('predetermined-days-label');
+            const interactiveDays = document.getElementById('interactive-days');
+            if(currentActiveCourse.predeterminedDays && currentActiveCourse.predeterminedDays.length > 0) {
+                interactiveDays.classList.add('hidden');
+                daysLabel.classList.remove('hidden');
+                daysLabel.innerText = "Instructor's Set Days: " + currentActiveCourse.predeterminedDays.join(", ");
+            } else {
+                interactiveDays.classList.remove('hidden');
+                daysLabel.classList.add('hidden');
+            }
+
+            // Handle Predetermined Times
+            const timesLabel = document.getElementById('predetermined-times-label');
+            const interactiveTimes = document.getElementById('interactive-times');
+            if(currentActiveCourse.predeterminedTimes && currentActiveCourse.predeterminedTimes.length > 0) {
+                interactiveTimes.classList.add('hidden');
+                timesLabel.classList.remove('hidden');
+                timesLabel.innerText = "Instructor's Set Times: " + currentActiveCourse.predeterminedTimes.join(", ");
+            } else {
+                interactiveTimes.classList.remove('hidden');
+                timesLabel.classList.add('hidden');
+            }
+
+            // Scroll modal to top
+            document.querySelector('#registration-modal .overflow-y-auto').scrollTop = 0;
+
+            // Display Modal
+            document.getElementById('registration-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }
+
+        // Close and Reset completely
+        function closeModal() {
+            document.getElementById('registration-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; // Restore background scrolling
+            
+            document.getElementById('gform').reset();
+            
+            // Clear all checkboxes & radios programmatically
+            document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(cb => cb.checked = false);
+            
+            document.getElementById('gform').classList.remove('hidden');
+            document.getElementById('success-message').classList.add('hidden');
+            submitted = false;
+            currentActiveCourse = null;
+        }
+
+        // On Form Submit: Combine strings to hidden inputs
+        function prepareSubmit() {
+            // 1. Course Name
+            const uiName = document.getElementById('ui-course-name').value.trim();
+            document.getElementById('real-course-name').value = currentActiveCourse.isCustom ? "Custom: " + uiName : uiName;
+
+            // 2. Composite Address
+            const country = document.getElementById('addr-country').value.trim();
+            const state = document.getElementById('addr-state').value.trim();
+            const area = document.getElementById('addr-area').value.trim();
+            
+            let fullAddress =[];
+            if(country) fullAddress.push(country);
+            if(state) fullAddress.push(state);
+            if(area) fullAddress.push(area);
+            document.getElementById('real-address').value = fullAddress.join(' - ');
+
+            // 3. Days
+            if (currentActiveCourse.predeterminedDays && currentActiveCourse.predeterminedDays.length > 0) {
+                document.getElementById('real-days').value = currentActiveCourse.predeterminedDays.join(', ');
+            } else {
+                const days = Array.from(document.querySelectorAll('input[name="pref-day"]:checked')).map(cb => cb.value).join(', ');
+                document.getElementById('real-days').value = days;
+            }
+
+            // 4. Times
+            if (currentActiveCourse.predeterminedTimes && currentActiveCourse.predeterminedTimes.length > 0) {
+                document.getElementById('real-times').value = currentActiveCourse.predeterminedTimes.join(', ');
+            } else {
+                const times = Array.from(document.querySelectorAll('input[name="pref-time"]:checked')).map(cb => cb.value).join(', ');
+                document.getElementById('real-times').value = times;
+            }
+
+            submitted = true;
+            return true;
+        }
+
+        // Handles cleanup when hidden iframe finishes loading (Submission Complete)
+        function handleIframeLoad() {
+            if (submitted) {
+                document.getElementById('gform').classList.add('hidden');
+                document.getElementById('success-message').classList.remove('hidden');
+                
+                // Auto Close
+                setTimeout(() => {
+                    closeModal();
+                }, 3500);
+            }
+        }
+    </script>
+</body>
+</html>
