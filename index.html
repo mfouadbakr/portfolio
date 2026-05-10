@@ -474,15 +474,54 @@
                 <div class="modal-body pt-0">
                     <!-- Static Icon (Animation Removed) -->
                     <div class="mb-3">
-                        <i class="fas fa-gamepad fa-4x text-danger"></i>
+                        <i class="fas fa-gamepad fa-4x"></i>
                     </div>
                     <h2 class="modal-title fw-bold mb-2" id="gamesPromoLabel">Game Library Launched!</h2>
                     <p class="text-muted">
-                        Explore my new interactive games section featuring <strong>Karoot</strong>, <strong>Jalsa</strong>, and <strong>Tiny Spy</strong>.
+                        Explore my new interactive games section featuring <strong>The Pact: Infinity</strong>, <strong>Tiny Spy</strong>, <strong>Karoot</strong>, and more.
                     </p>
                     <div class="mt-4">
                         <a href="games/index.html" class="btn btn-custom rounded-pill px-4 py-2">
                             <i class="fas fa-play me-2"></i> Play Games Now
+                        </a>
+                    </div>
+                    <div class="mt-2">
+                        <button type="button" class="btn btn-sm btn-link text-secondary text-decoration-none" data-bs-dismiss="modal">Maybe later</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROMOTIONAL MODAL FOR APPS -->
+    <div class="modal fade" id="appsPromoModal" tabindex="-1" aria-labelledby="appsPromoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center p-4">
+                
+                <!-- Background Animation Container (Reusing your CSS) -->
+                <div class="bg-animation-container">
+                    <div class="floating-card card-1"></div>
+                    <div class="floating-card card-2"></div>
+                    <div class="floating-card card-3"></div>
+                    <div class="floating-card card-4"></div>
+                    <div class="floating-card card-5"></div>
+                    <div class="floating-card card-6"></div>
+                </div>
+
+                <div class="modal-header border-0 pb-0 justify-content-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pt-0">
+                    <div class="mb-3">
+                        <i class="fas fa-mobile-screen-button fa-4x"></i>
+                    </div>
+                    <h2 class="modal-title fw-bold mb-2" id="appsPromoLabel">Explore My Apps!</h2>
+                    <p class="text-muted">
+                        Discover useful tools like <strong>Zad El-Muslim</strong>, <strong>Academy</strong>, <strong>Study with Bakr</strong>, and more.
+                    </p>
+                    <div class="mt-4">
+                        <a href="apps/index.html" class="btn btn-custom rounded-pill px-4 py-2">
+                            <i class="fas fa-th me-2"></i> View All Apps
                         </a>
                     </div>
                     <div class="mt-2">
@@ -507,16 +546,36 @@
     <!-- Script to Trigger Modal on Load (With 5s Delay & Testing Enabled) -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Set delay to 5000 milliseconds (5 seconds)
+            // 1. Get the elements
+            var gamesModalEl = document.getElementById('gamesPromoModal');
+            var appsModalEl = document.getElementById('appsPromoModal');
+
+            // 2. Initial 5-second delay
             setTimeout(function() {
-                // I have commented out the 'once per session' check so it appears on refresh for testing.
-                // if (!sessionStorage.getItem('gamesPopupShown')) {
-                    var gamesModal = new bootstrap.Modal(document.getElementById('gamesPromoModal'));
+                if (gamesModalEl) {
+                    console.log("Showing Games Modal...");
+                    var gamesModal = new bootstrap.Modal(gamesModalEl);
                     gamesModal.show();
-                    
-                    // sessionStorage.setItem('gamesPopupShown', 'true');
-                // }
-            }, 5000); // 5 Seconds Delay
+
+                    // 3. Listen for the "hidden" event
+                    gamesModalEl.addEventListener('hidden.bs.modal', function () {
+                        console.log("Games Modal hidden, preparing Apps Modal...");
+                        
+                        // 4. Delay before showing the next one to prevent backdrop glitches
+                        setTimeout(function() {
+                            if (appsModalEl) {
+                                console.log("Showing Apps Modal now.");
+                                var appsModal = new bootstrap.Modal(appsModalEl);
+                                appsModal.show();
+                            } else {
+                                console.error("Could not find appsPromoModal ID in HTML");
+                            }
+                        }, 800); // slightly longer delay for mobile smoothness
+                    });
+                } else {
+                    console.error("Could not find gamesPromoModal ID in HTML");
+                }
+            }, 5000); 
         });
     </script>
 
