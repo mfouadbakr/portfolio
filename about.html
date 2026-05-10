@@ -25,11 +25,33 @@
 
     <!-- css -->
     <link href="assets/css/common.css" rel="stylesheet">
-    <link href="assets/css/loader.css" rel="stylesheet">
 
+    <!--Splash CSS-->
+    <style>
+        body.splash-lock { overflow: hidden !important; margin: 0; height: 100vh; }
+        .splash-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 10000;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .splash-logo { max-width: 180px; width: 50%; height: auto; margin-bottom: 20px; }
+        .spinner {
+            width: 40px; height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #b9b9b9;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 </head>
 
-<body>
+<body class="splash-lock">
     <!--Splash-->
     <div class="splash-screen" id="splash">
         <img src="assets/images/logo-dark.png" alt="Logo" class="splash-logo">
@@ -88,6 +110,9 @@
                         mastering any skill.
                         In his view, everything in computer science — and beyond — can be learned if you approach it
                         with dedication and persistence.
+                    </p>
+                    <p class="animate__animated animate__fadeInUp animate__delay-2s">
+                        Currently researching in the <span class="highlight-bta">AI Engineering</span> field and enjoying dealing with <span class="highlight-bta">LLMs (Cloudly and Locally)</span> and perform <span class="highlight-bta">prompt-engineering</span> and build <span class="highlight-bta">RAG-based hybrid solutions</span>.
                     </p>
                 </div>
             </div>
@@ -172,7 +197,6 @@
                         <div class="skill-item"><span class="fa-ps">Ps</span> Photoshop</div>
                         <div class="skill-item"><i class="fa-solid fa-chart-simple"></i> PowerBI</div>
                         <div class="skill-item"><i class="fa-solid fa-tachometer-alt"></i> JMeter</div>
-                        <div class="skill-item"><i class="fa-solid fa-book-open"></i> Storytelling</div>
                     </div>
                 </div>
 
@@ -212,7 +236,7 @@
                     <div class="skills-title">Data &amp; Automation</div>
                     <div class="skills-grid">
                         <div class="skill-item"><i class="fa-brands fa-python"></i> Python</div>
-                        <div class="skill-item"><i class="fa-solid fa-rocket"></i> Gemini API</div>
+                        <div class="skill-item"><i class="fa-solid fa-rocket"></i>LLM Models (Gemini (Cloud), Deepseek-R1 (Local))</div>
                         <div class="skill-item"><i class="fa-brands fa-windows"></i> PowerShell 5</div>
                         <div class="skill-item"><i class="fa-solid fa-terminal"></i> Bash Scripting</div>
                     </div>
@@ -234,6 +258,7 @@
                         <div class="skill-item"><i class="fa-solid fa-brain"></i> Analytical Thinking</div>
                         <div class="skill-item"><i class="fa-solid fa-lightbulb"></i> Problem-Solving</div>
                         <div class="skill-item"><i class="fa-solid fa-comments"></i> Presentation</div>
+                        <div class="skill-item"><i class="fa-solid fa-book-open"></i> Storytelling</div>
                     </div>
                 </div>
 
