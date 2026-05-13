@@ -16,12 +16,21 @@ const coursesData =[
             </div>
             <div class="w-full md:w-2/3 p-6 flex flex-col justify-between">
                 <div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Digital Marketing Masterclass</h3>
-                    <p class="text-sm md:text-base text-gray-600 mb-4 leading-relaxed">Learn SEO, Social Media Marketing, PPC, and Email Marketing from industry experts. Boost your brand's online presence and drive real results.</p>
-                    <div class="flex flex-col sm:flex-row sm:gap-6 text-sm text-gray-800 mb-6 border-l-4 border-[#e70000] pl-4 py-2 bg-gray-50 rounded-r-md">
-                        <p><span class="font-semibold text-gray-900">Instructor:</span> Dr. Ahmed Hassan</p>
-                        <p><span class="font-semibold text-gray-900">Schedule:</span> Sat, Tue (Evenings)</p>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2 font-poppins">Digital Marketing Masterclass</h3>
+                    <p class="text-sm md:text-base text-gray-600 mb-5 leading-relaxed">Learn SEO, Social Media Marketing, PPC, and Email Marketing from industry experts. Boost your brand's online presence and drive real results.</p>
+                    
+                    <!-- NEW PREMIUM BADGES -->
+                    <div class="flex flex-wrap gap-3 mb-6">
+                        <div class="flex items-center gap-1.5 bg-red-50 text-[#e70000] px-3 py-1.5 rounded-lg text-xs font-bold border border-red-100 uppercase tracking-wide">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+                            Dr. Ahmed Hassan
+                        </div>
+                        <div class="flex items-center gap-1.5 bg-gray-100 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-bold border border-gray-200 uppercase tracking-wide">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg>
+                            Sat, Tue (Evenings)
+                        </div>
                     </div>
+
                 </div>
                 <div class="mt-2 text-right md:text-left">
                     <button onclick="openModal('course_1')" class="btn-custom w-full sm:w-auto shadow-sm">Register for Course</button>
@@ -48,12 +57,21 @@ const coursesData =[
             </div>
             <div class="w-full md:w-2/3 p-6 flex flex-col justify-between">
                 <div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Request a Custom Course</h3>
-                    <p class="text-sm md:text-base text-gray-600 mb-4 leading-relaxed">Don't see what you're looking for? Let us know what you want to learn, and our experts will tailor a learning path specifically for you.</p>
-                    <div class="flex flex-col sm:flex-row sm:gap-6 text-sm text-gray-800 mb-6 border-l-4 border-gray-800 pl-4 py-2 bg-gray-50 rounded-r-md">
-                        <p><span class="font-semibold text-gray-900">Instructor:</span> Assigned upon request</p>
-                        <p><span class="font-semibold text-gray-900">Schedule:</span> Flexible</p>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2 font-poppins">Request a Custom Course</h3>
+                    <p class="text-sm md:text-base text-gray-600 mb-5 leading-relaxed">Don't see what you're looking for? Let us know what you want to learn, and our experts will tailor a learning path specifically for you.</p>
+                    
+                    <!-- NEW PREMIUM BADGES -->
+                    <div class="flex flex-wrap gap-3 mb-6">
+                        <div class="flex items-center gap-1.5 bg-gray-100 text-gray-800 px-3 py-1.5 rounded-lg text-xs font-bold border border-gray-200 uppercase tracking-wide">
+                            <svg class="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+                            Expert Assigned on Request
+                        </div>
+                        <div class="flex items-center gap-1.5 bg-gray-100 text-gray-800 px-3 py-1.5 rounded-lg text-xs font-bold border border-gray-200 uppercase tracking-wide">
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            Flexible Schedule
+                        </div>
                     </div>
+
                 </div>
                 <div class="mt-2 text-right md:text-left">
                     <button onclick="openModal('course_2')" class="btn-custom btn-dark w-full sm:w-auto shadow-sm">Propose Custom Course</button>

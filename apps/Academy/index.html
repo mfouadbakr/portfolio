@@ -5,14 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Academy | Explore Courses</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <!-- Include Inter & Poppins Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Animate.css for the modal animation -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     
     <style>
         /* --- Global Styles --- */
         body {
             font-family: 'Inter', sans-serif;
-            padding-top: 64px; /* Offset for the fixed navbar */
+            padding-top: 64px;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
@@ -29,18 +33,12 @@
         
         input:read-only, textarea:read-only {
             cursor: not-allowed;
-            background-color: #f3f4f6 !important;
             color: #4b5563 !important;
-            border-color: #e5e7eb !important;
         }
 
         /* Custom Checkbox and Radio Color */
         input[type="checkbox"], input[type="radio"] {
             accent-color: #e70000;
-        }
-        input[type="checkbox"]:checked, input[type="radio"]:checked {
-            background-color: #e70000;
-            border-color: #e70000;
         }
 
         /* Buttons */
@@ -122,6 +120,9 @@
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Modal Overlay Styling */
+        .modal-overlay { background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -162,215 +163,253 @@
     <iframe name="hidden_iframe" id="hidden_iframe" class="hidden" onload="handleIframeLoad()"></iframe>
 
     <!-- Registration Modal -->
-    <div id="registration-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div id="registration-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 hidden">
         <!-- Background Overlay -->
-        <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity backdrop-blur-sm" onclick="closeModal()"></div>
+        <div class="absolute inset-0 modal-overlay transition-opacity" onclick="closeModal()"></div>
 
         <!-- Modal Content Container -->
-        <div class="fixed inset-0 z-10 overflow-y-auto no-scrollbar py-6 sm:py-10">
-            <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-                <!-- Modal Card -->
-                <div class="relative transform overflow-hidden rounded-xl bg-white text-left shadow-2xl transition-all sm:w-full sm:max-w-3xl border-t-4 border-[#e70000]">
-                    
-                    <div class="bg-white px-5 pb-6 pt-5 sm:p-8">
-                        <!-- Modal Header -->
-                        <div class="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
-                            <div>
-                                <h3 class="text-2xl font-bold text-gray-900" id="modal-title">Registration Form</h3>
-                                <p class="text-sm text-gray-500 mt-1">Please fill in your details to apply.</p>
+        <div class="bg-white w-full sm:max-w-3xl rounded-3xl shadow-2xl relative z-10 overflow-y-auto max-h-[95vh] no-scrollbar animate__animated animate__zoomIn">
+            
+            <!-- Modal Header -->
+            <div class="bg-[#e70000] p-6 text-white text-center relative sticky top-0 z-20">
+                <button type="button" onclick="closeModal()" class="absolute top-4 right-4 text-white hover:bg-black/20 p-2 rounded-full transition-colors focus:outline-none flex items-center justify-center w-8 h-8">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                <h2 class="text-2xl font-bold font-poppins" id="modal-title">Course Registration</h2>
+                <p class="text-sm opacity-80 mt-1">Submit details to get a quote and tailored schedule</p>
+            </div>
+
+            <!-- Success Message -->
+            <div id="success-message" class="hidden text-center py-16 px-6">
+                <div class="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-green-100 mb-6">
+                    <svg class="h-12 w-12 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                </div>
+                <h3 class="text-3xl font-bold text-gray-900 mb-3 font-poppins">Registration Successful!</h3>
+                <p class="text-gray-500 text-lg">Thank you for registering. We will contact you soon regarding your application.</p>
+            </div>
+
+            <!-- Form -->
+            <form id="gform" action="https://docs.google.com/forms/d/e/1FAIpQLSfXGaY-dvBfr2amJbiEtVA9vcDczAHrElDXDVsVwgdaqBaREQ/formResponse" method="POST" target="hidden_iframe" onsubmit="return prepareSubmit()" class="p-6 sm:p-8 space-y-6">
+                
+                <!-- Hidden Fields populated by JS on Submit -->
+                <input type="hidden" name="entry.1580927698" id="real-address">
+                <input type="hidden" name="entry.1245295070" id="real-days">
+                <input type="hidden" name="entry.587636556" id="real-times">
+                <input type="hidden" name="entry.743884959" id="form-course-instructor">
+                <input type="hidden" name="entry.1995981978" id="form-course-mode">
+                <input type="hidden" name="entry.899661260" id="real-course-name">
+
+                <!-- SECTION: Course Details -->
+                <div>
+                    <h4 class="text-xs font-bold uppercase text-gray-400 mb-3 tracking-widest border-b border-gray-100 pb-2">Course Overview</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="sm:col-span-2">
+                            <label class="block text-sm font-bold mb-1 text-gray-800">Course Name <span class="text-[#e70000]">*</span></label>
+                            <div class="flex w-full bg-gray-50 border border-gray-200 rounded-xl focus-within:border-[#e70000] overflow-hidden transition-colors">
+                                <span id="custom-prefix" class="flex select-none items-center pl-4 pr-3 text-[#e70000] font-bold bg-gray-100 border-r border-gray-200 hidden text-sm">Custom:</span>
+                                <input type="text" id="ui-course-name" required class="flex-1 p-3 bg-transparent outline-none font-bold text-sm text-gray-900 disabled:text-gray-500" placeholder="e.g. Advanced Data Science">
                             </div>
-                            <button type="button" onclick="closeModal()" class="text-gray-400 hover:text-[#e70000] hover:bg-red-50 p-2 rounded-full transition-colors focus:outline-none">
-                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
                         </div>
 
-                        <!-- Success Message -->
-                        <div id="success-message" class="hidden text-center py-12">
-                            <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-100 mb-5">
-                                <svg class="h-10 w-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
-                            </div>
-                            <h3 class="text-2xl font-bold text-gray-900 mb-2">Registration Successful!</h3>
-                            <p class="text-gray-600">Thank you for registering. We will contact you soon regarding your application.</p>
+                        <div class="sm:col-span-2">
+                            <label class="block text-sm font-bold mb-1 text-gray-800">Course Description <span id="desc-opt" class="text-gray-400 font-normal text-xs ml-1"></span></label>
+                            <textarea name="entry.1617163909" id="form-course-desc" rows="2" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#e70000] outline-none text-sm transition-colors text-gray-900" placeholder="Describe your preferred learning topics..."></textarea>
                         </div>
 
-                        <!-- Form -->
-                        <form id="gform" action="https://docs.google.com/forms/d/e/1FAIpQLSfXGaY-dvBfr2amJbiEtVA9vcDczAHrElDXDVsVwgdaqBaREQ/formResponse" method="POST" target="hidden_iframe" onsubmit="return prepareSubmit()">
+                        <div>
+                            <label class="text-xs font-bold uppercase text-gray-400 block mb-1">Instructor</label>
+                            <input type="text" id="ui-course-instructor" readonly class="w-full bg-gray-100 p-3 rounded-xl font-bold text-sm outline-none text-[#e70000]">
+                        </div>
+                        
+                        <div>
+                            <label class="text-xs font-bold uppercase text-gray-400 block mb-1">Mode</label>
                             
-                            <!-- Hidden Fields populated by JS on Submit -->
-                            <input type="hidden" name="entry.1580927698" id="real-address">
-                            <input type="hidden" name="entry.1245295070" id="real-days">
-                            <input type="hidden" name="entry.587636556" id="real-times">
-                            <input type="hidden" name="entry.743884959" id="form-course-instructor">
-                            <input type="hidden" name="entry.1995981978" id="form-course-mode">
-                            <input type="hidden" name="entry.899661260" id="real-course-name">
-
-                            <div class="space-y-8">
-                                
-                                <!-- SECTION: Course Details -->
-                                <div class="bg-gray-50 p-5 rounded-lg border border-gray-200 shadow-sm">
-                                    <h4 class="text-sm font-bold text-[#e70000] mb-4 uppercase tracking-wider flex items-center gap-2">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                                        Course Overview
-                                    </h4>
-                                    
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <div class="sm:col-span-2">
-                                            <label class="block text-sm font-semibold text-gray-700 mb-1">Course Name <span class="text-red-500">*</span></label>
-                                            <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-[#e70000] bg-white">
-                                                <span id="custom-prefix" class="flex select-none items-center pl-3 text-[#e70000] font-bold bg-gray-100 rounded-l-md border-r border-gray-300 hidden">Custom:</span>
-                                                <input type="text" id="ui-course-name" required class="block w-full min-w-0 flex-1 rounded-r-md border-0 py-2 px-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 font-semibold disabled:bg-gray-100 disabled:text-gray-500" placeholder="e.g. Advanced Data Science">
-                                            </div>
-                                        </div>
-
-                                        <div class="sm:col-span-2">
-                                            <label class="block text-sm font-semibold text-gray-700 mb-1">Course Description <span id="desc-opt" class="text-gray-400 font-normal text-xs ml-1"></span></label>
-                                            <textarea name="entry.1617163909" id="form-course-desc" rows="2" class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#e70000] sm:text-sm sm:leading-6 bg-white disabled:bg-gray-100 disabled:text-gray-500" placeholder="Describe your preferred learning topics..."></textarea>
-                                        </div>
-
-                                        <div>
-                                            <label class="block text-sm font-semibold text-gray-700 mb-1">Instructor</label>
-                                            <input type="text" id="ui-course-instructor" readonly class="block w-full rounded-md border-0 py-2 px-3 font-medium sm:text-sm sm:leading-6">
-                                        </div>
-                                        
-                                        <div>
-                                            <label class="block text-sm font-semibold text-gray-700 mb-1">Mode</label>
-                                            <input type="text" id="ui-course-mode" readonly class="block w-full rounded-md border-0 py-2 px-3 font-medium sm:text-sm sm:leading-6">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- SECTION: Personal Information -->
-                                <div>
-                                    <h4 class="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider border-b border-gray-200 pb-2">Personal Information</h4>
-                                    
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <div class="sm:col-span-2">
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Full Name <span class="text-red-500">*</span></label>
-                                            <input type="text" name="entry.177066322" required placeholder="John Doe" class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#e70000] sm:text-sm sm:leading-6 bg-white">
-                                        </div>
-
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Email <span class="text-red-500">*</span></label>
-                                            <input type="email" name="entry.858229098" required placeholder="john@example.com" class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#e70000] sm:text-sm sm:leading-6 bg-white">
-                                        </div>
-
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Phone <span class="text-red-500">*</span></label>
-                                            <input type="tel" name="entry.522745691" required placeholder="+20 123 456 7890" class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#e70000] sm:text-sm sm:leading-6 bg-white">
-                                        </div>
-
-                                        <div class="flex gap-4">
-                                            <div class="w-1/3">
-                                                <label class="block text-sm font-medium text-gray-700 mb-1">Age <span class="text-red-500">*</span></label>
-                                                <input type="number" name="entry.349430112" required placeholder="e.g. 25" min="10" max="100" class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#e70000] sm:text-sm sm:leading-6 bg-white">
-                                            </div>
-                                            <!-- Radio buttons for Gender -->
-                                            <div class="w-2/3">
-                                                <label class="block text-sm font-medium text-gray-700 mb-1">Gender <span class="text-red-500">*</span></label>
-                                                <div class="flex items-center gap-4 h-full pb-1">
-                                                    <label class="flex items-center gap-2 cursor-pointer">
-                                                        <input type="radio" name="entry.775464880" value="Male" required class="w-4 h-4 border-gray-300 focus:ring-[#e70000]">
-                                                        <span class="text-sm text-gray-700 font-medium">Male</span>
-                                                    </label>
-                                                    <label class="flex items-center gap-2 cursor-pointer">
-                                                        <input type="radio" name="entry.775464880" value="Female" required class="w-4 h-4 border-gray-300 focus:ring-[#e70000]">
-                                                        <span class="text-sm text-gray-700 font-medium">Female</span>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Composite Address Section -->
-                                        <div class="sm:col-span-2">
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
-                                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                                <input type="text" id="addr-country" placeholder="Country" class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#e70000] sm:text-sm sm:leading-6 bg-white">
-                                                <input type="text" id="addr-state" placeholder="State/City" class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#e70000] sm:text-sm sm:leading-6 bg-white">
-                                                <input type="text" id="addr-area" placeholder="Area" class="block w-full rounded-md border-0 py-2 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#e70000] sm:text-sm sm:leading-6 bg-white">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- SECTION: Educational Background -->
-                                <div>
-                                    <h4 class="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider border-b border-gray-200 pb-2">Educational Background</h4>
-                                    
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <div class="sm:col-span-2">
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Educational Stage</label>
-                                            <select name="entry.1897653936" class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#e70000] sm:text-sm sm:leading-6 bg-white">
-                                                <option value="" disabled selected>Select Stage</option>
-                                                <option value="School">School</option>
-                                                <option value="University">University</option>
-                                                <option value="Master">Master</option>
-                                                <option value="PHd">PHd</option>
-                                                <option value="Other">Other</option>
-                                            </select>
-                                        </div>
-
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">School / University</label>
-                                            <input type="text" name="entry.1044133502" placeholder="e.g. Cairo University" class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#e70000] sm:text-sm sm:leading-6 bg-white">
-                                        </div>
-
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-1">Faculty / Dept.</label>
-                                            <input type="text" name="entry.1710170668" placeholder="e.g. Engineering" class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#e70000] sm:text-sm sm:leading-6 bg-white">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- SECTION: Schedule Preferences -->
-                                <div>
-                                    <h4 class="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider border-b border-gray-200 pb-2">Schedule Preferences</h4>
-                                    
-                                    <div class="grid grid-cols-1 gap-5">
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-2">Preferred Days</label>
-                                            <p id="predetermined-days-label" class="text-sm text-[#e70000] font-semibold bg-red-50 py-2 px-3 rounded border border-red-100 hidden"></p>
-                                            <div id="interactive-days" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="pref-day" value="Saturday" class="w-4 h-4 rounded border-gray-300 focus:ring-[#e70000]"><span class="text-sm text-gray-700">Saturday</span></label>
-                                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="pref-day" value="Sunday" class="w-4 h-4 rounded border-gray-300 focus:ring-[#e70000]"><span class="text-sm text-gray-700">Sunday</span></label>
-                                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="pref-day" value="Monday" class="w-4 h-4 rounded border-gray-300 focus:ring-[#e70000]"><span class="text-sm text-gray-700">Monday</span></label>
-                                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="pref-day" value="Tuesday" class="w-4 h-4 rounded border-gray-300 focus:ring-[#e70000]"><span class="text-sm text-gray-700">Tuesday</span></label>
-                                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="pref-day" value="Wednesday" class="w-4 h-4 rounded border-gray-300 focus:ring-[#e70000]"><span class="text-sm text-gray-700">Wednesday</span></label>
-                                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="pref-day" value="Thursday" class="w-4 h-4 rounded border-gray-300 focus:ring-[#e70000]"><span class="text-sm text-gray-700">Thursday</span></label>
-                                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="pref-day" value="Friday" class="w-4 h-4 rounded border-gray-300 focus:ring-[#e70000]"><span class="text-sm text-gray-700">Friday</span></label>
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700 mb-2">Preferred Times</label>
-                                            <p id="predetermined-times-label" class="text-sm text-[#e70000] font-semibold bg-red-50 py-2 px-3 rounded border border-red-100 hidden"></p>
-                                            <div id="interactive-times" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="pref-time" value="Morning" class="w-4 h-4 rounded border-gray-300 focus:ring-[#e70000]"><span class="text-sm text-gray-700">Morning</span></label>
-                                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="pref-time" value="Afternoon" class="w-4 h-4 rounded border-gray-300 focus:ring-[#e70000]"><span class="text-sm text-gray-700">Afternoon</span></label>
-                                                <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" name="pref-time" value="Evening" class="w-4 h-4 rounded border-gray-300 focus:ring-[#e70000]"><span class="text-sm text-gray-700">Evening</span></label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- SECTION: Extra -->
-                                <div>
-                                    <h4 class="text-sm font-bold text-gray-900 mb-4 uppercase tracking-wider border-b border-gray-200 pb-2">Additional Info</h4>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Comments or Questions</label>
-                                    <textarea name="entry.711119809" rows="3" placeholder="Any special requirements or questions?" class="block w-full rounded-md border-0 py-2.5 px-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#e70000] sm:text-sm sm:leading-6 bg-white"></textarea>
-                                </div>
-
+                            <!-- Readonly Display for Preset Courses -->
+                            <div id="mode-readonly-container">
+                                <input type="text" id="ui-course-mode-readonly" readonly class="w-full bg-gray-100 p-3 rounded-xl font-bold text-sm outline-none text-[#e70000]">
                             </div>
 
-                            <div class="mt-8 flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-gray-200">
-                                <button type="button" onclick="closeModal()" class="w-full sm:w-auto px-6 py-2.5 bg-white text-gray-700 font-semibold rounded-lg border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors">Cancel</button>
-                                <button type="submit" class="w-full sm:w-auto btn-custom focus:outline-none focus:ring-4 focus:ring-red-200">Submit Application</button>
+                            <!-- Interactive Select for Custom Courses -->
+                            <div id="mode-select-container" class="hidden">
+                                <select id="ui-course-mode-select" class="w-full bg-gray-50 border border-gray-200 p-3 rounded-xl font-bold text-sm outline-none focus:border-[#e70000] transition-colors text-gray-900">
+                                    <option value="" disabled selected>Select Mode</option>
+                                    <option value="Hybrid">Hybrid</option>
+                                    <option value="Online">Online</option>
+                                    <option value="Face to Face">Face to Face</option>
+                                </select>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
-            </div>
+
+                <!-- SECTION: Personal Information -->
+                <div>
+                    <h4 class="text-xs font-bold uppercase text-gray-400 mb-3 tracking-widest border-b border-gray-100 pb-2">Personal Information</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="sm:col-span-2">
+                            <label class="block text-sm font-bold mb-1 text-gray-800">Full Name <span class="text-[#e70000]">*</span></label>
+                            <input type="text" name="entry.177066322" required placeholder="John Doe" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#e70000] outline-none text-sm transition-colors text-gray-900">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold mb-1 text-gray-800">Email <span class="text-[#e70000]">*</span></label>
+                            <input type="email" name="entry.858229098" required placeholder="john@example.com" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#e70000] outline-none text-sm transition-colors text-gray-900">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold mb-1 text-gray-800">Phone <span class="text-[#e70000]">*</span></label>
+                            <input type="tel" name="entry.522745691" required placeholder="+20 123 456 7890" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#e70000] outline-none text-sm transition-colors text-gray-900">
+                        </div>
+
+                        <div class="flex flex-col sm:flex-row gap-4 sm:col-span-2">
+                            <div class="w-full sm:w-1/3">
+                                <label class="block text-sm font-bold mb-1 text-gray-800">Age <span class="text-[#e70000]">*</span></label>
+                                <input type="number" name="entry.349430112" required placeholder="e.g. 25" min="10" max="100" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#e70000] outline-none text-sm transition-colors text-gray-900">
+                            </div>
+                            <div class="w-full sm:w-2/3">
+                                <label class="block text-sm font-bold mb-1 text-gray-800">Gender <span class="text-[#e70000]">*</span></label>
+                                <div class="flex gap-3">
+                                    <label class="flex-1 flex items-center justify-center sm:justify-start gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                                        <input type="radio" name="entry.775464880" value="Male" required class="w-4 h-4 text-[#e70000] focus:ring-[#e70000] border-gray-300">
+                                        <span class="text-sm font-bold text-gray-700">Male</span>
+                                    </label>
+                                    <label class="flex-1 flex items-center justify-center sm:justify-start gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                                        <input type="radio" name="entry.775464880" value="Female" required class="w-4 h-4 text-[#e70000] focus:ring-[#e70000] border-gray-300">
+                                        <span class="text-sm font-bold text-gray-700">Female</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Composite Address Section -->
+                        <div class="sm:col-span-2 mt-2">
+                            <label class="block text-sm font-bold mb-1 text-gray-800">Address</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <select id="addr-country" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#e70000] outline-none text-sm transition-colors text-gray-900">
+                                    <option value="Egypt" selected>Egypt</option>
+                                    <option value="Saudi Arabia">Saudi Arabia</option>
+                                    <option value="UAE">UAE</option>
+                                    <option value="Qatar">Qatar</option>
+                                    <option value="Kuwait">Kuwait</option>
+                                    <option value="Jordan">Jordan</option>
+                                    <option value="USA">USA</option>
+                                    <option value="UK">UK</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <input type="text" id="addr-state" placeholder="State/City" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#e70000] outline-none text-sm transition-colors text-gray-900">
+                                <input type="text" id="addr-area" placeholder="Area" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#e70000] outline-none text-sm transition-colors text-gray-900">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: Educational Background -->
+                <div>
+                    <h4 class="text-xs font-bold uppercase text-gray-400 mb-3 tracking-widest border-b border-gray-100 pb-2">Educational Background</h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="sm:col-span-2">
+                            <label class="block text-sm font-bold mb-1 text-gray-800">Educational Stage & Status</label>
+                            <select name="entry.1897653936" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#e70000] outline-none text-sm transition-colors text-gray-900">
+                                <option value="" disabled selected>Select Stage & Status</option>
+                                <option value="School (Currently Studying)">School (Currently Studying)</option>
+                                <option value="School (Graduated)">School (Graduated)</option>
+                                <option value="University (Currently Studying)">University (Currently Studying)</option>
+                                <option value="University (Graduated)">University (Graduated)</option>
+                                <option value="Master (Currently Studying)">Master (Currently Studying)</option>
+                                <option value="Master (Graduated)">Master (Graduated)</option>
+                                <option value="PhD (Currently Studying)">PhD (Currently Studying)</option>
+                                <option value="PhD (Graduated)">PhD (Graduated)</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold mb-1 text-gray-800">School / University</label>
+                            <input type="text" name="entry.1044133502" placeholder="e.g. Cairo University" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#e70000] outline-none text-sm transition-colors text-gray-900">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold mb-1 text-gray-800">Faculty / Dept.</label>
+                            <input type="text" name="entry.1710170668" placeholder="e.g. Engineering" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#e70000] outline-none text-sm transition-colors text-gray-900">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: Schedule Preferences -->
+                <div>
+                    <h4 class="text-xs font-bold uppercase text-gray-400 mb-3 tracking-widest border-b border-gray-100 pb-2">Schedule Preferences</h4>
+                    <div class="grid grid-cols-1 gap-5">
+                        <div>
+                            <label class="block text-sm font-bold mb-2 text-gray-800">Preferred Days</label>
+                            <p id="predetermined-days-label" class="text-sm text-[#e70000] font-bold bg-red-50 py-3 px-4 rounded-xl border border-red-100 hidden"></p>
+                            <div id="interactive-days" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <label class="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                                    <input type="checkbox" name="pref-day" value="Saturday" class="w-4 h-4 rounded text-[#e70000] focus:ring-[#e70000] border-gray-300">
+                                    <span class="text-sm font-bold text-gray-700">Saturday</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                                    <input type="checkbox" name="pref-day" value="Sunday" class="w-4 h-4 rounded text-[#e70000] focus:ring-[#e70000] border-gray-300">
+                                    <span class="text-sm font-bold text-gray-700">Sunday</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                                    <input type="checkbox" name="pref-day" value="Monday" class="w-4 h-4 rounded text-[#e70000] focus:ring-[#e70000] border-gray-300">
+                                    <span class="text-sm font-bold text-gray-700">Monday</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                                    <input type="checkbox" name="pref-day" value="Tuesday" class="w-4 h-4 rounded text-[#e70000] focus:ring-[#e70000] border-gray-300">
+                                    <span class="text-sm font-bold text-gray-700">Tuesday</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                                    <input type="checkbox" name="pref-day" value="Wednesday" class="w-4 h-4 rounded text-[#e70000] focus:ring-[#e70000] border-gray-300">
+                                    <span class="text-sm font-bold text-gray-700">Wednesday</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                                    <input type="checkbox" name="pref-day" value="Thursday" class="w-4 h-4 rounded text-[#e70000] focus:ring-[#e70000] border-gray-300">
+                                    <span class="text-sm font-bold text-gray-700">Thursday</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                                    <input type="checkbox" name="pref-day" value="Friday" class="w-4 h-4 rounded text-[#e70000] focus:ring-[#e70000] border-gray-300">
+                                    <span class="text-sm font-bold text-gray-700">Friday</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold mb-2 text-gray-800">Preferred Times</label>
+                            <p id="predetermined-times-label" class="text-sm text-[#e70000] font-bold bg-red-50 py-3 px-4 rounded-xl border border-red-100 hidden"></p>
+                            <div id="interactive-times" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <label class="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                                    <input type="checkbox" name="pref-time" value="Morning" class="w-4 h-4 rounded text-[#e70000] focus:ring-[#e70000] border-gray-300">
+                                    <span class="text-sm font-bold text-gray-700">Morning</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                                    <input type="checkbox" name="pref-time" value="Afternoon" class="w-4 h-4 rounded text-[#e70000] focus:ring-[#e70000] border-gray-300">
+                                    <span class="text-sm font-bold text-gray-700">Afternoon</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                                    <input type="checkbox" name="pref-time" value="Evening" class="w-4 h-4 rounded text-[#e70000] focus:ring-[#e70000] border-gray-300">
+                                    <span class="text-sm font-bold text-gray-700">Evening</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: Extra -->
+                <div>
+                    <h4 class="text-xs font-bold uppercase text-gray-400 mb-3 tracking-widest border-b border-gray-100 pb-2">Additional Info</h4>
+                    <label class="block text-sm font-bold mb-1 text-gray-800">Comments or Questions</label>
+                    <textarea name="entry.711119809" rows="3" placeholder="Any special requirements or questions?" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:border-[#e70000] outline-none text-sm transition-colors text-gray-900"></textarea>
+                </div>
+
+                <!-- Form Submit Buttons -->
+                <div class="pt-6 mt-4 flex gap-3 border-t border-gray-100">
+                    <button type="button" onclick="closeModal()" class="flex-1 py-3 font-bold text-gray-400 hover:text-gray-700 hover:bg-gray-50 rounded-xl transition-colors">Cancel</button>
+                    <button type="submit" class="flex-[2] py-3 bg-[#e70000] text-white font-bold rounded-xl shadow-lg hover:bg-[#121212] transition-colors">Submit Application</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -411,18 +450,20 @@
             const descInput = document.getElementById('form-course-desc');
             const customPrefix = document.getElementById('custom-prefix');
             const instructorInput = document.getElementById('ui-course-instructor');
-            const modeInput = document.getElementById('ui-course-mode');
+            
+            // Mode elements mapping
+            const modeReadonlyContainer = document.getElementById('mode-readonly-container');
+            const modeSelectContainer = document.getElementById('mode-select-container');
+            const modeReadonlyInput = document.getElementById('ui-course-mode-readonly');
+            const modeSelectInput = document.getElementById('ui-course-mode-select');
 
-            // Set background logic & UI
+            // Set basic values
             document.getElementById('form-course-instructor').value = currentActiveCourse.instructor;
-            document.getElementById('form-course-mode').value = currentActiveCourse.mode;
             instructorInput.value = currentActiveCourse.instructor;
-            modeInput.value = currentActiveCourse.mode;
 
             // Handle Custom vs Regular
             if (currentActiveCourse.isCustom) {
                 customPrefix.classList.remove('hidden');
-                nameInput.classList.remove('rounded-l-md');
                 
                 nameInput.value = "";
                 nameInput.removeAttribute('readonly');
@@ -433,9 +474,15 @@
                 descInput.disabled = false;
                 descInput.setAttribute('required', 'true');
                 document.getElementById('desc-opt').innerText = "(*Required)";
+
+                // Show selectable Dropdown for Mode
+                modeReadonlyContainer.classList.add('hidden');
+                modeSelectContainer.classList.remove('hidden');
+                modeSelectInput.setAttribute('required', 'true');
+                modeSelectInput.value = ""; // Reset dropdown to placeholder
+                
             } else {
                 customPrefix.classList.add('hidden');
-                nameInput.classList.add('rounded-l-md');
 
                 nameInput.value = currentActiveCourse.name;
                 nameInput.setAttribute('readonly', 'true');
@@ -444,6 +491,12 @@
                 descInput.setAttribute('readonly', 'true');
                 descInput.removeAttribute('required');
                 document.getElementById('desc-opt').innerText = "";
+
+                // Show Read-only Display for Mode
+                modeReadonlyContainer.classList.remove('hidden');
+                modeSelectContainer.classList.add('hidden');
+                modeSelectInput.removeAttribute('required');
+                modeReadonlyInput.value = currentActiveCourse.mode;
             }
 
             // Handle Predetermined Days
@@ -470,7 +523,7 @@
                 timesLabel.classList.add('hidden');
             }
 
-            // Scroll modal to top
+            // Scroll modal to top seamlessly
             document.querySelector('#registration-modal .overflow-y-auto').scrollTop = 0;
 
             // Display Modal
@@ -500,7 +553,14 @@
             const uiName = document.getElementById('ui-course-name').value.trim();
             document.getElementById('real-course-name').value = currentActiveCourse.isCustom ? "Custom: " + uiName : uiName;
 
-            // 2. Composite Address
+            // 2. Mode Field
+            if (currentActiveCourse.isCustom) {
+                document.getElementById('form-course-mode').value = document.getElementById('ui-course-mode-select').value;
+            } else {
+                document.getElementById('form-course-mode').value = currentActiveCourse.mode;
+            }
+
+            // 3. Composite Address
             const country = document.getElementById('addr-country').value.trim();
             const state = document.getElementById('addr-state').value.trim();
             const area = document.getElementById('addr-area').value.trim();
@@ -511,7 +571,7 @@
             if(area) fullAddress.push(area);
             document.getElementById('real-address').value = fullAddress.join(' - ');
 
-            // 3. Days
+            // 4. Days
             if (currentActiveCourse.predeterminedDays && currentActiveCourse.predeterminedDays.length > 0) {
                 document.getElementById('real-days').value = currentActiveCourse.predeterminedDays.join(', ');
             } else {
@@ -519,7 +579,7 @@
                 document.getElementById('real-days').value = days;
             }
 
-            // 4. Times
+            // 5. Times
             if (currentActiveCourse.predeterminedTimes && currentActiveCourse.predeterminedTimes.length > 0) {
                 document.getElementById('real-times').value = currentActiveCourse.predeterminedTimes.join(', ');
             } else {
@@ -540,7 +600,7 @@
                 // Auto Close
                 setTimeout(() => {
                     closeModal();
-                }, 3500);
+                }, 4000);
             }
         }
     </script>
