@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Include Inter & Poppins Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Animate.css for the modal animation -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
@@ -22,7 +22,7 @@
             min-height: 100vh;
         }
 
-        h2, h3, h4 {
+        h1, h2, h3, h4 {
             font-family: 'Poppins', sans-serif;
         }
 
@@ -46,10 +46,10 @@
             font-family: 'Poppins', sans-serif;
             background-color: #e70000;
             color: #fff;
-            padding: 10px 24px;
+            padding: 12px 28px;
             font-size: 14px;
             font-weight: 600;
-            border-radius: 6px;
+            border-radius: 8px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             border: none;
@@ -58,8 +58,8 @@
         }
         .btn-custom:hover {
             background-color: #cc0000;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 6px -1px rgba(231, 0, 0, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(231, 0, 0, 0.3);
         }
 
         .btn-dark {
@@ -67,38 +67,7 @@
         }
         .btn-dark:hover {
             background-color: #000;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Textures Styles */
-        .bg-texture-2 {
-            background-image: linear-gradient(to left, #ff2b2b, #1f1f1f);
-            background-position: center;
-            background-size: cover;
-        }
-
-        /* Hero */
-        .hero {
-            position: relative;
-            min-height: 40vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            text-align: center;
-            padding: 40px 20px;
-            overflow: hidden;
-        }
-
-        @media (min-width: 768px) {
-            .hero { min-height: 50vh; }
-            @keyframes breathing {
-                0% { background-size: 100%; }
-                50% { background-size: 105%; }
-                100% { background-size: 100%; }
-            }
-            .hero { animation: breathing 8s infinite ease-in-out; }
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
         /* Footer */
@@ -128,33 +97,75 @@
 <body class="bg-gray-50 text-gray-800">
 
     <!-- Fixed Navbar -->
-    <nav class="fixed top-0 w-full z-40 bg-white shadow-sm border-b border-gray-200 h-16 flex items-center justify-center">
+    <nav class="fixed top-0 w-full z-40 bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-200 h-16 flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors" onclick="showHome()">
         <div class="flex items-center gap-2">
-            <div class="w-8 h-8 bg-[#e70000] text-white rounded flex items-center justify-center font-bold text-xl">A</div>
+            <div class="w-8 h-8 bg-[#e70000] text-white rounded flex items-center justify-center font-bold text-xl shadow-sm">A</div>
             <span class="font-bold text-2xl tracking-tight text-gray-900">Academy</span>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <header class="hero bg-texture-2">
-        <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight mb-4">Empower Your Future</h1>
-        <p class="text-base md:text-xl text-gray-200 max-w-2xl mx-auto">Explore our industry-leading courses and kickstart your career with expert-led training.</p>
-    </header>
+    <!-- SPA Container -->
+    <div id="app-container" class="flex-grow flex flex-col w-full">
+        
+        <!-- ============================================== -->
+        <!-- VIEW 1: HOME PAGE (HERO + LIST) -->
+        <!-- ============================================== -->
+        <div id="home-view" class="flex-grow flex flex-col w-full">
+            
+            <!-- Redesigned Hero Section -->
+            <header class="relative bg-gray-900 text-white overflow-hidden">
+                <div class="absolute inset-0">
+                    <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" alt="Education Background" class="w-full h-full object-cover opacity-30 mix-blend-overlay">
+                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                </div>
+                <div class="relative max-w-5xl mx-auto px-4 py-20 md:py-28 text-center">
+                    <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">Master Your Craft. <span class="text-[#e70000]">Shape Your Future.</span></h1>
+                    <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10">Discover industry-leading programs, find expert instructors, and embark on a tailored learning experience designed for real results.</p>
+                    
+                    <!-- Search Bar -->
+                    <div class="max-w-2xl mx-auto bg-white rounded-full p-2 flex shadow-2xl focus-within:ring-4 ring-white/20 transition-all">
+                        <div class="pl-4 flex items-center text-gray-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                        <input type="text" id="search-input" placeholder="Search for courses, instructors, or topics..." class="flex-1 bg-transparent px-4 py-3 outline-none text-gray-900 w-full text-base font-medium">
+                    </div>
+                </div>
+            </header>
 
-    <!-- Courses Section -->
-    <main class="max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 md:py-16 flex-grow">
-        <div class="mb-8 border-b-2 border-gray-200 pb-2">
-            <h2 class="text-2xl md:text-3xl font-bold text-gray-900 text-center md:text-left">Available Programs</h2>
+            <!-- Courses Section -->
+            <main class="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12 flex-grow">
+                <div class="mb-8 border-b-2 border-gray-200 pb-4 flex justify-between items-end">
+                    <h2 class="text-3xl font-bold text-gray-900">Available Programs</h2>
+                </div>
+                <div id="course-list" class="flex flex-col gap-8">
+                    <!-- Courses dynamically injected here via JS -->
+                </div>
+            </main>
         </div>
 
-        <div id="course-list" class="flex flex-col gap-6 md:gap-8">
-            <!-- Courses dynamically injected here via JS -->
+        <!-- ============================================== -->
+        <!-- VIEW 2: COURSE DETAILS PAGE -->
+        <!-- ============================================== -->
+        <div id="course-detail-view" class="hidden flex-grow w-full bg-gray-50 pb-16">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+                <!-- Back Button -->
+                <button onclick="showHome()" class="mb-6 inline-flex items-center gap-2 text-gray-500 hover:text-[#e70000] font-semibold transition-colors bg-white px-4 py-2 rounded-full border border-gray-200 shadow-sm">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    Back to All Courses
+                </button>
+
+                <!-- Detail Content (Injected dynamically) -->
+                <div id="detail-content-container" class="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden">
+                    <!-- Filled by showCourseDetail() JS -->
+                </div>
+            </div>
         </div>
-    </main>
+
+    </div>
 
     <!-- Footer -->
     <footer>
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <p class="text-gray-400 text-sm">Developed by <a href="https://mfouadbakr.github.io/portfolio/index.html" target="_blank">Mohamed Bakr</a></p>
         </div>
     </footer>
@@ -173,9 +184,7 @@
             <!-- Modal Header -->
             <div class="bg-[#e70000] p-6 text-white text-center relative sticky top-0 z-20">
                 <button type="button" onclick="closeModal()" class="absolute top-4 right-4 text-white hover:bg-black/20 p-2 rounded-full transition-colors focus:outline-none flex items-center justify-center w-8 h-8">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
                 <h2 class="text-2xl font-bold font-poppins" id="modal-title">Course Registration</h2>
                 <p class="text-sm opacity-80 mt-1">Submit details to get a quote and tailored schedule</p>
@@ -271,11 +280,11 @@
                             <div class="w-full sm:w-2/3">
                                 <label class="block text-sm font-bold mb-1 text-gray-800">Gender <span class="text-[#e70000]">*</span></label>
                                 <div class="flex gap-3">
-                                    <label class="flex-1 flex items-center justify-center sm:justify-start gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                                    <label class="flex-1 flex items-center justify-center sm:justify-start gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors focus-within:ring-2 ring-[#e70000]">
                                         <input type="radio" name="entry.775464880" value="Male" required class="w-4 h-4 text-[#e70000] focus:ring-[#e70000] border-gray-300">
                                         <span class="text-sm font-bold text-gray-700">Male</span>
                                     </label>
-                                    <label class="flex-1 flex items-center justify-center sm:justify-start gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
+                                    <label class="flex-1 flex items-center justify-center sm:justify-start gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors focus-within:ring-2 ring-[#e70000]">
                                         <input type="radio" name="entry.775464880" value="Female" required class="w-4 h-4 text-[#e70000] focus:ring-[#e70000] border-gray-300">
                                         <span class="text-sm font-bold text-gray-700">Female</span>
                                     </label>
@@ -337,61 +346,23 @@
                     </div>
                 </div>
 
-                <!-- SECTION: Schedule Preferences -->
+                <!-- SECTION: Schedule Preferences (Dynamically Handled) -->
                 <div>
                     <h4 class="text-xs font-bold uppercase text-gray-400 mb-3 tracking-widest border-b border-gray-100 pb-2">Schedule Preferences</h4>
+                    <p class="text-xs text-gray-500 mb-3 -mt-1 italic">*Checkboxes automatically reflect the instructor's available dates/times for preset courses.</p>
+                    
                     <div class="grid grid-cols-1 gap-5">
                         <div>
-                            <label class="block text-sm font-bold mb-2 text-gray-800">Preferred Days</label>
-                            <p id="predetermined-days-label" class="text-sm text-[#e70000] font-bold bg-red-50 py-3 px-4 rounded-xl border border-red-100 hidden"></p>
-                            <div id="interactive-days" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                <label class="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
-                                    <input type="checkbox" name="pref-day" value="Saturday" class="w-4 h-4 rounded text-[#e70000] focus:ring-[#e70000] border-gray-300">
-                                    <span class="text-sm font-bold text-gray-700">Saturday</span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
-                                    <input type="checkbox" name="pref-day" value="Sunday" class="w-4 h-4 rounded text-[#e70000] focus:ring-[#e70000] border-gray-300">
-                                    <span class="text-sm font-bold text-gray-700">Sunday</span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
-                                    <input type="checkbox" name="pref-day" value="Monday" class="w-4 h-4 rounded text-[#e70000] focus:ring-[#e70000] border-gray-300">
-                                    <span class="text-sm font-bold text-gray-700">Monday</span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
-                                    <input type="checkbox" name="pref-day" value="Tuesday" class="w-4 h-4 rounded text-[#e70000] focus:ring-[#e70000] border-gray-300">
-                                    <span class="text-sm font-bold text-gray-700">Tuesday</span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
-                                    <input type="checkbox" name="pref-day" value="Wednesday" class="w-4 h-4 rounded text-[#e70000] focus:ring-[#e70000] border-gray-300">
-                                    <span class="text-sm font-bold text-gray-700">Wednesday</span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
-                                    <input type="checkbox" name="pref-day" value="Thursday" class="w-4 h-4 rounded text-[#e70000] focus:ring-[#e70000] border-gray-300">
-                                    <span class="text-sm font-bold text-gray-700">Thursday</span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
-                                    <input type="checkbox" name="pref-day" value="Friday" class="w-4 h-4 rounded text-[#e70000] focus:ring-[#e70000] border-gray-300">
-                                    <span class="text-sm font-bold text-gray-700">Friday</span>
-                                </label>
+                            <label class="block text-sm font-bold mb-2 text-gray-800">Available Days</label>
+                            <div id="interactive-days" class="flex flex-wrap gap-3">
+                                <!-- Days injected here based on course selection -->
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-bold mb-2 text-gray-800">Preferred Times</label>
-                            <p id="predetermined-times-label" class="text-sm text-[#e70000] font-bold bg-red-50 py-3 px-4 rounded-xl border border-red-100 hidden"></p>
-                            <div id="interactive-times" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                <label class="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
-                                    <input type="checkbox" name="pref-time" value="Morning" class="w-4 h-4 rounded text-[#e70000] focus:ring-[#e70000] border-gray-300">
-                                    <span class="text-sm font-bold text-gray-700">Morning</span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
-                                    <input type="checkbox" name="pref-time" value="Afternoon" class="w-4 h-4 rounded text-[#e70000] focus:ring-[#e70000] border-gray-300">
-                                    <span class="text-sm font-bold text-gray-700">Afternoon</span>
-                                </label>
-                                <label class="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors">
-                                    <input type="checkbox" name="pref-time" value="Evening" class="w-4 h-4 rounded text-[#e70000] focus:ring-[#e70000] border-gray-300">
-                                    <span class="text-sm font-bold text-gray-700">Evening</span>
-                                </label>
+                            <label class="block text-sm font-bold mb-2 text-gray-800">Available Times</label>
+                            <div id="interactive-times" class="flex flex-wrap gap-3">
+                                <!-- Times injected here based on course selection -->
                             </div>
                         </div>
                     </div>
@@ -407,7 +378,7 @@
                 <!-- Form Submit Buttons -->
                 <div class="pt-6 mt-4 flex gap-3 border-t border-gray-100">
                     <button type="button" onclick="closeModal()" class="flex-1 py-3 font-bold text-gray-400 hover:text-gray-700 hover:bg-gray-50 rounded-xl transition-colors">Cancel</button>
-                    <button type="submit" class="flex-[2] py-3 bg-[#e70000] text-white font-bold rounded-xl shadow-lg hover:bg-[#121212] transition-colors">Submit Application</button>
+                    <button type="submit" class="flex-[2] py-3 bg-[#e70000] text-white font-bold rounded-xl shadow-lg hover:bg-[#121212] transition-colors text-lg uppercase tracking-wide">Submit Application</button>
                 </div>
             </form>
         </div>
@@ -420,28 +391,159 @@
         let submitted = false;
         let currentActiveCourse = null;
 
-        // Render on page load
+        // On Page Load
         document.addEventListener('DOMContentLoaded', () => {
             renderCourses();
+
+            // Search Functionality Input Listener
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                renderCourses(e.target.value);
+            });
         });
 
-        // Render Courses List
-        function renderCourses() {
+        // 1. RENDER COURSES (With Search Support)
+        function renderCourses(query = '') {
             const container = document.getElementById('course-list');
             container.innerHTML = '';
             
-            if (typeof coursesData !== 'undefined') {
-                coursesData.forEach(course => {
-                    const div = document.createElement('div');
-                    div.innerHTML = course.html;
-                    container.appendChild(div.firstElementChild);
-                });
-            } else {
-                container.innerHTML = '<p class="text-red-500 text-center">Error: courses.js could not be loaded.</p>';
+            if (typeof coursesData === 'undefined') {
+                container.innerHTML = '<p class="text-red-500 text-center font-bold">Error: courses.js could not be loaded.</p>';
+                return;
             }
+
+            // Filter logic
+            const filtered = coursesData.filter(course => {
+                const searchStr = `${course.name} ${course.description} ${course.instructor}`.toLowerCase();
+                return searchStr.includes(query.toLowerCase());
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<p class="text-gray-500 text-center py-10 text-lg">No courses found matching "${query}".</p>`;
+                return;
+            }
+
+            filtered.forEach(course => {
+                const div = document.createElement('div');
+                div.innerHTML = course.html;
+                container.appendChild(div.firstElementChild);
+            });
         }
 
-        // Open Modal and apply course-specific rules
+        // 2. SPA NAVIGATION LOGIC
+        function showCourseDetail(courseId) {
+            const course = coursesData.find(c => c.id === courseId);
+            if (!course) return;
+
+            // Switch views
+            document.getElementById('home-view').classList.add('hidden');
+            const detailView = document.getElementById('course-detail-view');
+            detailView.classList.remove('hidden');
+            window.scrollTo(0, 0);
+
+            // Populate Dedicated Detail Page
+            const container = document.getElementById('detail-content-container');
+            container.innerHTML = `
+                <!-- Course Header Image -->
+                <div class="h-64 md:h-[400px] w-full bg-gray-200 relative">
+                    ${course.isCustom ? 
+                        `<div class="w-full h-full bg-gray-900 flex items-center justify-center">
+                            <svg class="w-40 h-40 text-[#e70000] opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                         </div>` : 
+                        `<img src="${course.image}" class="w-full h-full object-cover">`
+                    }
+                    ${course.isCustom ? '' : `<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>`}
+                </div>
+
+                <!-- Course Text Info -->
+                <div class="p-8 md:p-12">
+                    <div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-10">
+                        <div>
+                            <h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-4 font-poppins">${course.isCustom ? 'Custom Tailored Course' : course.name}</h2>
+                            <div class="flex flex-wrap gap-3">
+                                <span class="bg-red-50 text-[#e70000] px-4 py-2 rounded-lg text-sm font-bold border border-red-100 flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+                                    Instructor: ${course.instructor}
+                                </span>
+                                <span class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg text-sm font-bold border border-gray-200 flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                                    Format: ${course.mode}
+                                </span>
+                            </div>
+                        </div>
+                        <button onclick="openModal('${course.id}')" class="btn-custom text-lg px-8 py-4 w-full md:w-auto shrink-0 shadow-xl hover:shadow-2xl">
+                            ${course.isCustom ? 'Propose Curriculum' : 'Enroll Now'}
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                        <div class="md:col-span-2 space-y-6">
+                            <h3 class="text-2xl font-bold font-poppins border-b pb-2 border-gray-200">Course Overview</h3>
+                            <!-- Render the formatted HTML block from longDescription -->
+                            <div class="text-lg leading-relaxed">${course.longDescription || course.description}</div>
+                        </div>
+                        <div class="space-y-6">
+                            <h3 class="text-2xl font-bold font-poppins border-b pb-2 border-gray-200">Instructor Background</h3>
+                            <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100">
+                                <h4 class="font-bold text-lg mb-2 text-gray-900">${course.instructor}</h4>
+                                <p class="text-gray-600 text-sm leading-relaxed">${course.instructorBio || 'An expert professional dedicated to providing high-quality educational experiences.'}</p>
+                                
+                                <!-- Conditional Portfolio Link -->
+                                ${course.instructorPortfolio ? `
+                                <div class="mt-4 pt-4 border-t border-gray-200">
+                                    <a href="${course.instructorPortfolio}" target="_blank" class="inline-flex items-center gap-2 text-sm font-semibold text-[#e70000] hover:text-[#cc0000] transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                        View Instructor Portfolio
+                                    </a>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showHome() {
+            document.getElementById('course-detail-view').classList.add('hidden');
+            document.getElementById('home-view').classList.remove('hidden');
+            window.scrollTo(0, 0);
+            
+            // Re-render based on current search input if user goes back
+            renderCourses(document.getElementById('search-input').value);
+        }
+
+        // 3. DYNAMIC SCHEDULE CHECKBOXES
+        function renderScheduleCheckboxes(course) {
+            const daysContainer = document.getElementById('interactive-days');
+            const timesContainer = document.getElementById('interactive-times');
+            
+            const allDays = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+            const allTimes = ['Morning', 'Afternoon', 'Evening'];
+            
+            // Determine available choices
+            let availableDays = (course.predeterminedDays && course.predeterminedDays.length > 0) ? course.predeterminedDays : allDays;
+            let availableTimes = (course.predeterminedTimes && course.predeterminedTimes.length > 0) ? course.predeterminedTimes : allTimes;
+            
+            // Generate Days HTML
+            daysContainer.innerHTML = availableDays.map(day => `
+                <label class="flex-1 min-w-[120px] flex items-center gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-red-50 transition-colors focus-within:ring-2 focus-within:ring-[#e70000]">
+                    <input type="checkbox" name="pref-day" value="${day}" class="w-4 h-4 rounded text-[#e70000] focus:ring-[#e70000] border-gray-300">
+                    <span class="text-sm font-bold text-gray-700">${day}</span>
+                </label>
+            `).join('');
+
+            // Generate Times HTML
+            timesContainer.innerHTML = availableTimes.map(time => `
+                <label class="flex-1 min-w-[120px] flex items-center gap-2 cursor-pointer p-3 border border-gray-200 rounded-xl bg-gray-50 hover:bg-red-50 transition-colors focus-within:ring-2 focus-within:ring-[#e70000]">
+                    <input type="checkbox" name="pref-time" value="${time}" class="w-4 h-4 rounded text-[#e70000] focus:ring-[#e70000] border-gray-300">
+                    <span class="text-sm font-bold text-gray-700">${time}</span>
+                </label>
+            `).join('');
+        }
+
+        // 4. MODAL LOGIC
         function openModal(courseId) {
             currentActiveCourse = coursesData.find(c => c.id === courseId);
             if(!currentActiveCourse) return;
@@ -461,7 +563,7 @@
             document.getElementById('form-course-instructor').value = currentActiveCourse.instructor;
             instructorInput.value = currentActiveCourse.instructor;
 
-            // Handle Custom vs Regular
+            // Handle Custom vs Regular View Restrictions
             if (currentActiveCourse.isCustom) {
                 customPrefix.classList.remove('hidden');
                 
@@ -475,11 +577,10 @@
                 descInput.setAttribute('required', 'true');
                 document.getElementById('desc-opt').innerText = "(*Required)";
 
-                // Show selectable Dropdown for Mode
                 modeReadonlyContainer.classList.add('hidden');
                 modeSelectContainer.classList.remove('hidden');
                 modeSelectInput.setAttribute('required', 'true');
-                modeSelectInput.value = ""; // Reset dropdown to placeholder
+                modeSelectInput.value = ""; 
                 
             } else {
                 customPrefix.classList.add('hidden');
@@ -492,36 +593,14 @@
                 descInput.removeAttribute('required');
                 document.getElementById('desc-opt').innerText = "";
 
-                // Show Read-only Display for Mode
                 modeReadonlyContainer.classList.remove('hidden');
                 modeSelectContainer.classList.add('hidden');
                 modeSelectInput.removeAttribute('required');
                 modeReadonlyInput.value = currentActiveCourse.mode;
             }
 
-            // Handle Predetermined Days
-            const daysLabel = document.getElementById('predetermined-days-label');
-            const interactiveDays = document.getElementById('interactive-days');
-            if(currentActiveCourse.predeterminedDays && currentActiveCourse.predeterminedDays.length > 0) {
-                interactiveDays.classList.add('hidden');
-                daysLabel.classList.remove('hidden');
-                daysLabel.innerText = "Instructor's Set Days: " + currentActiveCourse.predeterminedDays.join(", ");
-            } else {
-                interactiveDays.classList.remove('hidden');
-                daysLabel.classList.add('hidden');
-            }
-
-            // Handle Predetermined Times
-            const timesLabel = document.getElementById('predetermined-times-label');
-            const interactiveTimes = document.getElementById('interactive-times');
-            if(currentActiveCourse.predeterminedTimes && currentActiveCourse.predeterminedTimes.length > 0) {
-                interactiveTimes.classList.add('hidden');
-                timesLabel.classList.remove('hidden');
-                timesLabel.innerText = "Instructor's Set Times: " + currentActiveCourse.predeterminedTimes.join(", ");
-            } else {
-                interactiveTimes.classList.remove('hidden');
-                timesLabel.classList.add('hidden');
-            }
+            // Render precise scheduling checkboxes
+            renderScheduleCheckboxes(currentActiveCourse);
 
             // Scroll modal to top seamlessly
             document.querySelector('#registration-modal .overflow-y-auto').scrollTop = 0;
@@ -531,7 +610,7 @@
             document.body.style.overflow = 'hidden'; // Prevent background scrolling
         }
 
-        // Close and Reset completely
+        // Close and Reset Form
         function closeModal() {
             document.getElementById('registration-modal').classList.add('hidden');
             document.body.style.overflow = 'auto'; // Restore background scrolling
@@ -547,57 +626,48 @@
             currentActiveCourse = null;
         }
 
-        // On Form Submit: Combine strings to hidden inputs
+        // 5. ON FORM SUBMIT
         function prepareSubmit() {
-            // 1. Course Name
+            // Course Name
             const uiName = document.getElementById('ui-course-name').value.trim();
             document.getElementById('real-course-name').value = currentActiveCourse.isCustom ? "Custom: " + uiName : uiName;
 
-            // 2. Mode Field
+            // Mode Field
             if (currentActiveCourse.isCustom) {
                 document.getElementById('form-course-mode').value = document.getElementById('ui-course-mode-select').value;
             } else {
                 document.getElementById('form-course-mode').value = currentActiveCourse.mode;
             }
 
-            // 3. Composite Address
+            // Composite Address
             const country = document.getElementById('addr-country').value.trim();
             const state = document.getElementById('addr-state').value.trim();
             const area = document.getElementById('addr-area').value.trim();
             
-            let fullAddress =[];
+            let fullAddress = [];
             if(country) fullAddress.push(country);
             if(state) fullAddress.push(state);
             if(area) fullAddress.push(area);
             document.getElementById('real-address').value = fullAddress.join(' - ');
 
-            // 4. Days
-            if (currentActiveCourse.predeterminedDays && currentActiveCourse.predeterminedDays.length > 0) {
-                document.getElementById('real-days').value = currentActiveCourse.predeterminedDays.join(', ');
-            } else {
-                const days = Array.from(document.querySelectorAll('input[name="pref-day"]:checked')).map(cb => cb.value).join(', ');
-                document.getElementById('real-days').value = days;
-            }
+            // Harvest the selected checkboxes 
+            const selectedDays = Array.from(document.querySelectorAll('input[name="pref-day"]:checked')).map(cb => cb.value).join(', ');
+            document.getElementById('real-days').value = selectedDays || "Not specified";
 
-            // 5. Times
-            if (currentActiveCourse.predeterminedTimes && currentActiveCourse.predeterminedTimes.length > 0) {
-                document.getElementById('real-times').value = currentActiveCourse.predeterminedTimes.join(', ');
-            } else {
-                const times = Array.from(document.querySelectorAll('input[name="pref-time"]:checked')).map(cb => cb.value).join(', ');
-                document.getElementById('real-times').value = times;
-            }
+            const selectedTimes = Array.from(document.querySelectorAll('input[name="pref-time"]:checked')).map(cb => cb.value).join(', ');
+            document.getElementById('real-times').value = selectedTimes || "Not specified";
 
             submitted = true;
             return true;
         }
 
-        // Handles cleanup when hidden iframe finishes loading (Submission Complete)
+        // 6. IFRAME FINISH LOAD HANDLER
         function handleIframeLoad() {
             if (submitted) {
                 document.getElementById('gform').classList.add('hidden');
                 document.getElementById('success-message').classList.remove('hidden');
                 
-                // Auto Close
+                // Auto Close Modal after 4 seconds
                 setTimeout(() => {
                     closeModal();
                 }, 4000);
