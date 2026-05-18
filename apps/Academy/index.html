@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Academy | Explore Courses</title>
+    
+    <!-- Open Graph / Social Meta Tags (Default Fallbacks) -->
+    <meta id="meta-og-title" property="og:title" content="Academy | Explore Courses">
+    <meta id="meta-og-desc" property="og:description" content="Discover industry-leading programs, find expert instructors, and embark on a tailored learning experience designed for real results.">
+    <meta id="meta-og-image" property="og:image" content="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80">
+    <meta property="og:type" content="website">
+
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- Include Inter & Poppins Fonts -->
@@ -399,7 +406,57 @@
             document.getElementById('search-input').addEventListener('input', (e) => {
                 renderCourses(e.target.value);
             });
+
+            // Handle Deep Linking via URL Parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const courseParam = urlParams.get('course');
+            if (courseParam) {
+                // False prevents pushing the state again since we just loaded it
+                showCourseDetail(courseParam, false);
+            }
         });
+
+        // Listen for Browser Back/Forward navigation
+        window.addEventListener('popstate', (event) => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const courseParam = urlParams.get('course');
+            if (courseParam) {
+                showCourseDetail(courseParam, false);
+            } else {
+                showHome(false);
+            }
+        });
+
+        // Dynamic Meta Tag Updater
+        function updateMetaTags(title, desc, image) {
+            document.title = title;
+            document.getElementById('meta-og-title').content = title;
+            document.getElementById('meta-og-desc').content = desc;
+            if (image) document.getElementById('meta-og-image').content = image;
+        }
+
+        // Copy Course Link to Clipboard Helper
+        function copyCourseLink(courseId, btnElement) {
+            const baseUrl = window.location.origin + window.location.pathname;
+            const linkToCopy = `${baseUrl}?course=${courseId}`;
+            
+            navigator.clipboard.writeText(linkToCopy).then(() => {
+                const originalHTML = btnElement.innerHTML;
+                
+                // Show Success State
+                btnElement.innerHTML = `<svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> <span class="text-green-600">Copied!</span>`;
+                btnElement.classList.add('bg-green-50', 'border-green-200');
+                
+                // Revert after 2 seconds
+                setTimeout(() => {
+                    btnElement.innerHTML = originalHTML;
+                    btnElement.classList.remove('bg-green-50', 'border-green-200');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy link: ', err);
+                alert("Failed to copy link. Please manually copy the URL.");
+            });
+        }
 
         // 1. RENDER COURSES (With Search Support)
         function renderCourses(query = '') {
@@ -430,9 +487,23 @@
         }
 
         // 2. SPA NAVIGATION LOGIC
-        function showCourseDetail(courseId) {
+        function showCourseDetail(courseId, pushState = true) {
             const course = coursesData.find(c => c.id === courseId);
-            if (!course) return;
+            if (!course) {
+                showHome(true);
+                return;
+            }
+
+            // Update URL and History
+            if (pushState) {
+                const url = new URL(window.location);
+                url.searchParams.set('course', courseId);
+                window.history.pushState({courseId}, '', url);
+            }
+
+            // Update Meta Tags dynamically for sharing APIs that support JS
+            const pageTitle = course.isCustom ? 'Custom Tailored Course | Academy' : `${course.name} by ${course.instructor} | Academy`;
+            updateMetaTags(pageTitle, course.description, course.image || 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
 
             // Switch views
             document.getElementById('home-view').classList.add('hidden');
@@ -459,7 +530,7 @@
                 <!-- Course Text Info -->
                 <div class="p-8 md:p-12">
                     <div class="flex flex-col md:flex-row justify-between items-start gap-8 mb-10">
-                        <div>
+                        <div class="flex-1">
                             <h2 class="text-3xl md:text-5xl font-bold text-gray-900 mb-4 font-poppins">${course.isCustom ? 'Custom Tailored Course' : course.name}</h2>
                             <div class="flex flex-wrap gap-3">
                                 <span class="bg-red-50 text-[#e70000] px-4 py-2 rounded-lg text-sm font-bold border border-red-100 flex items-center gap-2">
@@ -472,9 +543,17 @@
                                 </span>
                             </div>
                         </div>
-                        <button onclick="openModal('${course.id}')" class="btn-custom text-lg px-8 py-4 w-full md:w-auto shrink-0 shadow-xl hover:shadow-2xl">
-                            ${course.isCustom ? 'Propose Curriculum' : 'Enroll Now'}
-                        </button>
+                        
+                        <!-- CTA Buttons -->
+                        <div class="flex flex-col gap-3 w-full md:w-auto shrink-0">
+                            <button onclick="openModal('${course.id}')" class="btn-custom text-lg px-8 py-4 shadow-xl hover:shadow-2xl w-full">
+                                ${course.isCustom ? 'Propose Curriculum' : 'Enroll Now'}
+                            </button>
+                            <button onclick="copyCourseLink('${course.id}', this)" class="flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-gray-700 bg-white border border-gray-200 hover:bg-gray-50 rounded-xl transition-colors shadow-sm w-full">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                                Share Course Link
+                            </button>
+                        </div>
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -484,7 +563,7 @@
                             <div class="text-lg leading-relaxed">${course.longDescription || course.description}</div>
                         </div>
                         <div class="space-y-6">
-                            <h3 class="text-2xl font-bold font-poppins border-b pb-2 border-gray-200">Instructor Background</h3>
+                            <h3 class="text-2xl font-bold font-poppins border-b pb-2 border-gray-200">Instructor</h3>
                             <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100">
                                 <h4 class="font-bold text-lg mb-2 text-gray-900">${course.instructor}</h4>
                                 <p class="text-gray-600 text-sm leading-relaxed">${course.instructorBio || 'An expert professional dedicated to providing high-quality educational experiences.'}</p>
@@ -494,7 +573,7 @@
                                 <div class="mt-4 pt-4 border-t border-gray-200">
                                     <a href="${course.instructorPortfolio}" target="_blank" class="inline-flex items-center gap-2 text-sm font-semibold text-[#e70000] hover:text-[#cc0000] transition-colors">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                                        View Instructor Portfolio
+                                        View Instructor
                                     </a>
                                 </div>
                                 ` : ''}
@@ -505,7 +584,17 @@
             `;
         }
 
-        function showHome() {
+        function showHome(pushState = true) {
+            // Update URL and History back to normal
+            if (pushState) {
+                const url = new URL(window.location);
+                url.searchParams.delete('course');
+                window.history.pushState({}, '', url);
+            }
+
+            // Restore original meta tags
+            updateMetaTags('Academy | Explore Courses', 'Discover industry-leading programs, find expert instructors, and embark on a tailored learning experience designed for real results.', 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
+
             document.getElementById('course-detail-view').classList.add('hidden');
             document.getElementById('home-view').classList.remove('hidden');
             window.scrollTo(0, 0);
