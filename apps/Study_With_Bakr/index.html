@@ -1,1 +1,456 @@
-Coming Soon!
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study With Bakr | Learning Resources</title>
+    
+    <!-- Open Graph Meta Tags -->
+    <meta id="meta-og-title" property="og:title" content="Study With Bakr | Learning Resources">
+    <meta id="meta-og-desc" property="og:description" content="Discover comprehensive guides, concepts, and in-depth materials designed to accelerate your learning journey.">
+    
+    <!-- Tailwind & Typography -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    
+    <!-- Marked.js for parsing Markdown files dynamically -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    typography: {
+                        DEFAULT: {
+                            css: {
+                                h1: { fontFamily: 'Poppins, sans-serif' },
+                                h2: { fontFamily: 'Poppins, sans-serif' },
+                                h3: { fontFamily: 'Poppins, sans-serif' },
+                                p: { fontFamily: 'Inter, sans-serif' },
+                                a: { color: '#e70000', '&:hover': { color: '#cc0000' } },
+                                pre: { backgroundColor: '#1f2937', color: '#f3f4f6' },
+                                code: { color: '#e70000', backgroundColor: '#f3f4f6', padding: '0.2rem 0.4rem', borderRadius: '0.25rem', fontWeight: '600' },
+                                'code::before': { content: '""' },
+                                'code::after': { content: '""' },
+                            },
+                        },
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            padding-top: 64px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; }
+
+        .btn-custom {
+            font-family: 'Poppins', sans-serif;
+            background-color: #e70000;
+            color: #fff;
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .btn-custom:hover { background-color: #cc0000; }
+
+        footer {
+            background-color: #1a1a1a; 
+            padding: 24px 0;
+            text-align: center;
+            margin-top: auto; 
+        }
+        footer a { color: #e70000; transition: color 0.3s ease; }
+        footer a:hover { color: #ff3333; }
+
+        .nav-link.active {
+            background-color: #fef2f2;
+            color: #e70000;
+            border-left: 4px solid #e70000;
+            font-weight: 700;
+        }
+
+        #progress-bar {
+            position: fixed;
+            top: 64px; left: 0; height: 4px; background: #e70000; z-index: 50; width: 0%; transition: width 0.1s ease-out;
+        }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Fixed Navbar -->
+    <nav id="main-nav" class="fixed top-0 w-full z-40 bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-200 h-16 flex items-center justify-center px-4 sm:px-8 transition-all duration-300">
+        <!-- Logo -->
+        <div class="flex items-center gap-2 cursor-pointer" onclick="showHome()">
+            <div class="w-8 h-8 bg-[#e70000] text-white rounded flex items-center justify-center font-bold text-xl shadow-sm">B</div>
+            <span class="font-bold text-2xl tracking-tight text-gray-900">Study With Bakr</span>
+        </div>
+        
+        <!-- Mobile Sidebar Toggle -->
+        <button id="mobile-menu-btn" class="hidden text-gray-600 hover:text-[#e70000] p-2 focus:outline-none transition-colors">
+            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+    </nav>
+
+    <!-- Progress Bar -->
+    <div id="progress-bar" class="hidden"></div>
+
+    <div id="app-container" class="flex-grow flex flex-col w-full">
+        
+        <!-- ============================================== -->
+        <!-- VIEW 1: HOME PAGE -->
+        <!-- ============================================== -->
+        <div id="home-view" class="flex-grow flex flex-col w-full">
+            
+            <!-- Redesigned Hero Section (Generic) -->
+            <header class="relative bg-gray-900 text-white overflow-hidden">
+                <div class="absolute inset-0">
+                    <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" alt="Education Background" class="w-full h-full object-cover opacity-30 mix-blend-overlay">
+                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                </div>
+                <div class="relative max-w-5xl mx-auto px-4 py-20 md:py-28 text-center">
+                    <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">Explore Our <span class="text-[#e70000]">Learning Resources.</span></h1>
+                    <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-10">Discover comprehensive guides, concepts, and in-depth materials designed to accelerate your learning journey.</p>
+                    
+                    <!-- Search Bar -->
+                    <div class="max-w-2xl mx-auto bg-white rounded-full p-2 flex shadow-2xl focus-within:ring-4 ring-white/20 transition-all">
+                        <div class="pl-4 flex items-center text-gray-400">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        </div>
+                        <input type="text" id="search-input" placeholder="Search for tutorials, topics, or materials..." class="flex-1 bg-transparent px-4 py-3 outline-none text-gray-900 w-full text-base font-medium">
+                    </div>
+                </div>
+            </header>
+
+            <main class="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12 flex-grow">
+                <div class="mb-8 border-b-2 border-gray-200 pb-4">
+                    <h2 class="text-3xl font-bold text-gray-900">All Topics</h2>
+                </div>
+                
+                <!-- Card Container -->
+                <div id="tutorial-list" class="flex flex-col gap-6">
+                    <!-- Cards dynamically injected here -->
+                </div>
+            </main>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- VIEW 2: TUTORIAL READING PAGE (W3Schools Style) -->
+        <!-- ============================================== -->
+        <div id="tutorial-detail-view" class="hidden flex-grow w-full bg-white relative">
+            <!-- Full width container to pin sidebar to the absolute left edge -->
+            <div class="flex flex-col sm:flex-row w-full h-full">
+                
+                <!-- Left Sidebar (Navigation) -->
+                <aside id="sidebar-nav" class="w-full sm:w-72 sm:shrink-0 bg-gray-50 border-r border-gray-200 sm:min-h-[calc(100vh-64px)] hidden sm:block sm:sticky sm:top-16 overflow-y-auto z-30">
+                    <div class="p-6">
+                        <button onclick="showHome()" class="mb-6 text-sm flex items-center gap-2 text-gray-500 hover:text-[#e70000] font-semibold transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                            Back to Home
+                        </button>
+                        <h3 id="sidebar-title" class="font-bold text-lg text-gray-900 mb-4 border-b pb-2 border-gray-200">Tutorial Title</h3>
+                        <nav id="sidebar-links" class="flex flex-col space-y-1">
+                            <!-- Links injected here -->
+                        </nav>
+                    </div>
+                </aside>
+
+                <!-- Right Content Area (Centered Content) -->
+                <main class="flex-1 w-full bg-white flex justify-center">
+                    <div class="w-full max-w-4xl px-4 sm:px-10 py-10">
+                        <!-- Content Loading State -->
+                        <div id="loading-spinner" class="hidden flex flex-col items-center justify-center py-20 text-gray-400">
+                            <svg class="animate-spin h-10 w-10 text-[#e70000] mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                            <p>Loading content...</p>
+                        </div>
+
+                        <!-- Markdown Rendered Here -->
+                        <article id="markdown-content" class="prose prose-base sm:prose-lg max-w-none text-gray-700">
+                        </article>
+
+                        <div class="mt-12 flex justify-between items-center border-t border-gray-200 pt-6">
+                            <button id="share-btn" class="inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-[#e70000] transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                                <span>Share Link</span>
+                            </button>
+                        </div>
+
+                        <!-- Author Info Moved to Bottom -->
+                        <div class="mt-16 bg-gray-50 p-6 rounded-2xl border border-gray-200 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6">
+                            <div class="w-16 h-16 bg-red-100 text-[#e70000] rounded-full flex items-center justify-center text-2xl font-bold shrink-0">
+                                MB
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-lg mb-1 text-gray-900">Mohamed Bakr</h4>
+                                <p class="text-gray-600 text-sm leading-relaxed mb-4">Instructor and Software Engineer passionate about breaking down complex computer science, data, and AI topics into simple, understandable concepts.</p>
+                                <a href="https://mfouadbakr.github.io/portfolio/index.html" target="_blank" class="text-[#e70000] hover:text-[#cc0000] font-bold text-sm transition-colors">
+                                    View Author &rarr;
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="max-w-5xl mx-auto px-4">
+            <p class="text-gray-400 text-sm">Developed by <a href="https://mfouadbakr.github.io/portfolio/index.html" target="_blank">Mohamed Bakr</a></p>
+        </div>
+    </footer>
+
+    <!-- Load Data File -->
+    <script src="data.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            renderHomeList();
+
+            document.getElementById('search-input').addEventListener('input', (e) => {
+                renderHomeList(e.target.value);
+            });
+
+            // Mobile menu toggle logic
+            document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+                const sidebar = document.getElementById('sidebar-nav');
+                sidebar.classList.toggle('hidden');
+            });
+
+            // Handle URL params
+            const urlParams = new URLSearchParams(window.location.search);
+            const tutorialParam = urlParams.get('tutorial');
+            const pageParam = urlParams.get('page');
+            
+            if (tutorialParam) {
+                loadTutorial(tutorialParam, pageParam, false);
+            }
+
+            // Scroll Progress
+            window.addEventListener('scroll', () => {
+                const view = document.getElementById('tutorial-detail-view');
+                if(!view.classList.contains('hidden')) {
+                    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                    document.getElementById('progress-bar').style.width = ((winScroll / height) * 100) + "%";
+                }
+            });
+        });
+
+        window.addEventListener('popstate', (event) => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tutorialParam = urlParams.get('tutorial');
+            const pageParam = urlParams.get('page');
+            if (tutorialParam) {
+                loadTutorial(tutorialParam, pageParam, false);
+            } else {
+                showHome(false);
+            }
+        });
+
+        // Copy Link
+        function copyLink(tutorialId, pageId, btnElement) {
+            // Prevent event from bubbling up and clicking the card body
+            if (event) event.stopPropagation();
+
+            const baseUrl = window.location.origin + window.location.pathname;
+            const linkToCopy = `${baseUrl}?tutorial=${tutorialId}&page=${pageId}`;
+            
+            navigator.clipboard.writeText(linkToCopy).then(() => {
+                const originalHTML = btnElement.innerHTML;
+                btnElement.innerHTML = `<svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> <span class="text-green-600 font-bold">Copied!</span>`;
+                setTimeout(() => { btnElement.innerHTML = originalHTML; }, 2000);
+            });
+        }
+
+        // Navbar View Toggle
+        function updateNavbar(isTutorialView) {
+            const nav = document.getElementById('main-nav');
+            const mobileBtn = document.getElementById('mobile-menu-btn');
+            
+            if (isTutorialView) {
+                nav.classList.remove('justify-center');
+                nav.classList.add('justify-between');
+                mobileBtn.classList.remove('hidden');
+                mobileBtn.classList.add('sm:hidden'); // Shows only on small screens
+            } else {
+                nav.classList.add('justify-center');
+                nav.classList.remove('justify-between');
+                mobileBtn.classList.add('hidden');
+                mobileBtn.classList.remove('sm:hidden');
+            }
+        }
+
+        // Home View Rendering (Text-Only Horizontal Cards)
+        function renderHomeList(query = '') {
+            const container = document.getElementById('tutorial-list');
+            container.innerHTML = '';
+            
+            if (typeof tutorialsData === 'undefined') {
+                container.innerHTML = '<p class="text-red-500 font-bold text-center">Error: data.js not loaded.</p>';
+                return;
+            }
+
+            const filtered = tutorialsData.filter(t => 
+                `${t.title} ${t.description} ${t.category}`.toLowerCase().includes(query.toLowerCase())
+            );
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<p class="text-center text-gray-500 py-10">No results found matching "${query}".</p>`;
+                return;
+            }
+
+            filtered.forEach(tut => {
+                const card = document.createElement('div');
+                const firstPage = tut.pages[0].id; 
+
+                card.innerHTML = `
+                    <div class="flex flex-col bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer">
+                        <div class="p-6 md:p-8 flex flex-col justify-between h-full">
+                            
+                            <!-- Main text block (Clickable) -->
+                            <div onclick="loadTutorial('${tut.id}', '${firstPage}')">
+                                <div class="mb-3">
+                                    <span class="bg-red-50 text-[#e70000] px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-lg border border-red-100">${tut.category}</span>
+                                </div>
+                                <h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-3 font-poppins">${tut.title}</h3>
+                                <p class="text-gray-600 mb-6 leading-relaxed text-sm md:text-base">${tut.description}</p>
+                            </div>
+                            
+                            <!-- Bottom Line: Chapters & Buttons -->
+                            <div class="mt-auto pt-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 z-10 relative border-t border-gray-100">
+                                
+                                <!-- Chapters Info (Left Side) -->
+                                <div class="flex items-center gap-1.5 text-gray-600 font-semibold text-sm w-full sm:w-auto" onclick="loadTutorial('${tut.id}', '${firstPage}')">
+                                    <svg class="w-5 h-5 text-[#e70000]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                                    ${tut.pages.length} Chapters
+                                </div>
+                                
+                                <!-- Buttons (Share & Read - Right Side) -->
+                                <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                                    <button onclick="copyLink('${tut.id}', '${firstPage}', this)" class="flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors w-full sm:w-auto">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                                        Share
+                                    </button>
+                                    <button onclick="loadTutorial('${tut.id}', '${firstPage}')" class="btn-custom w-full sm:w-auto shadow-sm">Start Reading</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card.firstElementChild);
+            });
+        }
+
+        // Detail View Logic
+        async function loadTutorial(tutorialId, pageId, pushState = true) {
+            const tutorial = tutorialsData.find(t => t.id === tutorialId);
+            if (!tutorial) { showHome(true); return; }
+
+            // Default to first page if none provided
+            if (!pageId && tutorial.pages.length > 0) {
+                pageId = tutorial.pages[0].id;
+            }
+            
+            const pageObj = tutorial.pages.find(p => p.id === pageId);
+            if(!pageObj) return;
+
+            if (pushState) {
+                const url = new URL(window.location);
+                url.searchParams.set('tutorial', tutorialId);
+                url.searchParams.set('page', pageId);
+                window.history.pushState({tutorialId, pageId}, '', url);
+            }
+
+            // UI Switch & Layout adjustments
+            document.getElementById('home-view').classList.add('hidden');
+            document.getElementById('tutorial-detail-view').classList.remove('hidden');
+            document.getElementById('progress-bar').classList.remove('hidden');
+            updateNavbar(true); // Adjusts logo and hamburger menu
+            window.scrollTo(0, 0);
+
+            // Hide sidebar on mobile after clicking
+            if(window.innerWidth < 640) {
+                document.getElementById('sidebar-nav').classList.add('hidden');
+            }
+
+            // Build Sidebar
+            document.getElementById('sidebar-title').innerText = tutorial.title;
+            const navContainer = document.getElementById('sidebar-links');
+            navContainer.innerHTML = tutorial.pages.map(p => {
+                const isActive = p.id === pageId ? 'active' : 'text-gray-600 hover:bg-gray-100 border-l-4 border-transparent';
+                return `<button onclick="loadTutorial('${tutorial.id}', '${p.id}')" class="text-left px-4 py-2.5 text-sm transition-colors nav-link ${isActive}">${p.title}</button>`;
+            }).join('');
+
+            // Share Button
+            const shareBtn = document.getElementById('share-btn');
+            shareBtn.onclick = function() { copyLink(tutorial.id, pageId, this); };
+
+            // Fetch and Parse Markdown
+            const contentDiv = document.getElementById('markdown-content');
+            const spinner = document.getElementById('loading-spinner');
+            
+            contentDiv.innerHTML = '';
+            spinner.classList.remove('hidden');
+
+            try {
+                const response = await fetch(pageObj.file);
+                if (!response.ok) throw new Error("File missing");
+                const text = await response.text();
+                
+                // Parse markdown into HTML
+                contentDiv.innerHTML = marked.parse(text);
+                
+                document.title = `${pageObj.title} | ${tutorial.title}`;
+            } catch (err) {
+                // Professional Error Fallback
+                contentDiv.innerHTML = `
+                    <div class="bg-red-50 text-red-600 p-8 rounded-2xl border border-red-200 text-center mt-6">
+                        <svg class="w-12 h-12 mx-auto mb-4 text-[#e70000]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        <h2 class="text-2xl font-bold mb-2 font-poppins text-gray-900">Content Unavailable</h2>
+                        <p class="text-gray-700">We couldn't load this tutorial at the moment. Please try again later or check your connection.</p>
+                    </div>`;
+            } finally {
+                spinner.classList.add('hidden');
+            }
+        }
+
+        function showHome(pushState = true) {
+            if (pushState) {
+                const url = new URL(window.location);
+                url.searchParams.delete('tutorial');
+                url.searchParams.delete('page');
+                window.history.pushState({}, '', url);
+            }
+
+            document.title = "Study With Bakr | Learning Resources";
+            document.getElementById('tutorial-detail-view').classList.add('hidden');
+            document.getElementById('progress-bar').classList.add('hidden');
+            document.getElementById('home-view').classList.remove('hidden');
+            updateNavbar(false); // Re-centers logo
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>
