@@ -1,5 +1,65 @@
 const coursesData = [
     {
+        "id": "course_digitalmarketing",
+        "name": "Digital Marketing Course",
+        "description": "Start from zero to your first client! Learn the best strategies through practical applications and interactive offline training.",
+        "longDescription": `
+            <div class="bg-red-50 border-l-4 border-[#e70000] p-4 mb-6">
+                <p class="text-[#e70000] font-bold">🔥 Special Offer: 50% Discount for the first 5 people who register! Limited seats available.</p>
+            </div>
+            <h4 class="font-bold text-gray-800 mb-3 text-xl">Course Highlights (من الصفر لأول عميل)</h4>
+            <ul class="list-disc pl-5 space-y-3 text-gray-600">
+                <li><strong class="text-gray-800">Best Strategies (افضل الاستراتيجيات):</strong> Master modern marketing funnels, audience targeting, and ad campaign structures.</li>
+                <li><strong class="text-gray-800">Practical Applications (تطبيقات عملية):</strong> Hands-on experience creating, running, and managing real ad campaigns.</li>
+                <li><strong class="text-gray-800">Interactive Training (تدريب تفاعلي):</strong> Learn in a fully offline, engaging environment with real-time feedback.</li>
+                <li><strong class="text-gray-800">Securing Your First Client:</strong> Step-by-step guidance on how to package your skills and land your very first paying client.</li>
+                <li><strong class="text-gray-800">Course Certificate (شهادة اتمام الكورس):</strong> Receive a certified document upon successful completion of the course.</li>
+            </ul>
+        `,
+        "instructor": "Kamal Abdallah",
+        "instructorBio": "Kamal Abdallah is a Digital Marketing expert dedicated to guiding students from the absolute basics to securing their very first client using proven, real-world strategies.",
+        "instructorPortfolio": "",
+        "image": "images/digital_marketing.png",
+        "mode": "Face to Face",
+        "isCustom": false,
+        "predeterminedDays": ["Saturday", "Monday", "Wednesday"],
+        "predeterminedTimes": ["Afternoon", "Evening"],
+        "html": `
+        <div class="flex flex-col md:flex-row bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative">
+            <div class="absolute top-0 right-0 bg-[#e70000] text-white px-4 py-1 text-xs font-bold rounded-bl-lg shadow-sm z-10 animate-pulse">
+                50% OFF (First 5 Registrations)
+            </div>
+            <div class="w-full md:w-1/3 bg-gray-100 relative overflow-hidden min-h-[240px]">
+                <img src="https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Digital Marketing" class="w-full h-full object-cover absolute inset-0">
+                <span class="absolute top-4 left-4 bg-gray-900/90 backdrop-blur-sm px-3 py-1 text-xs font-bold text-white rounded shadow-sm">Offline Course</span>
+            </div>
+            <div class="w-full md:w-2/3 p-6 md:p-8 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3 font-poppins">Digital Marketing Course</h3>
+                    <p class="text-gray-600 mb-6 leading-relaxed">Start from zero to your first client! Learn the best strategies through practical applications and interactive offline training.</p>
+                    
+                    <div class="flex flex-wrap gap-3 mb-6">
+                        <div class="flex items-center gap-1.5 bg-red-50 text-[#e70000] px-3 py-1.5 rounded-lg text-xs font-bold border border-red-100 uppercase tracking-wide">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+                            Kamal Abdallah
+                        </div>
+                        <div class="flex items-center gap-1.5 bg-gray-100 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-bold border border-gray-200 uppercase tracking-wide">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg>
+                            Offline / Face to Face
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 flex flex-col sm:flex-row justify-end gap-3">
+                    <button onclick="copyCourseLink('course_digitalmarketing', this)" class="flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-lg transition-colors w-full sm:w-auto">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                        Share
+                    </button>
+                    <button onclick="showCourseDetail('course_digitalmarketing')" class="btn-custom w-full sm:w-auto shadow-sm">View Details</button>
+                </div>
+            </div>
+        </div>`
+    },
+    {
         "id": "course_cpp",
         "name": "C++ Programming Course",
         "description": "Learn C++ programming from scratch to advanced concepts, including pointers, OOP, and memory management.",
@@ -334,114 +394,6 @@ const coursesData = [
         </div>`
     },
     {
-        "id": "course_custom",
-        "name": "",
-        "description": "Don't see what you're looking for? Let us know what you want to learn, and our experts will tailor a learning path specifically for you.",
-        "longDescription": `
-            <p class="text-gray-600 leading-relaxed text-lg mb-4">Our Custom Tailored Courses allow you to design a curriculum that directly aligns with your career goals and current skill level.</p>
-            <ul class="list-disc pl-5 space-y-3 text-gray-600">
-                <li><strong class="text-gray-800">Personalized Curriculum:</strong> Target the exact software skills, programming languages, or leadership tools you need.</li>
-                <li><strong class="text-gray-800">Expert Matching:</strong> We source the perfect expert to guide you based on your unique goals.</li>
-                <li><strong class="text-gray-800">Flexible Scheduling:</strong> Build a timeline and schedule that fits perfectly into your busy life.</li>
-            </ul>
-        `,
-        "instructor": "Assigned upon request",
-        "instructorBio": "We partner with a wide network of industry experts, university professors, and corporate leaders. Once you propose a topic and your goals, we will carefully match you with a vetted instructor who holds a proven track record in your requested field.",
-        "instructorPortfolio": "", 
-        "image": "",
-        "mode": "Flexible",
-        "isCustom": true,
-        "predeterminedDays": [],
-        "predeterminedTimes":[],
-        "html": `
-        <div class="flex flex-col md:flex-row bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-            <div class="w-full md:w-1/3 bg-gray-900 relative overflow-hidden flex items-center justify-center min-h-[240px]">
-                <svg class="w-24 h-24 text-[#e70000] opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-                <span class="absolute top-4 left-4 bg-[#e70000] px-3 py-1 text-xs font-bold text-white rounded shadow-sm tracking-wide">Custom Tailored</span>
-            </div>
-            <div class="w-full md:w-2/3 p-6 md:p-8 flex flex-col justify-between">
-                <div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3 font-poppins">Request a Custom Course</h3>
-                    <p class="text-gray-600 mb-6 leading-relaxed">Don't see what you're looking for? Let us know what you want to learn, and our experts will tailor a learning path specifically for you.</p>
-                    
-                    <div class="flex flex-wrap gap-3 mb-6">
-                        <div class="flex items-center gap-1.5 bg-gray-100 text-gray-800 px-3 py-1.5 rounded-lg text-xs font-bold border border-gray-200 uppercase tracking-wide">
-                            <svg class="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
-                            Expert Assigned on Request
-                        </div>
-                        <div class="flex items-center gap-1.5 bg-gray-100 text-gray-800 px-3 py-1.5 rounded-lg text-xs font-bold border border-gray-200 uppercase tracking-wide">
-                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            Flexible Schedule
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-4 flex flex-col sm:flex-row justify-end gap-3">
-                    <button onclick="copyCourseLink('course_custom', this)" class="flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-lg transition-colors w-full sm:w-auto">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
-                        Share
-                    </button>
-                    <button onclick="showCourseDetail('course_custom')" class="btn-custom btn-dark w-full sm:w-auto shadow-sm">View Details</button>
-                </div>
-            </div>
-        </div>`
-    },
-    {
-        "id": "course_msoffice",
-        "name": "Microsoft Office Mastery",
-        "description": "Master essential workplace tools including Word, Excel, and PowerPoint. Taught by a Microsoft Certified Specialist.",
-        "longDescription": `
-            <h4 class="font-bold text-gray-800 mb-3 text-xl">Course Outline</h4>
-            <ul class="list-disc pl-5 space-y-3 text-gray-600">
-                <li><strong class="text-gray-800">Microsoft Word:</strong> Advanced document formatting, styles, mail merge, and professional reporting.</li>
-                <li><strong class="text-gray-800">Microsoft Excel:</strong> Core functions, complex formulas, pivot tables, data visualization, and data analysis.</li>
-                <li><strong class="text-gray-800">Microsoft PowerPoint:</strong> Designing engaging slides, animations, transitions, and master templates.</li>
-                <li><strong class="text-gray-800">Productivity Hacks:</strong> Keyboard shortcuts and workflow integration between the three apps.</li>
-            </ul>
-        `,
-        "instructor": "Mohamed Bakr",
-        "instructorBio": "Mohamed Bakr is officially Certified by Microsoft in both MS Word and MS Excel. He brings practical, workplace-ready techniques to help students and professionals maximize their daily productivity.",
-        "instructorPortfolio": "https://mfouadbakr.github.io/portfolio/index.html",
-        "image": "https://images.unsplash.com/photo-1512758117929-08ce1bb2a46f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
-        "mode": "Online",
-        "isCustom": false,
-        "predeterminedDays": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"],
-        "predeterminedTimes": ["Evening"],
-        "html": `
-        <div class="flex flex-col md:flex-row bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-            <div class="w-full md:w-1/3 bg-gray-100 relative overflow-hidden min-h-[240px]">
-                <img src="https://images.unsplash.com/photo-1512758117929-08ce1bb2a46f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Microsoft Office" class="w-full h-full object-cover absolute inset-0">
-                <span class="absolute top-4 left-4 bg-gray-900/90 backdrop-blur-sm px-3 py-1 text-xs font-bold text-white rounded shadow-sm">Online</span>
-                <span class="absolute top-4 right-4 bg-blue-600/90 backdrop-blur-sm px-3 py-1 text-xs font-bold text-white rounded shadow-sm">Certified Instructor</span>
-            </div>
-            <div class="w-full md:w-2/3 p-6 md:p-8 flex flex-col justify-between">
-                <div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3 font-poppins">Microsoft Office (Word, Excel, PowerPoint)</h3>
-                    <p class="text-gray-600 mb-6 leading-relaxed">Master essential workplace tools including Word, Excel, and PowerPoint. Taught by a Microsoft Certified Specialist.</p>
-                    
-                    <div class="flex flex-wrap gap-3 mb-6">
-                        <div class="flex items-center gap-1.5 bg-red-50 text-[#e70000] px-3 py-1.5 rounded-lg text-xs font-bold border border-red-100 uppercase tracking-wide">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
-                            Mohamed Bakr
-                        </div>
-                        <div class="flex items-center gap-1.5 bg-gray-100 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-bold border border-gray-200 uppercase tracking-wide">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg>
-                            Sun - Thu (Evenings)
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-4 flex flex-col sm:flex-row justify-end gap-3">
-                    <button onclick="copyCourseLink('course_msoffice', this)" class="flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-lg transition-colors w-full sm:w-auto">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
-                        Share
-                    </button>
-                    <button onclick="showCourseDetail('course_msoffice')" class="btn-custom w-full sm:w-auto shadow-sm">View Details</button>
-                </div>
-            </div>
-        </div>`
-    },
-    {
         "id": "course_presentationskills",
         "name": "Mastering Presentation Skills",
         "description": "Learn the art of public speaking, discover best practices, avoid common mistakes, and practice delivering impactful presentations.",
@@ -495,63 +447,111 @@ const coursesData = [
         </div>`
     },
     {
-        "id": "course_digitalmarketing",
-        "name": "Digital Marketing Course",
-        "description": "Start from zero to your first client! Learn the best strategies through practical applications and interactive offline training.",
+        "id": "course_msoffice",
+        "name": "Microsoft Office Mastery",
+        "description": "Master essential workplace tools including Word, Excel, and PowerPoint. Taught by a Microsoft Certified Specialist.",
         "longDescription": `
-            <div class="bg-red-50 border-l-4 border-[#e70000] p-4 mb-6">
-                <p class="text-[#e70000] font-bold">🔥 Special Offer: 50% Discount for the first 5 people who register! Limited seats available.</p>
-            </div>
-            <h4 class="font-bold text-gray-800 mb-3 text-xl">Course Highlights (من الصفر لأول عميل)</h4>
+            <h4 class="font-bold text-gray-800 mb-3 text-xl">Course Outline</h4>
             <ul class="list-disc pl-5 space-y-3 text-gray-600">
-                <li><strong class="text-gray-800">Best Strategies (افضل الاستراتيجيات):</strong> Master modern marketing funnels, audience targeting, and ad campaign structures.</li>
-                <li><strong class="text-gray-800">Practical Applications (تطبيقات عملية):</strong> Hands-on experience creating, running, and managing real ad campaigns.</li>
-                <li><strong class="text-gray-800">Interactive Training (تدريب تفاعلي):</strong> Learn in a fully offline, engaging environment with real-time feedback.</li>
-                <li><strong class="text-gray-800">Securing Your First Client:</strong> Step-by-step guidance on how to package your skills and land your very first paying client.</li>
-                <li><strong class="text-gray-800">Course Certificate (شهادة اتمام الكورس):</strong> Receive a certified document upon successful completion of the course.</li>
+                <li><strong class="text-gray-800">Microsoft Word:</strong> Advanced document formatting, styles, mail merge, and professional reporting.</li>
+                <li><strong class="text-gray-800">Microsoft Excel:</strong> Core functions, complex formulas, pivot tables, data visualization, and data analysis.</li>
+                <li><strong class="text-gray-800">Microsoft PowerPoint:</strong> Designing engaging slides, animations, transitions, and master templates.</li>
+                <li><strong class="text-gray-800">Productivity Hacks:</strong> Keyboard shortcuts and workflow integration between the three apps.</li>
             </ul>
         `,
-        "instructor": "Kamal Abdallah",
-        "instructorBio": "Kamal Abdallah is a Digital Marketing expert dedicated to guiding students from the absolute basics to securing their very first client using proven, real-world strategies.",
-        "instructorPortfolio": "",
-        "image": "https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
-        "mode": "Face to Face",
+        "instructor": "Mohamed Bakr",
+        "instructorBio": "Mohamed Bakr is officially Certified by Microsoft in both MS Word and MS Excel. He brings practical, workplace-ready techniques to help students and professionals maximize their daily productivity.",
+        "instructorPortfolio": "https://mfouadbakr.github.io/portfolio/index.html",
+        "image": "images/office.png",
+        "mode": "Online",
         "isCustom": false,
-        "predeterminedDays": ["Saturday", "Monday", "Wednesday"],
-        "predeterminedTimes": ["Afternoon", "Evening"],
+        "predeterminedDays": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday"],
+        "predeterminedTimes": ["Evening"],
         "html": `
-        <div class="flex flex-col md:flex-row bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative">
-            <div class="absolute top-0 right-0 bg-[#e70000] text-white px-4 py-1 text-xs font-bold rounded-bl-lg shadow-sm z-10 animate-pulse">
-                50% OFF (First 5 Registrations)
-            </div>
+        <div class="flex flex-col md:flex-row bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
             <div class="w-full md:w-1/3 bg-gray-100 relative overflow-hidden min-h-[240px]">
-                <img src="https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Digital Marketing" class="w-full h-full object-cover absolute inset-0">
-                <span class="absolute top-4 left-4 bg-gray-900/90 backdrop-blur-sm px-3 py-1 text-xs font-bold text-white rounded shadow-sm">Offline Course</span>
+                <img src="https://images.unsplash.com/photo-1512758117929-08ce1bb2a46f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Microsoft Office" class="w-full h-full object-cover absolute inset-0">
+                <span class="absolute top-4 left-4 bg-gray-900/90 backdrop-blur-sm px-3 py-1 text-xs font-bold text-white rounded shadow-sm">Online</span>
+                <span class="absolute top-4 right-4 bg-blue-600/90 backdrop-blur-sm px-3 py-1 text-xs font-bold text-white rounded shadow-sm">Certified Instructor</span>
             </div>
             <div class="w-full md:w-2/3 p-6 md:p-8 flex flex-col justify-between">
                 <div>
-                    <h3 class="text-2xl font-bold text-gray-900 mb-3 font-poppins">Digital Marketing Course</h3>
-                    <p class="text-gray-600 mb-6 leading-relaxed">Start from zero to your first client! Learn the best strategies through practical applications and interactive offline training.</p>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3 font-poppins">Microsoft Office (Word, Excel, PowerPoint)</h3>
+                    <p class="text-gray-600 mb-6 leading-relaxed">Master essential workplace tools including Word, Excel, and PowerPoint. Taught by a Microsoft Certified Specialist.</p>
                     
                     <div class="flex flex-wrap gap-3 mb-6">
                         <div class="flex items-center gap-1.5 bg-red-50 text-[#e70000] px-3 py-1.5 rounded-lg text-xs font-bold border border-red-100 uppercase tracking-wide">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
-                            Kamal Abdallah
+                            Mohamed Bakr
                         </div>
                         <div class="flex items-center gap-1.5 bg-gray-100 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-bold border border-gray-200 uppercase tracking-wide">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg>
-                            Offline / Face to Face
+                            Sun - Thu (Evenings)
                         </div>
                     </div>
                 </div>
                 <div class="mt-4 flex flex-col sm:flex-row justify-end gap-3">
-                    <button onclick="copyCourseLink('course_digitalmarketing', this)" class="flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-lg transition-colors w-full sm:w-auto">
+                    <button onclick="copyCourseLink('course_msoffice', this)" class="flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-lg transition-colors w-full sm:w-auto">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
                         Share
                     </button>
-                    <button onclick="showCourseDetail('course_digitalmarketing')" class="btn-custom w-full sm:w-auto shadow-sm">View Details</button>
+                    <button onclick="showCourseDetail('course_msoffice')" class="btn-custom w-full sm:w-auto shadow-sm">View Details</button>
                 </div>
             </div>
         </div>`
-    }
+    },
+    {
+        "id": "course_custom",
+        "name": "",
+        "description": "Don't see what you're looking for? Let us know what you want to learn, and our experts will tailor a learning path specifically for you.",
+        "longDescription": `
+            <p class="text-gray-600 leading-relaxed text-lg mb-4">Our Custom Tailored Courses allow you to design a curriculum that directly aligns with your career goals and current skill level.</p>
+            <ul class="list-disc pl-5 space-y-3 text-gray-600">
+                <li><strong class="text-gray-800">Personalized Curriculum:</strong> Target the exact software skills, programming languages, or leadership tools you need.</li>
+                <li><strong class="text-gray-800">Expert Matching:</strong> We source the perfect expert to guide you based on your unique goals.</li>
+                <li><strong class="text-gray-800">Flexible Scheduling:</strong> Build a timeline and schedule that fits perfectly into your busy life.</li>
+            </ul>
+        `,
+        "instructor": "Assigned upon request",
+        "instructorBio": "We partner with a wide network of industry experts, university professors, and corporate leaders. Once you propose a topic and your goals, we will carefully match you with a vetted instructor who holds a proven track record in your requested field.",
+        "instructorPortfolio": "", 
+        "image": "",
+        "mode": "Flexible",
+        "isCustom": true,
+        "predeterminedDays": [],
+        "predeterminedTimes":[],
+        "html": `
+        <div class="flex flex-col md:flex-row bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="w-full md:w-1/3 bg-gray-900 relative overflow-hidden flex items-center justify-center min-h-[240px]">
+                <svg class="w-24 h-24 text-[#e70000] opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                <span class="absolute top-4 left-4 bg-[#e70000] px-3 py-1 text-xs font-bold text-white rounded shadow-sm tracking-wide">Custom Tailored</span>
+            </div>
+            <div class="w-full md:w-2/3 p-6 md:p-8 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-3 font-poppins">Request a Custom Course</h3>
+                    <p class="text-gray-600 mb-6 leading-relaxed">Don't see what you're looking for? Let us know what you want to learn, and our experts will tailor a learning path specifically for you.</p>
+                    
+                    <div class="flex flex-wrap gap-3 mb-6">
+                        <div class="flex items-center gap-1.5 bg-gray-100 text-gray-800 px-3 py-1.5 rounded-lg text-xs font-bold border border-gray-200 uppercase tracking-wide">
+                            <svg class="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+                            Expert Assigned on Request
+                        </div>
+                        <div class="flex items-center gap-1.5 bg-gray-100 text-gray-800 px-3 py-1.5 rounded-lg text-xs font-bold border border-gray-200 uppercase tracking-wide">
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            Flexible Schedule
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 flex flex-col sm:flex-row justify-end gap-3">
+                    <button onclick="copyCourseLink('course_custom', this)" class="flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-lg transition-colors w-full sm:w-auto">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                        Share
+                    </button>
+                    <button onclick="showCourseDetail('course_custom')" class="btn-custom btn-dark w-full sm:w-auto shadow-sm">View Details</button>
+                </div>
+            </div>
+        </div>`
+    },
 ];
