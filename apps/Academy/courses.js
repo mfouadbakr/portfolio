@@ -30,7 +30,7 @@ const coursesData = [
                 50% OFF (First 5 Registrations)
             </div>
             <div class="w-full md:w-1/3 bg-gray-100 relative overflow-hidden min-h-[240px]">
-                <img src="https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Digital Marketing" class="w-full h-full object-cover absolute inset-0">
+                <img src="images/digital_marketing.png" alt="Digital Marketing" class="w-full h-full object-cover absolute inset-0">
                 <span class="absolute top-4 left-4 bg-gray-900/90 backdrop-blur-sm px-3 py-1 text-xs font-bold text-white rounded shadow-sm">Offline Course</span>
             </div>
             <div class="w-full md:w-2/3 p-6 md:p-8 flex flex-col justify-between">
@@ -470,7 +470,7 @@ const coursesData = [
         "html": `
         <div class="flex flex-col md:flex-row bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
             <div class="w-full md:w-1/3 bg-gray-100 relative overflow-hidden min-h-[240px]">
-                <img src="https://images.unsplash.com/photo-1512758117929-08ce1bb2a46f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Microsoft Office" class="w-full h-full object-cover absolute inset-0">
+                <img src="images/office.png" alt="Microsoft Office" class="w-full h-full object-cover absolute inset-0">
                 <span class="absolute top-4 left-4 bg-gray-900/90 backdrop-blur-sm px-3 py-1 text-xs font-bold text-white rounded shadow-sm">Online</span>
                 <span class="absolute top-4 right-4 bg-blue-600/90 backdrop-blur-sm px-3 py-1 text-xs font-bold text-white rounded shadow-sm">Certified Instructor</span>
             </div>
